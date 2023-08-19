@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
 export default function Home() {
   return (
@@ -11,31 +11,28 @@ export default function Home() {
 
         <div className="max-w-[450px] mt-[68px]">
           <h1 className={`font-bold text-2xl text-[#232830]`}>
-            Automate your Integrations
+            Create New Password
           </h1>
-          <p className="text-[#232830]">Continue to your profile</p>
           <form className="mt-[71px]">
             <div>
-              <Input type="text" placeholder="Email" />
+              <Input type="text" placeholder="Enter OTP" />
             </div>
-            <div className="flex flex-col items-end mt-[32px]">
-              <Input type="password" placeholder="Password" />
-              <a
-                href="/auth/forgot-password"
-                className={`font-bold text-primary`}
-              >
-                Forgot your Password?
-              </a>
+            <div className="mt-[32px]">
+              <Input type="text" placeholder="New Password" />
             </div>
+            <div className="mt-[32px]">
+              <Input type="text" placeholder="Confirm Password" />
+            </div>
+
             <div className="mt-[52px]">
               <Button disabled type="submit">
-                Continue
+                Update password
               </Button>
             </div>
           </form>
           <p className="text-[#232830] mt-[97px] text-center">
             New to Ductape?{' '}
-            <a href="/auth/signup" className="font-bold underline text-primary">
+            <a href="#" className="font-bold underline text-primary">
               Create an account
             </a>
           </p>

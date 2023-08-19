@@ -1,9 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
-export default function Home() {
+export default function ResetPassword() {
   return (
     <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
       <div className="pt-20 w-[30%] mx-[55px]">
@@ -11,32 +11,25 @@ export default function Home() {
 
         <div className="max-w-[450px] mt-[68px]">
           <h1 className={`font-bold text-2xl text-[#232830]`}>
-            Automate your Integrations
+            Reset Password
           </h1>
-          <p className="text-[#232830]">Continue to your profile</p>
+          <p className="text-[#232830] max-w-[296px] mt-[12px]">
+            Enter your email address and we'll send you a code to reset your
+            password
+          </p>
           <form className="mt-[71px]">
             <div>
               <Input type="text" placeholder="Email" />
             </div>
-            <div className="flex flex-col items-end mt-[32px]">
-              <Input type="password" placeholder="Password" />
-              <a
-                href="/auth/forgot-password"
-                className={`font-bold text-primary`}
-              >
-                Forgot your Password?
-              </a>
-            </div>
             <div className="mt-[52px]">
               <Button disabled type="submit">
-                Continue
+                Send code
               </Button>
             </div>
           </form>
           <p className="text-[#232830] mt-[97px] text-center">
-            New to Ductape?{' '}
-            <a href="/auth/signup" className="font-bold underline text-primary">
-              Create an account
+            <a href="../" className="font-medium underline text-primary">
+              Return to Login
             </a>
           </p>
         </div>

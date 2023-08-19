@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import Input from '../../components/Input';
+import Button from '../../components/Button';
 
 export default function Home() {
   return (
@@ -11,32 +11,49 @@ export default function Home() {
 
         <div className="max-w-[450px] mt-[68px]">
           <h1 className={`font-bold text-2xl text-[#232830]`}>
-            Automate your Integrations
+            Verify it’s you
           </h1>
-          <p className="text-[#232830]">Continue to your profile</p>
+          <p className="text-[#232830]">
+            We sent a six-digit pin to your email. Enter it in the field below
+          </p>
           <form className="mt-[71px]">
-            <div>
-              <Input type="text" placeholder="Email" />
+            <div className="flex justify-between gap-[30px]">
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
+              <input
+                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                type="text"
+              />
             </div>
-            <div className="flex flex-col items-end mt-[32px]">
-              <Input type="password" placeholder="Password" />
-              <a
-                href="/auth/forgot-password"
-                className={`font-bold text-primary`}
-              >
-                Forgot your Password?
-              </a>
-            </div>
+
             <div className="mt-[52px]">
               <Button disabled type="submit">
-                Continue
+                Verify Code
               </Button>
             </div>
           </form>
-          <p className="text-[#232830] mt-[97px] text-center">
-            New to Ductape?{' '}
-            <a href="/auth/signup" className="font-bold underline text-primary">
-              Create an account
+          <p className="text-[#232830] mt-[77px] text-center">
+            Resend Code in{' '}
+            <a href="#" className="font-bold text-primary">
+              00:59
             </a>
           </p>
         </div>
