@@ -1,9 +1,36 @@
 import React from 'react';
 import Image from 'next/image';
+import { useFormik } from 'formik';
+import { useRouter } from 'next/router';
+import * as Yup from 'yup';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
+interface FormValues {
+  email: string;
+}
+
+const forgotPasswordSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email').required('Email is Required'),
+});
+
 export default function ResetPassword() {
+  const router = useRouter();
+
+  const handleSubmit = (values: FormValues, submitProps: any) => {
+    submitProps.setSubmitting(false);
+    submitProps.resetForm();
+    router.push('/auth/reset-password')
+  };
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      email: '',
+    },
+    validationSchema: forgotPasswordSchema,
+    onSubmit: handleSubmit,
+  });
+
   return (
     <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
       <div className="pt-20 w-[30%] mx-[55px]">
@@ -19,10 +46,23 @@ export default function ResetPassword() {
           </p>
           <form className="mt-[71px]">
             <div>
-              <Input type="text" placeholder="Email" />
+              <Input
+                type="text"
+                placeholder="Email"
+                onBlur={formik.handleBlur('email')}
+                value={formik.values.email}
+                onChange={formik.handleChange('email')}
+              />
+              {formik.touched.email && formik.errors.email ? (
+                <p className="text-xs mt-1 text-error">{formik.errors.email}</p>
+              ) : null}
             </div>
             <div className="mt-[52px]">
-              <Button disabled type="submit">
+              <Button
+                disabled={!formik.isValid || !formik.dirty}
+                type="submit"
+                onClick={() => formik.handleSubmit()}
+              >
                 Send code
               </Button>
             </div>

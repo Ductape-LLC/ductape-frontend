@@ -1,15 +1,55 @@
 import React from 'react';
 import Image from 'next/image';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useRouter } from 'next/router';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { Checkbox } from 'antd';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
+interface FormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  agreeToTerms: boolean;
+}
+
+const signupSchema = Yup.object().shape({
+  firstName: Yup.string().required('First name is Required'),
+  lastName: Yup.string().required('Required'),
+  email: Yup.string().email('Invalid email').required('Last name is Required'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .required('Confirm Password is required'),
+  agreeToTerms: Yup.boolean().oneOf([true], 'You must agree to the terms'),
+});
 
 export default function SignUp() {
-  const onChange = (e: CheckboxChangeEvent) => {
-    console.log(`checked = ${e.target.checked}`);
+  const router = useRouter();
+
+  const handleSubmit = (values: FormValues, submitProps: any) => {
+    submitProps.setSubmitting(false);
+    submitProps.resetForm();
+    router.push('/auth/verify');
   };
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      agreeToTerms: false,
+    },
+    validationSchema: signupSchema,
+    onSubmit: handleSubmit,
+  });
 
   return (
     <div className="bg-[#F9FAFC] py-8 pr-[21px] flex">
@@ -23,23 +63,81 @@ export default function SignUp() {
           <p className="text-[#232830]">Let’s get you setup</p>
           <form className="mt-[51px]">
             <div>
-              <Input type="text" placeholder="First Name" />
+              <Input
+                type="text"
+                placeholder="First Name"
+                onBlur={formik.handleBlur('firstName')}
+                value={formik.values.firstName}
+                onChange={formik.handleChange('firstName')}
+              />
+              {formik.touched.firstName && formik.errors.firstName ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.firstName}
+                </p>
+              ) : null}
             </div>
             <div className="mt-6">
-              <Input type="text" placeholder="Last Name" />
+              <Input
+                type="text"
+                placeholder="Last Name"
+                onBlur={formik.handleBlur('lastName')}
+                value={formik.values.lastName}
+                onChange={formik.handleChange('lastName')}
+              />
+              {formik.touched.lastName && formik.errors.lastName ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.lastName}
+                </p>
+              ) : null}
             </div>
             <div className="mt-6">
-              <Input type="text" placeholder="Email Address" />
+              <Input
+                type="text"
+                placeholder="Email Address"
+                onBlur={formik.handleBlur('email')}
+                value={formik.values.email}
+                onChange={formik.handleChange('email')}
+              />
+              {formik.touched.email && formik.errors.email ? (
+                <p className="text-xs mt-1 text-error">{formik.errors.email}</p>
+              ) : null}
             </div>
             <div className="mt-6">
-              <Input type="text" placeholder="Password" />
+              <Input
+                type="text"
+                placeholder="Password"
+                onBlur={formik.handleBlur('password')}
+                value={formik.values.password}
+                onChange={formik.handleChange('password')}
+              />
+              {formik.touched.password && formik.errors.password ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.password}
+                </p>
+              ) : null}
             </div>
             <div className="mt-6">
-              <Input type="text" placeholder="Confirm Password" />
+              <Input
+                type="text"
+                placeholder="Confirm Password"
+                onBlur={formik.handleBlur('confirmPassword')}
+                value={formik.values.confirmPassword}
+                onChange={formik.handleChange('confirmPassword')}
+              />
+              {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.confirmPassword}
+                </p>
+              ) : null}
             </div>
 
             <div className="mt-6">
-              <Checkbox onChange={onChange}>
+              <Checkbox
+                value={formik.values.agreeToTerms}
+                name="agreeToTerms"
+                onChange={formik.handleChange('agreeToTerms')}
+              >
                 <p className="text-sm font-medium">
                   By clicking the “Create Account” button, you agree to
                   Ductape’s{' '}
@@ -56,7 +154,11 @@ export default function SignUp() {
               </Checkbox>
             </div>
             <div className="mt-[46px]">
-              <Button disabled type="submit">
+              <Button
+                type="submit"
+                disabled={!formik.isValid || !formik.dirty}
+                onClick={() => formik.handleSubmit()}
+              >
                 Create Account
               </Button>
             </div>

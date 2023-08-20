@@ -8,7 +8,7 @@ interface CustomButtonProps
 
 const CustomButton: React.FC<CustomButtonProps> = ({ disabled, children, ...props }) => {
   return (
-    <button className={`${disabled?'bg-[#D9D9D9]':'bg-primary'} h-10 w-full text-white rounded text-sm`} {...props}>
+    <button className={`${disabled?'bg-[#D9D9D9]':'bg-primary'} h-10 w-full text-white rounded text-sm`} disabled={disabled} {...props}>
       {children}
     </button>
   );

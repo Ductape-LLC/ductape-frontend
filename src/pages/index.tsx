@@ -12,19 +12,28 @@ interface FormValues {
 }
 
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email('Invalid email').required('Required'),
-  password: Yup.string().required('Required'),
+  email: Yup.string().email('Invalid email').required('Email is Required'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
 });
 
 export default function Home() {
   const router = useRouter();
+
+  const handleSubmit = (values: FormValues, submitProps: any) => {
+    submitProps.setSubmitting(false);
+    submitProps.resetForm();
+    router.push('/')
+  };
+
   const formik = useFormik<FormValues>({
     initialValues: {
       email: '',
       password: '',
     },
     validationSchema: loginSchema,
-    onSubmit: () => router.push('/'),
+    onSubmit: handleSubmit,
   });
 
   return (

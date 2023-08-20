@@ -1,9 +1,62 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Image from 'next/image';
-import Input from '../../components/Input';
+import { useRouter } from 'next/router';
 import Button from '../../components/Button';
 
 export default function Home() {
+  const router = useRouter();
+  const [disableSubmit, setDisableSubmit] = useState(true);
+  const inputRefs = [
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+    useRef(null),
+  ];
+
+  const handleKeyDown = (event: any) => {
+    if (event.key === 'Backspace') {
+      const input = event.target;
+      if (!input.value && input.previousElementSibling) {
+        input.previousElementSibling.focus();
+      }
+    }
+  };
+
+  const handleInputChange = (event: any, nextInputRef: any) => {
+    const input = event.target;
+    const value = input.value;
+
+    const allInputsFilled = inputRefs.every(
+      (inputRef: any) => inputRef.current && inputRef.current.value
+    );
+
+    if (allInputsFilled) {
+      setDisableSubmit(false);
+    } else {
+      setDisableSubmit(true);
+    }
+
+    if (!nextInputRef) {
+      return;
+    }
+
+    if (value && value.length === 1 && nextInputRef.current) {
+      nextInputRef.current.focus();
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // Prevent form submission
+    const inputValues = inputRefs.map(
+      (inputRef: any) => inputRef.current.value
+    );
+    console.log('Input values:', inputValues);
+    // router.push('/auth/verify')
+    alert('success')
+  };
+
   return (
     <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
       <div className="pt-20 w-[30%] mx-[55px]">
@@ -19,33 +72,60 @@ export default function Home() {
           <form className="mt-[71px]">
             <div className="flex justify-between gap-[30px]">
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[1])}
+                ref={inputRefs[0]}
               />
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[2])}
+                ref={inputRefs[1]}
+                onKeyDown={handleKeyDown}
               />
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[3])}
+                ref={inputRefs[2]}
+                onKeyDown={handleKeyDown}
               />
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[4])}
+                ref={inputRefs[3]}
+                onKeyDown={handleKeyDown}
               />
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[5])}
+                ref={inputRefs[4]}
+                onKeyDown={handleKeyDown}
               />
               <input
-                className="border bg-white rounded-lg h-[41px] w-[41px]"
+                className="border bg-white rounded-lg h-[41px] w-[41px] text-[#232830] text-sm pl-[15px]"
+                maxLength={1}
                 type="text"
+                onChange={(e) => handleInputChange(e, inputRefs[6])}
+                ref={inputRefs[5]}
+                onKeyDown={handleKeyDown}
               />
             </div>
 
             <div className="mt-[52px]">
-              <Button disabled type="submit">
+              <Button
+                disabled={disableSubmit}
+                type="submit"
+                onClick={handleSubmit}
+              >
                 Verify Code
               </Button>
             </div>
