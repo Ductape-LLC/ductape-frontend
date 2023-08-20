@@ -17,6 +17,9 @@ const config: Config = {
         primary: {
           DEFAULT: '#0846A6',
         },
+        error: {
+          DEFAULT: '#FF0000',
+        }
       },
     },
   },
