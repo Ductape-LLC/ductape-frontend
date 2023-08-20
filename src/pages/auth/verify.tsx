@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Button from '../../components/Button';
 
@@ -47,7 +48,7 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault(); // Prevent form submission
     const inputValues = inputRefs.map(
       (inputRef: any) => inputRef.current.value
@@ -132,9 +133,9 @@ export default function Home() {
           </form>
           <p className="text-[#232830] mt-[77px] text-center">
             Resend Code in{' '}
-            <a href="#" className="font-bold text-primary">
+            <Link href="#" className="font-bold text-primary">
               00:59
-            </a>
+            </Link>
           </p>
         </div>
         <p className="absolute bottom-16 left-15 text-[#979797]">

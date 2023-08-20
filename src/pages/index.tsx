@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
@@ -73,12 +74,12 @@ export default function Home() {
                     {formik.errors.password}
                   </p>
                 ) : null}
-                <a
+                <Link
                   href="/auth/forgot-password"
                   className={`font-bold text-primary flex-1 text-right`}
                 >
                   Forgot your Password?
-                </a>
+                </Link>
               </div>
             </div>
             <div className="mt-[52px]">
@@ -93,9 +94,9 @@ export default function Home() {
           </form>
           <p className="text-[#232830] mt-[97px] text-center">
             New to Ductape?{' '}
-            <a href="/auth/signup" className="font-bold underline text-primary">
+            <Link href="/auth/signup" className="font-bold underline text-primary">
               Create an account
-            </a>
+            </Link>
           </p>
         </div>
         <p className="absolute bottom-16 left-15 text-[#979797]">

@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
@@ -68,9 +69,9 @@ export default function ResetPassword() {
             </div>
           </form>
           <p className="text-[#232830] mt-[97px] text-center">
-            <a href="../" className="font-medium underline text-primary">
+            <Link href="../" className="font-medium underline text-primary">
               Return to Login
-            </a>
+            </Link>
           </p>
         </div>
         <p className="absolute bottom-16 left-15 text-[#979797]">

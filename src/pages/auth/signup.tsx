@@ -1,11 +1,13 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { Checkbox } from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 
 interface FormValues {
   firstName: string;
@@ -24,7 +26,7 @@ const signupSchema = Yup.object().shape({
     .min(6, 'Password must be at least 6 characters')
     .required('Password is required'),
   confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password'), null], 'Passwords must match')
+    .oneOf([Yup.ref('password')], 'Passwords must match')
     .required('Confirm Password is required'),
   agreeToTerms: Yup.boolean().oneOf([true], 'You must agree to the terms'),
 });
@@ -136,7 +138,10 @@ export default function SignUp() {
               <Checkbox
                 value={formik.values.agreeToTerms}
                 name="agreeToTerms"
-                onChange={formik.handleChange('agreeToTerms')}
+                // onChange={formik.handleChange('agreeToTerms')}
+                onChange={(e: CheckboxChangeEvent) => {
+                  formik.setFieldValue('agreeToTerms', e.target.checked);
+                }}
               >
                 <p className="text-sm font-medium">
                   By clicking the “Create Account” button, you agree to
@@ -200,9 +205,9 @@ export default function SignUp() {
 
           <p className="text-[#232830] mt-[95px] text-center">
             Already have an account?{' '}
-            <a href="../" className="font-bold underline text-primary">
+            <Link href="../" className="font-bold underline text-primary">
               Login
-            </a>
+            </Link>
           </p>
         </div>
         {/* <p className="absolute bottom-16 left-15 text-[#979797]">
