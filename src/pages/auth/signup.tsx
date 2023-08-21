@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 

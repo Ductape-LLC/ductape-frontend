@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 
 interface FormValues {
   email: string;
@@ -21,7 +21,7 @@ export default function ResetPassword() {
   const handleSubmit = (values: FormValues, submitProps: any) => {
     submitProps.setSubmitting(false);
     submitProps.resetForm();
-    router.push('/auth/reset-password')
+    router.push('/auth/reset-password');
   };
 
   const formik = useFormik<FormValues>({

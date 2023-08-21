@@ -3,8 +3,8 @@ import Image from 'next/image';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import Input from '../../components/common/Input';
+import Button from '../../components/common/Button';
 
 interface FormValues {
   otp: string;

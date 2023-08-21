@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import Button from '../../components/Button';
+import Button from '../../components/common/Button';
 
 export default function Home() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function Home() {
     );
     console.log('Input values:', inputValues);
     // router.push('/auth/verify')
-    alert('success')
+    alert('success');
   };
 
   return (

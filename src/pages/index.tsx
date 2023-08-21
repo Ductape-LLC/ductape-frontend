@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
-import Input from '../components/Input';
-import Button from '../components/Button';
+import Input from '../components/common/Input';
+import Button from '../components/common/Button';
 
 interface FormValues {
   email: string;
@@ -25,7 +25,7 @@ export default function Home() {
   const handleSubmit = (values: FormValues, submitProps: any) => {
     submitProps.setSubmitting(false);
     submitProps.resetForm();
-    router.push('/')
+    router.push('/');
   };
 
   const formik = useFormik<FormValues>({
@@ -94,7 +94,10 @@ export default function Home() {
           </form>
           <p className="text-[#232830] mt-[97px] text-center">
             New to Ductape?{' '}
-            <Link href="/auth/signup" className="font-bold underline text-primary">
+            <Link
+              href="/auth/signup"
+              className="font-bold underline text-primary"
+            >
               Create an account
             </Link>
           </p>
