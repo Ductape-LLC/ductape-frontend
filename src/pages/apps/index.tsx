@@ -56,7 +56,7 @@ const Dashboard = () => {
             <div className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
-                  src="images/google.svg"
+                  src="/images/google.svg"
                   width={42}
                   height={42}
                   alt="google"
@@ -80,7 +80,7 @@ const Dashboard = () => {
             <div className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
-                  src="images/facebook.svg"
+                  src="/images/facebook.svg"
                   width={42}
                   height={42}
                   alt="faceebok"

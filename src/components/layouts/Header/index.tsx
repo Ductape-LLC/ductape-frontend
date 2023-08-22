@@ -11,7 +11,7 @@ const Header = () => {
   return (
     <div className="h-[89px] flex bg-white px-11 items-center border-b justify-between">
       <div className="flex items-center">
-        <Image src="images/logo.svg" width={148} height={38} alt="logo" />
+        <Image src="/images/logo.svg" width={148} height={38} alt="logo" />
 
         <Select
           defaultValue="lucy"
@@ -33,10 +33,10 @@ const Header = () => {
         <Link href="" className="text-[#232830] font-semibold">
           Support
         </Link>
-        <Image src="images/Bell.svg" width={32} height={32} alt="bell" />
+        <Image src="/images/Bell.svg" width={32} height={32} alt="bell" />
         <Button
           icon={
-            <Image src="images/user.svg" height={20} width={20} alt="user" />
+            <Image src="/images/user.svg" height={20} width={20} alt="user" />
           }
           className="bg-[#0846A6] text-white font-semibold flex items-center outline-none"
         >
