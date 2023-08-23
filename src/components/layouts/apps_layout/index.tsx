@@ -2,16 +2,19 @@ import React, { FC } from 'react';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 interface AppsLayoutProps {
   children: React.ReactNode;
 }
 
 const AppsLayout: FC<AppsLayoutProps> = ({ children }) => {
+    const router = useRouter();
   return (
     <div className="w-screen flex">
       <div className="w-[305px] min-h-screen bg-[#F9FAFC] pl-11 pt-8">
         <Image
+        onClick={() => router.back()}
           src="/images/back-arrow.svg"
           width={24}
           height={24}

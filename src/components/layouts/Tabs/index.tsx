@@ -13,11 +13,11 @@ const TabItems: TabInteface[] = [
   },
   {
     label: 'App',
-    href: '/dashboard',
+    href: '/apps',
   },
   {
     label: 'Integrations',
-    href: '/dashboard',
+    href: '/integrations',
   },
   {
     label: 'Marketplace',

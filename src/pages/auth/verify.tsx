@@ -54,8 +54,7 @@ export default function Home() {
       (inputRef: any) => inputRef.current.value
     );
     console.log('Input values:', inputValues);
-    // router.push('/auth/verify')
-    alert('success');
+    router.push('/')
   };
 
   return (

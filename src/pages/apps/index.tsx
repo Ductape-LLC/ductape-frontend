@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Input, Select } from 'antd';
-import CustomInput from '@/components/common/input';
+import CustomInput from '../../components/common/Input';
 import Image from 'next/image';
-import Dashboard_layout from '@/components/layouts/dashboard_layout';
-import Button from '@/components/common/Button';
-import Link from 'next/link';
+import Dashboard_layout from '../../components/layouts/dashboard_layout';
+import Button from '../../components/common/Button';
+import { useRouter } from 'next/router';
 import {
   SettingOutlined,
   PlusOutlined,
@@ -14,7 +14,9 @@ import {
 const { TextArea } = Input;
 
 const Dashboard = () => {
-  const [showModal, setShowModal] = useState(true);
+  const router = useRouter();
+  const [showEnvModal, setShowEnvModal] = useState(false);
+  const [showCreateAppModal, setShowCreateAppModal] = useState(false);
 
   return (
     <Dashboard_layout activeTab="App">
@@ -23,11 +25,11 @@ const Dashboard = () => {
           <div className="flex justify-between utems-center">
             <p className="text-[28px] text-[#232830] font-semibold">Apps</p>
             <div className="flex gap-7">
-              <Button className="font-semibold flex items-center text-sm border border-[#DC3444] text-[#DC3444] outline-none h-[40px] rounded px-[10px] gap-2">
+              <Button onClick={() =>setShowEnvModal(true)} className="font-semibold flex items-center text-sm border border-[#DC3444] text-[#DC3444] outline-none h-[40px] rounded px-[10px] gap-2">
                 <SettingOutlined className="text-[#DC3444]" size={16} />
                 Environments
               </Button>
-              <Button className="bg-[#0846A6] text-white font-semibold text-sm flex items-center outline-none  h-[40px] rounded px-[10px] gap-2">
+              <Button onClick={() =>setShowCreateAppModal(true)} className="bg-[#0846A6] text-white font-semibold text-sm flex items-center outline-none  h-[40px] rounded px-[10px] gap-2">
                 <PlusOutlined className="text-white" size={16} />
                 New App
               </Button>
@@ -53,7 +55,7 @@ const Dashboard = () => {
           </div>
 
           <div className="mt-[51px]">
-            <div className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
+            <div onClick={() => router.push('/apps/get-started')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
                   src="/images/google.svg"
@@ -77,7 +79,7 @@ const Dashboard = () => {
               </button>
             </div>
 
-            <div className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
+            <div onClick={() => router.push('/apps/get-started')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
                   src="/images/facebook.svg"
@@ -105,12 +107,12 @@ const Dashboard = () => {
       </div>
 
       <Modal
-        open={false}
+        open={showCreateAppModal}
         width="730px"
         className="rounded-none"
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        onCancel={() => setShowModal(false)}
+        onCancel={() => setShowCreateAppModal(false)}
         style={{ padding: 0 }}
       >
         <div>
@@ -135,7 +137,7 @@ const Dashboard = () => {
           </div>
 
           <div className="px-[30px] py-6 flex justify-end gap-5">
-            <Button className="font-semibold text-sm border  text-[#232830] outline-none h-[33px] rounded px-6 gap-2">
+            <Button onClick={() =>setShowCreateAppModal(false)} className="font-semibold text-sm border  text-[#232830] outline-none h-[33px] rounded px-6 gap-2">
               Cancel
             </Button>
             <Button className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-[33px] px-6">
@@ -146,12 +148,12 @@ const Dashboard = () => {
       </Modal>
 
       <Modal
-        open={false}
+        open={showEnvModal}
         width="730px"
         className="rounded-none"
         cancelButtonProps={{ style: { display: 'none' } }}
         okButtonProps={{ style: { display: 'none' } }}
-        onCancel={() => setShowModal(false)}
+        onCancel={() => setShowEnvModal(false)}
         style={{ padding: 0 }}
       >
         <div>
