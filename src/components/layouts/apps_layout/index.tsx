@@ -9,12 +9,12 @@ interface AppsLayoutProps {
 }
 
 const AppsLayout: FC<AppsLayoutProps> = ({ children }) => {
-    const router = useRouter();
+  const router = useRouter();
   return (
-    <div className="w-screen flex">
-      <div className="w-[305px] min-h-screen bg-[#F9FAFC] pl-11 pt-8">
+    <div className="w-screen fixed left-0 flex">
+      <div className="w-[305px] bg-[#F9FAFC] pl-11 pt-8 border-r pb-40 border-t relative overflow-y-auto h-screen">
         <Image
-        onClick={() => router.back()}
+          onClick={() => router.back()}
           src="/images/back-arrow.svg"
           width={24}
           height={24}
@@ -77,6 +77,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
+
 
         <div className="mt-[35px]">
           <div className="flex mt-[35px] items-center">
@@ -161,7 +162,14 @@ const AppsLayout: FC<AppsLayoutProps> = ({ children }) => {
           </div>
         </div>
       </div>
-      <div className="flex-1 bg-white px-"></div>
+
+
+
+
+      <div className="flex-1 bg-[#F9FAFC] relative overflow-y-auto border-t h-screen">
+        {children}
+        <div className="h-48" />
+      </div>
     </div>
   );
 };

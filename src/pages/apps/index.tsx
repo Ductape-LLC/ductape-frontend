@@ -55,7 +55,7 @@ const Dashboard = () => {
           </div>
 
           <div className="mt-[51px]">
-            <div onClick={() => router.push('/apps/get-started')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
+            <div onClick={() => router.push('/apps/my-app')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
                   src="/images/google.svg"
@@ -79,7 +79,7 @@ const Dashboard = () => {
               </button>
             </div>
 
-            <div onClick={() => router.push('/apps/get-started')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
+            <div onClick={() => router.push('/apps/my-app')} className="flex px-[36px] py-[34px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]">
               <div className="flex items-center gap-[25px]">
                 <Image
                   src="/images/facebook.svg"

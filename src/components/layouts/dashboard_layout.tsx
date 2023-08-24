@@ -7,12 +7,15 @@ interface Props {
   activeTab: string;
 }
 
-const Dashboard_layout:FC<Props> = ({ children, activeTab='Dashboard' }) => {
+const Dashboard_layout: FC<Props> = ({ children, activeTab = 'Dashboard' }) => {
   return (
     <>
-      <Header />
-      <Tabs activeTab={activeTab} />
-      <div className="min-h-screen bg-[#F7F8FA]">{children}</div>
+      <div className="fixed top-0 left-0 w-full">
+        <Header />
+        <Tabs activeTab={activeTab} />
+      </div>
+
+      <div className="bg-[#F7F8FA] mt-36">{children}</div>
     </>
   );
 };
