@@ -20,7 +20,7 @@ const Dashboard = () => {
 
   return (
     <Dashboard_layout activeTab="App">
-      <div className="w-screen">
+      <div className="w-screen h-screen">
         <div className="px-20 border-b h-[115px] flex flex-col justify-center  bg-white">
           <div className="flex justify-between utems-center">
             <p className="text-[28px] text-[#232830] font-semibold">Apps</p>
