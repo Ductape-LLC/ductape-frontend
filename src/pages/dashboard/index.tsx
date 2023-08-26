@@ -1,19 +1,17 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal } from 'antd';
-import Dashboard_layout from '../../components/layouts/dashboard_layout';
-import Input from '../../components/common/Input';
-import Button from '../../components/common/Button';
+import Dashboard_layout from '@/components/layouts/dashboard_layout';
+import { useDispatch, useSelector } from 'react-redux';
+import Input from '@/components/common/Input';
+import Button from '@/components/common/Button';
+import toast from 'react-hot-toast';
 import Link from 'next/link';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import { useFormik } from 'formik';
+import { useRouter } from 'next/router';
+import * as Yup from 'yup';
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { createWorkspace } from '@/api/workspaceClient';
 
 const data = [
   {
@@ -60,11 +58,58 @@ const data = [
   },
 ];
 
+interface FormValues {
+  name: string;
+}
+
+const createWorkSpaceSchema = Yup.object().shape({
+  name: Yup.string().required('Workspace name is required'),
+});
+
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const { workspaces } = useSelector((state: any) => state.workspace);
+  const { token, public_key, user } = useSelector((state: any) => state.user);
+
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (values: FormValues, submitProps: any) => {
+    try {
+      submitProps.setSubmitting(false);
+      setLoading(true);
+      toast.loading('Loading...');
+      const data = {
+        name: values.name,
+        public_key,
+        user_id: user._id,
+      };
+      const response = await createWorkspace(token, data);
+      if (response.status === 201) {
+        setLoading(false);
+        toast.success('Workspace created successful');
+        setShowModal(false);
+      }
+      setLoading(false);
+      submitProps.resetForm();
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
+  };
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      name: '',
+    },
+    validationSchema: createWorkSpaceSchema,
+    onSubmit: handleSubmit,
+  });
 
   useEffect(() => {
-    setShowModal(true);
+    if (workspaces.length === 0) {
+      setShowModal(true);
+    }
   }, []);
 
   return (
@@ -204,9 +249,27 @@ const Dashboard = () => {
               workspace.
             </p>
             <form className="mt-[49px]">
-              <Input placeholder="Workspace Name" />
+              <div>
+                <Input
+                  placeholder="Workspace Name"
+                  onBlur={formik.handleBlur('name')}
+                  value={formik.values.name}
+                  onChange={formik.handleChange('name')}
+                />
+                {formik.touched.name && formik.errors.name ? (
+                  <p className="text-xs mt-1 text-error">
+                    {formik.errors.name}
+                  </p>
+                ) : null}
+              </div>
               <div className="mt-[35px]">
-                <Button disabled>Create Workspace</Button>
+                <Button
+                  disabled={!formik.isValid || !formik.dirty || loading}
+                  type="submit"
+                  onClick={() => formik.handleSubmit()}
+                >
+                  Create Workspace
+                </Button>
               </div>
             </form>
             <div className="mt-20 w-full text-center">

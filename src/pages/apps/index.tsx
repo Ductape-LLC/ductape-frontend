@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Modal, Input, Select } from 'antd';
 import CustomInput from '../../components/common/Input';
 import Image from 'next/image';
 import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Button from '../../components/common/Button';
 import { useRouter } from 'next/router';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   SettingOutlined,
   PlusOutlined,
@@ -17,6 +18,14 @@ const Dashboard = () => {
   const router = useRouter();
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [showCreateAppModal, setShowCreateAppModal] = useState(false);
+  const { workspaces, defaultWorkspace } = useSelector((state: any) => state.workspace);
+
+  const workspacesOptions = useMemo(() => {
+    return workspaces.map((workspace: any) => ({
+      value: workspace.workspace_id,
+      label: workspace.workspace_name,
+    }));
+  }, [workspaces]);
 
   return (
     <Dashboard_layout activeTab="App">
@@ -46,11 +55,11 @@ const Dashboard = () => {
               prefix={<SearchOutlined />}
             />
             <Select
-              defaultValue="lucy"
+              defaultValue={defaultWorkspace?.workspace_name}
               size="large"
               style={{ width: 173 }}
               className="text-sm text-[#232830] outline-none"
-              options={[{ value: 'all', label: 'All' }]}
+              options={workspacesOptions}
             />
           </div>
 

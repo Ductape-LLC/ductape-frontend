@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Select, Button } from 'antd';
@@ -9,7 +9,9 @@ import { logout } from '../../../redux/slice/userSlice';
 const Header = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector((state: any) => state.user);
+  const { user } = useSelector((state: any) => state.user);
+  const { workspaces, defaultWorkspace } = useSelector((state: any) => state.workspace);
+
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
   };
@@ -19,21 +21,25 @@ const Header = () => {
     router.push('/');
   };
 
+  const workspacesOptions = useMemo(() => {
+    return workspaces.map((workspace: any) => ({
+      value: workspace.workspace_id,
+      label: workspace.workspace_name,
+    }));
+  }, [workspaces]);
+
+
   return (
     <div className="h-[89px] flex bg-white px-11 items-center border-b justify-between">
       <div className="flex items-center">
         <Image src="/images/logo.svg" width={148} height={38} alt="logo" />
 
         <Select
-          defaultValue="lucy"
+          defaultValue={defaultWorkspace?.workspace_name}
           style={{ width: 120 }}
           className="ml-[147px]"
           onChange={handleChange}
-          options={[
-            { value: 'textApp', label: 'textApp' },
-            { value: 'Sigma', label: 'Sigma' },
-            { value: 'SwiftMoney', label: 'SwiftMoney' },
-          ]}
+          options={workspacesOptions}
         />
       </div>
 

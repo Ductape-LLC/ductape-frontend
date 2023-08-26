@@ -10,7 +10,10 @@ import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import { loginUser } from '../api/userClient';
 import { login } from '../redux/slice/userSlice';
-import { setWorkspaces, setWorkspace } from '../redux/slice/workspaceSlice';
+import {
+  setWorkspaces,
+  setDefaultWorkspace,
+} from '../redux/slice/workspaceSlice';
 
 interface FormValues {
   email: string;
@@ -35,14 +38,20 @@ export default function Login() {
       const response = await loginUser(values);
       if (response.status === 201) {
         setLoading(false);
-        console.log(response.data);
         const { _id, firstname, lastname, email, active } = response.data.data;
         const data = {
-          user: {_id, firstname, lastname, email, active},
+          user: { _id, firstname, lastname, email, active },
           token: response.data.data.auth_token,
-        }
-        console.log(data);
+          public_key: response.data.data.public_key,
+        };
+        const workspaces = response.data.data.workspaces;
+        const workspace = workspaces.find(
+          (workspace: any) => workspace.default === true
+        );
+        dispatch(setWorkspaces(workspaces));
+        dispatch(setDefaultWorkspace(workspace));
         dispatch(login(data));
+        toast.success('Login successful');
         router.push('/dashboard');
       }
       setLoading(false);
@@ -52,7 +61,6 @@ export default function Login() {
       toast.error(error.response.data.errors);
     }
   };
-
 
   const formik = useFormik<FormValues>({
     initialValues: {
