@@ -56,7 +56,8 @@ export default function SignUp() {
       const response = await registerUser(user);
       if (response.status === 201) {
         setLoading(false);
-        router.push('/auth/verify');
+        const {_id} = response.data.data;
+        router.push('/auth/verify?user_id=' + _id);
       }
       setLoading(false);
       submitProps.resetForm();

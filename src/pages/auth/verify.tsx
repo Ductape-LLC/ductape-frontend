@@ -3,10 +3,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Button from '../../components/common/Button';
+import toast from 'react-hot-toast';
+import { verifyLogin } from '../../api/userClient';
 
 export default function Home() {
   const router = useRouter();
   const [disableSubmit, setDisableSubmit] = useState(true);
+  const { user_id } = router.query;
+  const [loading, setLoading] = useState(false);
   const inputRefs = [
     useRef(null),
     useRef(null),
@@ -48,13 +52,34 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = (e: any) => {
-    e.preventDefault(); // Prevent form submission
-    const inputValues = inputRefs.map(
-      (inputRef: any) => inputRef.current.value
-    );
-    console.log('Input values:', inputValues);
-    router.push('/')
+  const handleSubmit = async (e: any) => {
+    if (!user_id) return toast.error('Invalid user id');
+    if (typeof user_id !== 'string') return toast.error('Invalid user id');
+    try {
+      setLoading(true);
+      e.preventDefault(); 
+      const inputValues = inputRefs.map(
+        (inputRef: any) => inputRef.current.value
+      );
+      const data = {
+        user_id,
+        token: inputValues.join(''),
+      };
+      console.log('Input values:', inputValues);
+      const response = await verifyLogin(data);
+
+      if (response.status === 201) {
+        setLoading(false);
+        toast.success('Verified successful');
+        router.push('/');
+      }
+
+      setLoading(false);
+      // router.push('/');
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
   };
 
   return (
