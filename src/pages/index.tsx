@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
+import { loginUser } from '../api/userClient';
+import { login } from '../redux/slice/userSlice';
+import { setWorkspaces, setWorkspace } from '../redux/slice/workspaceSlice';
 
 interface FormValues {
   email: string;
@@ -17,14 +22,37 @@ const loginSchema = Yup.object().shape({
   password: Yup.string().required('Password is required'),
 });
 
-export default function Home() {
+export default function Login() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
 
-  const handleSubmit = (values: FormValues, submitProps: any) => {
-    submitProps.setSubmitting(false);
-    submitProps.resetForm();
-    router.push('/dashboard');
+  const handleSubmit = async (values: FormValues, submitProps: any) => {
+    try {
+      submitProps.setSubmitting(false);
+      setLoading(true);
+      toast.loading('Loading...');
+      const response = await loginUser(values);
+      if (response.status === 201) {
+        setLoading(false);
+        console.log(response.data);
+        const { _id, firstname, lastname, email, active } = response.data.data;
+        const data = {
+          user: {_id, firstname, lastname, email, active},
+          token: response.data.data.auth_token,
+        }
+        console.log(data);
+        dispatch(login(data));
+        router.push('/dashboard');
+      }
+      setLoading(false);
+      submitProps.resetForm();
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
   };
+
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -82,7 +110,7 @@ export default function Home() {
             </div>
             <div className="mt-[52px]">
               <Button
-                disabled={!formik.isValid || !formik.dirty}
+                disabled={!formik.isValid || !formik.dirty || loading}
                 type="submit"
                 onClick={() => formik.handleSubmit()}
               >

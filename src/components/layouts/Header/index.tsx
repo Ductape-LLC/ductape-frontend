@@ -2,10 +2,21 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Select, Button } from 'antd';
+import { useRouter } from 'next/router';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../../../redux/slice/userSlice';
 
 const Header = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state: any) => state.user);
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push('/');
   };
 
   return (
@@ -39,8 +50,9 @@ const Header = () => {
             <Image src="/images/user.svg" height={20} width={20} alt="user" />
           }
           className="bg-[#0846A6] text-white font-semibold flex items-center outline-none"
+          onClick={handleLogout}
         >
-          Fikayo S.
+          {`${user?.firstname} . ${user?.lastname.charAt().toUpperCase()}`}
         </Button>
       </div>
     </div>

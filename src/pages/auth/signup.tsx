@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useRouter } from 'next/router';
@@ -8,10 +9,11 @@ import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
 import { Checkbox } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { registerUser } from '../../api/userClient';
 
 interface FormValues {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -19,11 +21,15 @@ interface FormValues {
 }
 
 const signupSchema = Yup.object().shape({
-  firstName: Yup.string().required('First name is Required'),
-  lastName: Yup.string().required('Required'),
+  firstname: Yup.string().required('First name is Required'),
+  lastname: Yup.string().required('Required'),
   email: Yup.string().email('Invalid email').required('Last name is Required'),
   password: Yup.string()
     .min(6, 'Password must be at least 6 characters')
+    // .matches(
+    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$/,
+    //   'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
+    // )
     .required('Password is required'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'Passwords must match')
@@ -33,17 +39,37 @@ const signupSchema = Yup.object().shape({
 
 export default function SignUp() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values: FormValues, submitProps: any) => {
-    submitProps.setSubmitting(false);
-    submitProps.resetForm();
-    router.push('/auth/verify');
+  const handleSubmit = async (values: FormValues, submitProps: any) => {
+    try {
+      submitProps.setSubmitting(false);
+      setLoading(true);
+      toast.loading('Loading...');
+      const { firstname, lastname, email, password } = values;
+      const user = {
+        firstname,
+        lastname,
+        email,
+        password,
+      };
+      const response = await registerUser(user);
+      if (response.status === 201) {
+        setLoading(false);
+        router.push('/auth/verify');
+      }
+      setLoading(false);
+      submitProps.resetForm();
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
   };
 
   const formik = useFormik<FormValues>({
     initialValues: {
-      firstName: '',
-      lastName: '',
+      firstname: '',
+      lastname: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -68,13 +94,13 @@ export default function SignUp() {
               <Input
                 type="text"
                 placeholder="First Name"
-                onBlur={formik.handleBlur('firstName')}
-                value={formik.values.firstName}
-                onChange={formik.handleChange('firstName')}
+                onBlur={formik.handleBlur('firstname')}
+                value={formik.values.firstname}
+                onChange={formik.handleChange('firstname')}
               />
-              {formik.touched.firstName && formik.errors.firstName ? (
+              {formik.touched.firstname && formik.errors.firstname ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.firstName}
+                  {formik.errors.firstname}
                 </p>
               ) : null}
             </div>
@@ -82,13 +108,13 @@ export default function SignUp() {
               <Input
                 type="text"
                 placeholder="Last Name"
-                onBlur={formik.handleBlur('lastName')}
-                value={formik.values.lastName}
-                onChange={formik.handleChange('lastName')}
+                onBlur={formik.handleBlur('lastname')}
+                value={formik.values.lastname}
+                onChange={formik.handleChange('lastname')}
               />
-              {formik.touched.lastName && formik.errors.lastName ? (
+              {formik.touched.lastname && formik.errors.lastname ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.lastName}
+                  {formik.errors.lastname}
                 </p>
               ) : null}
             </div>
@@ -106,7 +132,7 @@ export default function SignUp() {
             </div>
             <div className="mt-6">
               <Input
-                type="text"
+                type="password"
                 placeholder="Password"
                 onBlur={formik.handleBlur('password')}
                 value={formik.values.password}
@@ -120,7 +146,7 @@ export default function SignUp() {
             </div>
             <div className="mt-6">
               <Input
-                type="text"
+                type="password"
                 placeholder="Confirm Password"
                 onBlur={formik.handleBlur('confirmPassword')}
                 value={formik.values.confirmPassword}
@@ -161,7 +187,7 @@ export default function SignUp() {
             <div className="mt-[46px]">
               <Button
                 type="submit"
-                disabled={!formik.isValid || !formik.dirty}
+                disabled={!formik.isValid || !formik.dirty || loading}
                 onClick={() => formik.handleSubmit()}
               >
                 Create Account

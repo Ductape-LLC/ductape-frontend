@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useFormik } from 'formik';
+import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { forgotUser } from '../../api/userClient';
 
 interface FormValues {
   email: string;
@@ -17,11 +19,24 @@ const forgotPasswordSchema = Yup.object().shape({
 
 export default function ResetPassword() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (values: FormValues, submitProps: any) => {
-    submitProps.setSubmitting(false);
-    submitProps.resetForm();
-    router.push('/auth/reset-password');
+  const handleSubmit = async (values: FormValues, submitProps: any) => {
+    try {
+      submitProps.setSubmitting(false);
+      setLoading(true);
+      toast.loading('Loading...');
+      const response = await forgotUser(values);
+      if (response.status === 201) {
+        setLoading(false);
+        router.push('/auth/reset-password?email=' + values.email);
+      }
+      setLoading(false);
+      submitProps.resetForm();
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
   };
 
   const formik = useFormik<FormValues>({
@@ -60,7 +75,7 @@ export default function ResetPassword() {
             </div>
             <div className="mt-[52px]">
               <Button
-                disabled={!formik.isValid || !formik.dirty}
+                disabled={!formik.isValid || !formik.dirty || loading}
                 type="submit"
                 onClick={() => formik.handleSubmit()}
               >

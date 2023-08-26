@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Image from 'next/image';
 import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
+import { toast } from 'react-hot-toast';
 import Input from '../../components/common/Input';
 import Button from '../../components/common/Button';
+import { changePasswordUser } from '../../api/userClient';
 
 interface FormValues {
   otp: string;
@@ -24,10 +26,33 @@ const resetPasswordSchema = Yup.object().shape({
 
 export default function Home() {
   const router = useRouter();
-  const handleSubmit = (values: FormValues, submitProps: any) => {
-    submitProps.setSubmitting(false);
-    submitProps.resetForm();
-    // router.push('/')
+ const [loading, setLoading] = useState(false);
+ const {email} = router.query;
+
+  const handleSubmit = async (values: FormValues, submitProps: any) => {
+    if (!email) return;
+    if (typeof email !== 'string') return;
+    try {
+      submitProps.setSubmitting(false);
+      setLoading(true);
+      toast.loading('Loading...');
+      const data = {
+        token: values.otp,
+        password: values.newPassword,
+        email,
+      } 
+      const response = await changePasswordUser(data);
+      if (response.status === 201) {
+        setLoading(false);
+        toast.success('Password changed successfully');
+        router.push('/');
+      }
+      setLoading(false);
+      submitProps.resetForm();
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
   };
 
   const formik = useFormik<FormValues>({
@@ -64,7 +89,7 @@ export default function Home() {
             </div>
             <div className="mt-[32px]">
               <Input
-                type="text"
+                type="password"
                 placeholder="New Password"
                 onBlur={formik.handleBlur('newPassword')}
                 value={formik.values.newPassword}
@@ -78,7 +103,7 @@ export default function Home() {
             </div>
             <div className="mt-[32px]">
               <Input
-                type="text"
+                type="password"
                 placeholder="Confirm Password"
                 onBlur={formik.handleBlur('confirmPassword')}
                 value={formik.values.confirmPassword}
@@ -94,7 +119,7 @@ export default function Home() {
 
             <div className="mt-[52px]">
               <Button
-                disabled={!formik.isValid || !formik.dirty}
+                disabled={!formik.isValid || !formik.dirty || loading}
                 type="submit"
                 onClick={() => formik.handleSubmit()}
               >

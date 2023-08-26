@@ -41,7 +41,7 @@ export const registerUser = async (payload: Register) => {
   }
 }
 
-export const loginUser = async (payload: { email: string; passord: string }) => {
+export const loginUser = async (payload: { email: string; password: string }) => {
   try {
       return await userClient("", "application/json").post(USER_LOGIN_URL, payload)
   } catch(e) {
