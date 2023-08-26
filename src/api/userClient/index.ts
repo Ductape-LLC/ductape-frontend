@@ -1,5 +1,5 @@
 import axios from "axios";
-import { USER_BASE_URL, USER_CREATE_URL, USER_LOGIN_URL, USER_FORGOT_URL, USER_CHANGE_PASSWORD, USER_OTP_LOGIN, USER_REQUEST_OTP } from "./urls";
+import { USER_BASE_URL, USER_CREATE_URL, USER_LOGIN_URL, USER_FORGOT_URL, USER_CHANGE_PASSWORD, USER_OTP_LOGIN, USER_REQUEST_OTP, USER_VERIFY_OTP } from "./urls";
 import { Parameterize } from "../../utils";
 
 const source = axios.CancelToken.source();
@@ -59,6 +59,10 @@ export const changePasswordUser = async (payload: { token: string; password: str
 
 export const otpLogin = async (payload: { user_id: string; password: string  }) => {
   return await userClient("", "application/json").post(USER_OTP_LOGIN, payload);
+}
+
+export const verifyLogin = async (payload: { user_id: string; token: string  }) => {
+  return await userClient("", "application/json").post(USER_VERIFY_OTP+'/'+payload.user_id, {token: payload.token});
 }
 
 export const requestOtp = async (payload: { user_id: string }) => {
