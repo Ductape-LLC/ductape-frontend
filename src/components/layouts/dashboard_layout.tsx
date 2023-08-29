@@ -8,6 +8,7 @@ import Tabs from './Tabs';
 interface Props {
   children: React.ReactNode;
   activeTab: string;
+  subTab?: string;
 }
 
 const Dashboard_layout: FC<Props> = ({ children, activeTab = 'Dashboard' }) => {

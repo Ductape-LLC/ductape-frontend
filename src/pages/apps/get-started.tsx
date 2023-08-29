@@ -24,13 +24,13 @@ const MyApp = () => {
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout>
+      <Apps_Layout activeAppTab="Get Started">
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">
             <h1 className="text-[#232830] font-bold text-3xl">Get Started</h1>
           </div>
 
-          <div className="px-16 p-12">
+          <div className="px-16 p-10">
             <StepOne/>
           </div>
         </div>

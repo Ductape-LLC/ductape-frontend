@@ -122,7 +122,8 @@ const Dashboard = () => {
               <span className="text-[#232830]">Wednesday 3 May, 2023</span>
             </p>
             <p className="text-[28px] text-[#232830]">
-              Welcome Back, <span className="font-semibold">Fikayomi</span>
+              Welcome Back,{' '}
+              <span className="font-semibold">{user.firstname}</span>
             </p>
           </div>
 

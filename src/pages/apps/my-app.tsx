@@ -65,7 +65,7 @@ const MyApp = () => {
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout>
+      <Apps_Layout activeAppTab='My App'>
         <div>
           <div className="px-16 pt-6 h-[170px] border-b bg-white">
             <div className="flex items-center gap-3">
