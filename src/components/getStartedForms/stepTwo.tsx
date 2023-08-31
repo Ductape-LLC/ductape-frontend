@@ -1,10 +1,8 @@
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button, Input } from 'antd';
 import CustomInput from '../common/Input';
 
-const { TextArea } = Input;
 
 const StepTwo = () => {
   return (
