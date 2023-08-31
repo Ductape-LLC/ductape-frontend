@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { Button, Input } from 'antd';
 import CustomInput from '../common/Input';
 
-
 const StepTwo = () => {
   return (
     <div className="border rounded bg-white">

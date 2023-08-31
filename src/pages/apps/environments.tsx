@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Modal, Input, Switch } from 'antd';
-import Dashboard_layout from '../../components/layouts/dashboard_layout';
-import Apps_Layout from '../../components/layouts/apps_layout';
-import CustomInput from '../../components/common/input';
-import CustomSelect from '../../components/common/select';
+import Dashboard_layout from '@/components/layouts/dashboard_layout';
+import Apps_Layout from '@/components/layouts/apps_layout';
+import CustomInput from '@/components/common/Input';
+import CustomSelect from '@/components/common/Select';
 import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 const { TextArea } = Input;
@@ -40,7 +40,9 @@ const Publish = () => {
                 <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
                   Inactive
                 </button>
-                <p className='underline text-xs font-semibold'>Production Environment</p>
+                <p className="underline text-xs font-semibold">
+                  Production Environment
+                </p>
               </div>
 
               <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
@@ -48,7 +50,9 @@ const Publish = () => {
                 <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
                   Inactive
                 </button>
-                <p className='underline text-xs font-semibold'>Sandbox Environment</p>
+                <p className="underline text-xs font-semibold">
+                  Sandbox Environment
+                </p>
               </div>
 
               <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
@@ -56,7 +60,9 @@ const Publish = () => {
                 <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
                   Inactive
                 </button>
-                <p className='underline text-xs font-semibold'>Test Environment</p>
+                <p className="underline text-xs font-semibold">
+                  Test Environment
+                </p>
               </div>
             </div>
           </div>
