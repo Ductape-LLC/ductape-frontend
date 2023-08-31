@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Select } from 'antd';
+// import { Select } from 'antd';
 import { FileUploader } from 'react-drag-drop-files';
 import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Apps_Layout from '../../components/layouts/apps_layout';
 import { UploadOutlined } from '@ant-design/icons';
 import Button from '../../components/common/Button';
+import Select from '../../components/common/Select';
 
 const Publish = () => {
   const [showModal, setShowModal] = useState(true);
@@ -37,36 +38,34 @@ const Publish = () => {
 
               <div className="mt-12">
                 <label className="text-sm font-semibold">Domain</label>
-                <div className="w-full mt-2 h-10 border rounded flex items-center">
-                  <Select
-                    defaultValue="Choose one"
-                    style={{ width: '100%' }}
-                    bordered={false}
-                    options={[
-                      { value: 'Choose one', label: 'Choose one' },
-                      { value: 'lucy', label: 'Lucy' },
-                      { value: 'Yiminghe', label: 'yiminghe' },
-                      { value: 'disabled', label: 'Disabled', disabled: true },
-                    ]}
-                  />
-                </div>
+                <Select
+                  className="mt-2"
+                  defaultValue="Choose one"
+                  style={{ width: '100%' }}
+                  bordered={false}
+                  options={[
+                    { value: 'Choose one', label: 'Choose one' },
+                    { value: 'lucy', label: 'Lucy' },
+                    { value: 'Yiminghe', label: 'yiminghe' },
+                    { value: 'disabled', label: 'Disabled', disabled: true },
+                  ]}
+                />
               </div>
 
               <div className="mt-12">
                 <label className="text-sm font-semibold">App Visibility</label>
-                <div className="w-full mt-2 h-10 border rounded flex items-center">
-                  <Select
-                    defaultValue="Choose one"
-                    style={{ width: '100%' }}
-                    bordered={false}
-                    options={[
-                      { value: 'Choose one', label: 'Choose one' },
-                      { value: 'lucy', label: 'Lucy' },
-                      { value: 'Yiminghe', label: 'yiminghe' },
-                      { value: 'disabled', label: 'Disabled', disabled: true },
-                    ]}
-                  />
-                </div>
+                <Select
+                  className="mt-2"
+                  defaultValue="Choose one"
+                  style={{ width: '100%' }}
+                  bordered={false}
+                  options={[
+                    { value: 'Choose one', label: 'Choose one' },
+                    { value: 'lucy', label: 'Lucy' },
+                    { value: 'Yiminghe', label: 'yiminghe' },
+                    { value: 'disabled', label: 'Disabled', disabled: true },
+                  ]}
+                />
               </div>
 
               <div className="mt-14">
