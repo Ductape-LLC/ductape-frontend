@@ -65,7 +65,7 @@ const MyApp = () => {
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab='My App'>
+      <Apps_Layout activeAppTab="My App">
         <div>
           <div className="px-16 pt-6 h-[170px] border-b bg-white">
             <div className="flex items-center gap-3">
@@ -118,10 +118,16 @@ const MyApp = () => {
                   <Line
                     type="monotone"
                     dataKey="pv"
-                    stroke="#8884d8"
+                    stroke="#5243AA"
                     activeDot={{ r: 8 }}
+                    strokeWidth={3}
                   />
-                  <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                  <Line
+                    type="monotone"
+                    dataKey="uv"
+                    stroke="#00875A"
+                    strokeWidth={3}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -144,7 +150,7 @@ const MyApp = () => {
                       </p>
                     </div>
                   </div>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <ArrowUpOutlined className="text-[#00875A]" />{' '}
                     <p className="text-[#00875A] font-bold text-sm">20.15 %</p>
                   </div>
@@ -165,7 +171,7 @@ const MyApp = () => {
                       </p>
                     </div>
                   </div>
-                  <div className='flex items-center gap-2'>
+                  <div className="flex items-center gap-2">
                     <ArrowDownOutlined className="text-[#00875A]" />{' '}
                     <p className="text-[#00875A] font-bold text-sm">20.15 %</p>
                   </div>
@@ -193,8 +199,9 @@ const MyApp = () => {
                     <Line
                       type="monotone"
                       dataKey="pv"
-                      stroke="#8884d8"
+                      stroke="#5243AA"
                       activeDot={{ r: 8 }}
+                      strokeWidth={3}
                     />
                     <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                   </LineChart>

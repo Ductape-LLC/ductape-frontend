@@ -1,5 +1,5 @@
 import axios from "axios";
-import { WORKSPACES_BASE_URL, WORKSPACE_CREATE_URL, WORKSPACE_FETCH_URL, WORKSPACE_DEFAULT_CHANGE, WORKSPACE_UPDATE_ENVS } from "./urls";
+import { WORKSPACES_BASE_URL, WORKSPACE_CREATE_URL, WORKSPACE_FETCH_URL, WORKSPACE_DEFAULT_CHANGE, WORKSPACE_UPDATE_ENVS, WORKSPACE_STATS } from "./urls";
 import { Parameterize } from "../../utils";
 
 const source = axios.CancelToken.source();
@@ -43,6 +43,19 @@ export const createWorkspace = async (token: string, payload: CREATE_WORKSPACE) 
 export const fetchWorkspaces = async (token: string, public_key: string) => {
   try {
       return await workspaceClient(token, "application/json").get(WORKSPACE_FETCH_URL+`/?public_key=${public_key}`)
+  } catch(e) {
+      throw e;
+  }
+}
+
+export const fetchWorkspaceStats = async (token: string, workspace_id: string,  public_key: string) => {
+  try {
+      const URL = Parameterize(
+        WORKSPACE_STATS,
+        ":workspace_id",
+        workspace_id
+      );
+      return await workspaceClient(token, "application/json").get(URL+`/?public_key=${public_key}`)
   } catch(e) {
       throw e;
   }

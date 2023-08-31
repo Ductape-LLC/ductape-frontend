@@ -1,8 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import Dashboard_layout from '@/components/layouts/dashboard_layout';
 import { useDispatch, useSelector } from 'react-redux';
+import moment from 'moment';
 import Input from '@/components/common/Input';
 import Button from '@/components/common/Button';
 import toast from 'react-hot-toast';
@@ -11,7 +12,7 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { createWorkspace } from '@/api/workspaceClient';
+import { createWorkspace, fetchWorkspaceStats } from '@/api/workspaceClient';
 
 const data = [
   {
@@ -68,11 +69,19 @@ const createWorkSpaceSchema = Yup.object().shape({
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { workspaces } = useSelector((state: any) => state.workspace);
+  const { workspaces, defaultWorkspace } = useSelector(
+    (state: any) => state.workspace
+  );
   const { token, public_key, user } = useSelector((state: any) => state.user);
 
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<{
+    apps: number;
+    integrations: number;
+    inbound_requests: number;
+    outbound_requests: number;
+  }>({ apps: 0, integrations: 0, inbound_requests: 0, outbound_requests: 0 });
 
   const handleSubmit = async (values: FormValues, submitProps: any) => {
     try {
@@ -106,10 +115,30 @@ const Dashboard = () => {
     onSubmit: handleSubmit,
   });
 
+  const getWorkSpaceStats = async () => {
+    try {
+      const response = await fetchWorkspaceStats(
+        token,
+        defaultWorkspace._id,
+        public_key
+      );
+
+      if (response.status === 200) {
+        const { apps, integrations, inbound_requests, outbound_requests } =
+          response.data.data;
+        setStats({ apps, integrations, inbound_requests, outbound_requests });
+      }
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
+  };
+
   useEffect(() => {
     if (workspaces.length === 0) {
       setShowModal(true);
     }
+    getWorkSpaceStats();
   }, []);
 
   return (
@@ -119,7 +148,9 @@ const Dashboard = () => {
           <div>
             <p className="font-semibold text-[#979797]">
               Dashboard /{' '}
-              <span className="text-[#232830]">Wednesday 3 May, 2023</span>
+              <span className="text-[#232830]">
+                {moment().format('dddd D MMMM, YYYY')}
+              </span>
             </p>
             <p className="text-[28px] text-[#232830]">
               Welcome Back,{' '}
@@ -130,22 +161,30 @@ const Dashboard = () => {
           <div className="flex justify-between items-center mt-[68px] gap-4">
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">APPS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+                {stats.apps.toLocaleString()}
+              </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">INTEGRATIONS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+                {stats.integrations.toLocaleString()}
+              </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">WEBHOOKS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+              <p className="text-[#78797A] text-sm">Inbound Requests</p>
+              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+                {stats.inbound_requests.toLocaleString()}
+              </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">WEBHOOKS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+              <p className="text-[#78797A] text-sm">Outbount Request</p>
+              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+                {stats.outbound_requests.toLocaleString()}
+              </h1>
             </div>
           </div>
         </div>
@@ -184,16 +223,22 @@ const Dashboard = () => {
                     <Line
                       type="monotone"
                       dataKey="pv"
-                      stroke="#8884d8"
                       activeDot={{ r: 8 }}
+                      strokeWidth={3}
+                      stroke="#5243AA"
                     />
-                    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+                    <Line
+                      type="monotone"
+                      dataKey="uv"
+                      stroke="#00875A"
+                      strokeWidth={3}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            <div className="w-[30%] border bg-white rounded">
+            <div className="w-[35%] border bg-white rounded">
               <div className="px-[30px] py-6 border-b">
                 <h2 className="text-[#232830] text-2xl font-bold">
                   Integrations
@@ -216,16 +261,15 @@ const Dashboard = () => {
                       bottom: 5,
                     }}
                   >
-                    {/* <CartesianGrid strokeDasharray="3 3" /> */}
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Line
                       type="monotone"
                       dataKey="pv"
-                      stroke="#8884d8"
+                      stroke="#5243AA"
+                      strokeWidth={3}
                       activeDot={{ r: 8 }}
                     />
-                    {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -283,6 +327,7 @@ const Dashboard = () => {
             </div>
           </div>
         </Modal>
+        <div className="h-20" />
       </div>
     </Dashboard_layout>
   );
