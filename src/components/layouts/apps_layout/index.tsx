@@ -80,7 +80,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({ children, activeAppTab='Get Started' 
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
+              <Link href="/apps/publish" className="font-bold text-sm">
                 Publish
               </Link>
             </div>

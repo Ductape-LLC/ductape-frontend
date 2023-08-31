@@ -37,13 +37,11 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-            <div className="flex-1">
-              <div className="border px-3 py-2">
+              <div className="border px-3 py-2 flex-1">
                 <p className="text-[#979797] text-[10px] font-semibold rounded">
                   Description
                 </p>
                 <p className="text-sm font-semibold">Production Environment</p>
-              </div>
             </div>
           </div>
 
@@ -62,13 +60,11 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-            <div className="flex-1">
-              <div className="border px-3 py-2">
+              <div className="border px-3 py-2 flex-1">
                 <p className="text-[#979797] text-[10px] font-semibold rounded">
                   Description
                 </p>
                 <p className="text-sm font-semibold">Production Environment</p>
-              </div>
             </div>
           </div>
 
@@ -87,15 +83,15 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-            <div className="flex-1">
-              <div className="border px-3 py-2">
+              <div className="border px-3 py-2 flex-1">
                 <p className="text-[#979797] text-[10px] font-semibold rounded">
                   Description
                 </p>
                 <p className="text-sm font-semibold">Production Environment</p>
-              </div>
             </div>
           </div>
+          
+
 
           <div className="flex items-center justify-between gap-6 mt-6">
             <div className="flex-1">

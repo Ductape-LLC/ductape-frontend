@@ -3,23 +3,12 @@ import Image from 'next/image';
 import { Modal, Input, Progress, Button } from 'antd';
 import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Apps_Layout from '../../components/layouts/apps_layout';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import StepOne from '../../components/getStartedForms/stepOne';
 import StepTwo from '@/components/getStartedForms/stepTwo';
 
 const { TextArea } = Input;
 
-const MyApp = () => {
+const GetStarted = () => {
   const [showModal, setShowModal] = useState(true);
 
   return (
@@ -31,7 +20,7 @@ const MyApp = () => {
           </div>
 
           <div className="px-16 p-10">
-            <StepOne/>
+            <StepTwo/>
           </div>
         </div>
       </Apps_Layout>
@@ -39,4 +28,4 @@ const MyApp = () => {
   );
 };
 
-export default MyApp;
+export default GetStarted;
