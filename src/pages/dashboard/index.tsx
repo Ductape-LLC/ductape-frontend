@@ -123,7 +123,7 @@ const Dashboard = () => {
             </p>
             <p className="text-[28px] text-[#232830]">
               Welcome Back,{' '}
-              <span className="font-semibold">{user.firstname}</span>
+              <span className="font-semibold">{user?.firstname}</span>
             </p>
           </div>
 
