@@ -203,7 +203,6 @@ const MyApp = () => {
                       activeDot={{ r: 8 }}
                       strokeWidth={3}
                     />
-                    <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                   </LineChart>
                 </ResponsiveContainer>
               </div>

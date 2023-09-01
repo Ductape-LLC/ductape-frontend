@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
 import { createWorkspace, fetchWorkspaceStats } from '@/api/workspaceClient';
+import { setShowCreateWorkspaceModal } from '@/redux/slice/workspaceSlice';
 
 const data = [
   {
@@ -69,19 +70,14 @@ const createWorkSpaceSchema = Yup.object().shape({
 
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const { workspaces, defaultWorkspace } = useSelector(
-    (state: any) => state.workspace
-  );
+  const {
+    workspaces,
+    defaultWorkspace,
+    workspaceStats,
+    showCreateWorkspaceModal,
+  } = useSelector((state: any) => state.workspace);
   const { token, public_key, user } = useSelector((state: any) => state.user);
-
-  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState<{
-    apps: number;
-    integrations: number;
-    inbound_requests: number;
-    outbound_requests: number;
-  }>({ apps: 0, integrations: 0, inbound_requests: 0, outbound_requests: 0 });
 
   const handleSubmit = async (values: FormValues, submitProps: any) => {
     try {
@@ -97,7 +93,7 @@ const Dashboard = () => {
       if (response.status === 201) {
         setLoading(false);
         toast.success('Workspace created successful');
-        setShowModal(false);
+        dispatch(setShowCreateWorkspaceModal(false));
       }
       setLoading(false);
       submitProps.resetForm();
@@ -115,30 +111,10 @@ const Dashboard = () => {
     onSubmit: handleSubmit,
   });
 
-  const getWorkSpaceStats = async () => {
-    try {
-      const response = await fetchWorkspaceStats(
-        token,
-        defaultWorkspace._id,
-        public_key
-      );
-
-      if (response.status === 200) {
-        const { apps, integrations, inbound_requests, outbound_requests } =
-          response.data.data;
-        setStats({ apps, integrations, inbound_requests, outbound_requests });
-      }
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
-
   useEffect(() => {
     if (workspaces.length === 0) {
-      setShowModal(true);
+      dispatch(setShowCreateWorkspaceModal(true));
     }
-    getWorkSpaceStats();
   }, []);
 
   return (
@@ -162,28 +138,28 @@ const Dashboard = () => {
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">APPS</p>
               <h1 className="text-[#232830] font-bold text-3xl mt-2">
-                {stats.apps.toLocaleString()}
+                {workspaceStats.apps.toLocaleString()}
               </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">INTEGRATIONS</p>
               <h1 className="text-[#232830] font-bold text-3xl mt-2">
-                {stats.integrations.toLocaleString()}
+                {workspaceStats.integrations.toLocaleString()}
               </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">Inbound Requests</p>
               <h1 className="text-[#232830] font-bold text-3xl mt-2">
-                {stats.inbound_requests.toLocaleString()}
+                {workspaceStats.inbound_requests.toLocaleString()}
               </h1>
             </div>
 
             <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
               <p className="text-[#78797A] text-sm">Outbount Request</p>
               <h1 className="text-[#232830] font-bold text-3xl mt-2">
-                {stats.outbound_requests.toLocaleString()}
+                {workspaceStats.outbound_requests.toLocaleString()}
               </h1>
             </div>
           </div>
@@ -278,12 +254,12 @@ const Dashboard = () => {
         </div>
 
         <Modal
-          open={showModal}
+          open={showCreateWorkspaceModal}
           width="50%"
           className="rounded-none"
           cancelButtonProps={{ style: { display: 'none' } }}
           okButtonProps={{ style: { display: 'none' } }}
-          onCancel={() => setShowModal(false)}
+          onCancel={() => dispatch(setShowCreateWorkspaceModal(false))}
         >
           <div className="py-14 px-12">
             <h1 className="text-[#232830] text-2xl font-bold">

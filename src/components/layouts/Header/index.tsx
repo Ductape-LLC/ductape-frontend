@@ -1,16 +1,55 @@
-import React, {useMemo} from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Select, Button } from 'antd';
+import { Select, Button, Avatar } from 'antd';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../redux/slice/userSlice';
+import { PlusOutlined } from '@ant-design/icons';
+import {
+  setWorkspaceStats,
+  setShowCreateWorkspaceModal,
+} from '@/redux/slice/workspaceSlice';
+import { fetchWorkspaceStats } from '@/api/workspaceClient';
+import toast from 'react-hot-toast';
+
+const { Option } = Select;
 
 const Header = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { user } = useSelector((state: any) => state.user);
-  const { workspaces, defaultWorkspace } = useSelector((state: any) => state.workspace);
+  const { token, public_key, user } = useSelector((state: any) => state.user);
+  const { workspaces, defaultWorkspace } = useSelector(
+    (state: any) => state.workspace
+  );
+  const [loading, setLoading] = useState(false);
+
+  const getWorkSpaceStats = async () => {
+    try {
+      const response = await fetchWorkspaceStats(
+        token,
+        defaultWorkspace._id,
+        public_key
+      );
+
+      if (response.status === 200) {
+        const { apps, integrations, inbound_requests, outbound_requests } =
+          response.data.data;
+        dispatch(
+          setWorkspaceStats({
+            apps,
+            integrations,
+            inbound_requests,
+            outbound_requests,
+          })
+        );
+      }
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
+  };
 
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
@@ -28,6 +67,9 @@ const Header = () => {
     }));
   }, [workspaces]);
 
+  useEffect(() => {
+    getWorkSpaceStats();
+  }, [defaultWorkspace]);
 
   return (
     <div className="h-[89px] flex bg-white px-11 items-center border-b justify-between">
@@ -36,11 +78,37 @@ const Header = () => {
 
         <Select
           defaultValue={defaultWorkspace?.workspace_name}
-          style={{ width: 120 }}
+          style={{ width: 180 }}
           className="ml-[147px]"
-          onChange={handleChange}
-          options={workspacesOptions}
-        />
+          dropdownStyle={{ minWidth: 180 }}
+          dropdownRender={(menu) => (
+            <div>
+              {menu}
+              <div
+                className="flex items-center justify-between px-1 py-2 cursor-pointer"
+                onClick={() => dispatch(setShowCreateWorkspaceModal(true))}
+              >
+                <p className="text-[#0846A6] flex items-center gap-2 text-sm">
+                  <PlusOutlined />
+                  Add a new workspace
+                </p>
+              </div>
+            </div>
+          )}
+        >
+          {workspacesOptions.map((workspace: any) => (
+            <Option
+              key={workspace.value}
+              value={workspace.value}
+              className="flex items-center"
+            >
+              <Avatar size={30} shape="square" className="mr-2">
+                {workspace.label.charAt(0).toUpperCase()}
+              </Avatar>{' '}
+              {workspace.label}
+            </Option>
+          ))}
+        </Select>
       </div>
 
       <div className="flex items-center gap-8">
