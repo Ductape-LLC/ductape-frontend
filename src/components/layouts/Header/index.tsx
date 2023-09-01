@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Select, Button, Avatar } from 'antd';
@@ -10,8 +10,12 @@ import { PlusOutlined } from '@ant-design/icons';
 import {
   setWorkspaceStats,
   setShowCreateWorkspaceModal,
+  setDefaultWorkspace,
 } from '@/redux/slice/workspaceSlice';
-import { fetchWorkspaceStats } from '@/api/workspaceClient';
+import {
+  fetchWorkspaceStats,
+  changeDefaultWorkspace,
+} from '@/api/workspaceClient';
 import toast from 'react-hot-toast';
 
 const { Option } = Select;
@@ -25,11 +29,11 @@ const Header = () => {
   );
   const [loading, setLoading] = useState(false);
 
-  const getWorkSpaceStats = async () => {
+  const getWorkSpaceStats = async (workspaceId: string) => {
     try {
       const response = await fetchWorkspaceStats(
         token,
-        defaultWorkspace._id,
+        workspaceId,
         public_key
       );
 
@@ -51,8 +55,38 @@ const Header = () => {
     }
   };
 
+  const ChangeDefaultWorkspace = async (workspaceId: string) => {
+    console.log(workspaceId);
+    try {
+      setLoading(true);
+      const response = await changeDefaultWorkspace(
+        token,
+        user._id,
+        workspaceId,
+        public_key
+      );
+      if (response.status === 200) {
+        setLoading(false);
+      }
+    } catch (error: any) {
+      setLoading(false);
+      toast.error(error.response.data.errors);
+    }
+  };
+
+  const handleChangeDefaultWorkspace = async (workspace: any) => {
+    await getWorkSpaceStats(workspace.workspace_id);
+    await ChangeDefaultWorkspace(workspace.workspace_id);
+    await dispatch(setDefaultWorkspace(workspace));
+  };
+
   const handleChange = (value: string) => {
     console.log(`selected ${value}`);
+    workspaces.forEach((workspace: any) => {
+      if (workspace.workspace_id === value) {
+        handleChangeDefaultWorkspace(workspace);
+      }
+    });
   };
 
   const handleLogout = () => {
@@ -60,15 +94,8 @@ const Header = () => {
     router.push('/');
   };
 
-  const workspacesOptions = useMemo(() => {
-    return workspaces.map((workspace: any) => ({
-      value: workspace.workspace_id,
-      label: workspace.workspace_name,
-    }));
-  }, [workspaces]);
-
   useEffect(() => {
-    getWorkSpaceStats();
+    getWorkSpaceStats(defaultWorkspace.workspace_id);
   }, [defaultWorkspace]);
 
   return (
@@ -78,9 +105,11 @@ const Header = () => {
 
         <Select
           defaultValue={defaultWorkspace?.workspace_name}
+          // onChange={handleChange}
           style={{ width: 180 }}
           className="ml-[147px]"
           dropdownStyle={{ minWidth: 180 }}
+          onChange={handleChange}
           dropdownRender={(menu) => (
             <div>
               {menu}
@@ -96,16 +125,16 @@ const Header = () => {
             </div>
           )}
         >
-          {workspacesOptions.map((workspace: any) => (
+          {workspaces.map((workspace: any) => (
             <Option
-              key={workspace.value}
-              value={workspace.value}
+              key={workspace.workspace_id}
+              value={workspace.workspace_id}
               className="flex items-center"
             >
               <Avatar size={30} shape="square" className="mr-2">
-                {workspace.label.charAt(0).toUpperCase()}
+                {workspace.workspace_name.charAt(0).toUpperCase()}
               </Avatar>{' '}
-              {workspace.label}
+              {workspace.workspace_name}
             </Option>
           ))}
         </Select>

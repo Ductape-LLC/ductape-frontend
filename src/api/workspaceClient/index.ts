@@ -60,3 +60,16 @@ export const fetchWorkspaceStats = async (token: string, workspace_id: string,  
       throw e;
   }
 }
+
+export const changeDefaultWorkspace = async (token: string, user_id: string, workspace_id: string, public_key: string) => {
+  try {
+      const URL = Parameterize(
+        WORKSPACE_DEFAULT_CHANGE,
+        ":user_id",
+        user_id
+      );
+      return await workspaceClient(token, "application/json").put(URL, { workspace_id, public_key })
+  } catch(e) {
+      throw e;
+  }
+}
