@@ -12,7 +12,7 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { createWorkspace, fetchWorkspaceStats } from '@/api/workspaceClient';
+import { createWorkspace } from '@/api/workspaceClient';
 import { setShowCreateWorkspaceModal } from '@/redux/slice/workspaceSlice';
 
 const data = [

@@ -73,3 +73,24 @@ export const changeDefaultWorkspace = async (token: string, user_id: string, wor
       throw e;
   }
 }
+
+export const updateWorkspaceEnvs = async (
+  token: string, 
+  workspace_id: string,
+  data: { 
+    envs: { env_name: string; slug: string; description: string }[], 
+    user_id: string,  
+    public_key: string
+  },
+  ) => {
+  try {
+      const URL = Parameterize(
+        WORKSPACE_UPDATE_ENVS,
+        ":workspace_id",
+        workspace_id
+      );
+      return await workspaceClient(token, "application/json").put(URL, data )
+  } catch(e) {
+      throw e;
+  }
+}
