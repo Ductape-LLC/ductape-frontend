@@ -95,6 +95,9 @@ const Header = () => {
   };
 
   useEffect(() => {
+    if (!defaultWorkspace) {
+      return;
+    }
     getWorkSpaceStats(defaultWorkspace.workspace_id);
   }, [defaultWorkspace]);
 
@@ -131,9 +134,12 @@ const Header = () => {
               value={workspace.workspace_id}
               className="flex items-center"
             >
-              <Avatar size={30} shape="square" className="mr-2">
-                {workspace.workspace_name.charAt(0).toUpperCase()}
-              </Avatar>{' '}
+              {workspace.workspace_name && (
+                <Avatar size={30} shape="square" className="mr-2">
+                  {workspace.workspace_name.charAt(0).toUpperCase()}
+                </Avatar>
+              )}
+
               {workspace.workspace_name}
             </Option>
           ))}
