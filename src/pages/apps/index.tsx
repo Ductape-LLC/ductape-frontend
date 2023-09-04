@@ -62,17 +62,18 @@ const Dashboard = () => {
   const router = useRouter();
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [showCreateAppModal, setShowCreateAppModal] = useState(false);
-  const { workspaces, defaultWorkspace } = useSelector(
+  const { defaultWorkspace } = useSelector(
     (state: any) => state.workspace
   );
   const { token, public_key, user } = useSelector((state: any) => state.user);
   const [loading, setLoading] = useState(false);
   const [apps, setApps] = useState<AppInterface[]>([]);
-  const [envs, setEnvs] = useState<ENV[]>([]);
+  const [envs, setEnvs] = useState<ENV[]>(defaultWorkspace.defaultEnvs);
   const [filterName, setFilterName] = useState('');
   const [appsStatus, setAppsStatus] = useState<string>('all');
   const [view, setView] = useState('grid');
 
+  console.log(defaultWorkspace, 'defaultWorkspace');
   const fetchAllApps = async () => {
     try {
       const response = await fetchApps(
