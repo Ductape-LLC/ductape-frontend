@@ -16,8 +16,10 @@ import {
   SettingOutlined,
   PlusOutlined,
   SearchOutlined,
+  UnorderedListOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
-import { env } from 'process';
+import AppListItems from '@/components/AppListItems';
 
 const { TextArea } = Input;
 
@@ -67,12 +69,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [apps, setApps] = useState<AppInterface[]>([]);
   const [envs, setEnvs] = useState<ENV[]>([]);
+  const [filterName, setFilterName] = useState('');
+  const [appsStatus, setAppsStatus] = useState<string>('all');
+  const [view, setView] = useState('grid');
 
   const fetchAllApps = async () => {
     try {
       const response = await fetchApps(
         token,
-        { workspace_id: defaultWorkspace._id, status: 'all' },
+        { workspace_id: defaultWorkspace._id, status: appsStatus },
         public_key
       );
       if (response.status === 200) {
@@ -157,17 +162,10 @@ const Dashboard = () => {
     onSubmit: handleAddEnv,
   });
 
-  const workspacesOptions = useMemo(() => {
-    return workspaces.map((workspace: any) => ({
-      value: workspace.workspace_id,
-      label: workspace.workspace_name,
-    }));
-  }, [workspaces]);
-
   useEffect(() => {
-  if (!defaultWorkspace) return;
+    if (!defaultWorkspace) return;
     fetchAllApps();
-  }, [defaultWorkspace]);
+  }, [defaultWorkspace, appsStatus]);
 
   return (
     <Dashboard_layout activeTab="App">
@@ -199,60 +197,45 @@ const Dashboard = () => {
             <Input
               size="large"
               placeholder="Search"
-              className="bg-white  border rounded w-full p-3 text-sm text-[#232830] outline-none"
+              className="bg-white  border rounded w-full px-3 h-11 text-sm text-[#232830] outline-none"
               prefix={<SearchOutlined />}
+              onChange={(e) => setFilterName(e.target.value)}
             />
+
+            <div className="h-11 flex">
+              <div onClick={() =>setView('grid')} className={`bg-white rounded-l border w-[50px] h-11 flex items-center justify-center cursor-pointer ${view==='grid'&&'border-[#0846A6]'}`}>
+                <AppstoreOutlined className={`${view==='grid'?'text-[#0846A6]':"#232830"}`} />
+              </div>
+              <div onClick={() =>setView('list')} className={`bg-white rounded-r border w-[50px] h-11 flex items-center justify-center cursor-pointer ${view==='list'&&'border-[#0846A6]'}`}>
+                <UnorderedListOutlined className={`${view==='list'?'text-[#0846A6]':"#232830"}`} />
+              </div>
+            </div>
             <Select
-              defaultValue={defaultWorkspace?.workspace_name}
+              defaultValue={'All'}
               size="large"
-              style={{ width: 173 }}
+              style={{ width: 173, height: 44 }}
               className="text-sm text-[#232830] outline-none"
-              options={workspacesOptions}
+              options={[
+                { label: 'All', value: 'all' },
+                { label: 'Draft', value: 'draft' },
+                { label: 'Published', value: 'published' },
+              ]}
+              onChange={(value) => setAppsStatus(value)}
             />
           </div>
 
-          <div className="mt-[51px]">
-            {apps.map((app) => (
-              <div
-                key={app._id}
-                onClick={() => router.push('/apps/my-app')}
-                className="flex px-[36px] h-[110px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]"
-              >
-                <div className="flex items-center gap-[25px]">
-                  <Image
-                    src="/images/google.svg"
-                    width={42}
-                    height={42}
-                    alt="google"
-                  />
-                  <div>
-                    <p className="font-bold text-xl text-[#232830]">
-                      {app.app_name}
-                    </p>
-                    <p className="text-sm text-[#979797] mt-1">{app.status}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-[37px]">
-                  <p className="font-semibold text-[#232830]">
-                    {app.actions.length} actions
-                  </p>
-                  <p className="font-semibold text-[#232830]">
-                    {app.envs.length} environaments
-                  </p>
-                </div>
-
-                <div
-                  className={`${
-                    app.active
-                      ? 'text-[#00875A] bg-[#00875A] border-[#00875A] border-[0.5px]'
-                      : 'text-[#DC3444] bg-[#DC3444] border-[#DC3444] border-[0.5px]'
-                  } bg-opacity-[15%] border text-xs px-[14px] py-1 rounded-sm`}
-                >
-                  {app.active ? 'Active' : 'Inactive'}
-                </div>
-              </div>
-            ))}
+          <div
+            className={`mt-[51px] ${
+              view === 'grid' && 'grid gap-8 md:grid-cols-2 lg:grid-cols-3'
+            }`}
+          >
+            {apps
+              .filter((app) =>
+                app.app_name.toLowerCase().includes(filterName.toLowerCase())
+              )
+              .map((app) => (
+                <AppListItems key={app._id} app={app} view="grid" />
+              ))}
           </div>
         </div>
       </div>
