@@ -165,6 +165,7 @@ const Dashboard = () => {
   }, [workspaces]);
 
   useEffect(() => {
+  if (!defaultWorkspace) return;
     fetchAllApps();
   }, [defaultWorkspace]);
 
