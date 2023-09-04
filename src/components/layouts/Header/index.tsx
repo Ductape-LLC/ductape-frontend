@@ -135,8 +135,10 @@ const Header = () => {
               className="flex items-center"
             >
               {workspace.workspace_name && (
-                <Avatar size={30} shape="square" className="mr-2">
-                  {workspace.workspace_name.charAt(0).toUpperCase()}
+                <Avatar size={24} shape="square" className="mr-2">
+                  <p className="text-sm">
+                    {workspace.workspace_name.charAt(0).toUpperCase()}
+                  </p>
                 </Avatar>
               )}
 

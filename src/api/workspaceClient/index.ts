@@ -40,9 +40,14 @@ export const createWorkspace = async (token: string, payload: CREATE_WORKSPACE) 
   }
 }
 
-export const fetchWorkspaces = async (token: string, public_key: string) => {
+export const fetchWorkspaces = async (token: string, user_id: string, public_key: string) => {
   try {
-      return await workspaceClient(token, "application/json").get(WORKSPACE_FETCH_URL+`/?public_key=${public_key}`)
+      const URL = Parameterize(
+        WORKSPACE_FETCH_URL,
+        ":user_id",
+        user_id
+      );
+      return await workspaceClient(token, "application/json").get(URL+`/?public_key=${public_key}`)
   } catch(e) {
       throw e;
   }
