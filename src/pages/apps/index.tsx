@@ -271,7 +271,7 @@ const Dashboard = () => {
             Create App
           </h1>
           <div className="px-[30px] mt-4 pb-7 border-b">
-            <p className="text-[#232830] mt-3 text-sm font-medium">
+            <p className="mt-3 text-sm font-medium tracking-[-0.4px] opacity-90">
               Each app defines its own environments, workflows and rules for
               authorization, authentication and integration. Allowing for secure
               communication between your webservices and integration partners.
