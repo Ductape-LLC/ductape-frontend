@@ -12,12 +12,11 @@ import { useFormik } from 'formik';
 import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
-import { createWorkspace, fetchWorkspaces } from '@/api/workspaceClient';
+import { createWorkspace } from '@/api/workspaceClient';
 import {
   setShowCreateWorkspaceModal,
-  setWorkspaces,
-  setDefaultWorkspace,
 } from '@/redux/slice/workspaceSlice';
+import { useWorkspaces } from '@/hooks/useWorkspaces';
 
 const data = [
   {
@@ -74,6 +73,7 @@ const createWorkSpaceSchema = Yup.object().shape({
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const { fetchAndSaveWorkSacpes } = useWorkspaces();
   const {
     workspaces,
     defaultWorkspace,
@@ -116,26 +116,8 @@ const Dashboard = () => {
     onSubmit: handleSubmit,
   });
 
-  const fetchAndSaveWorkSacpes = async () => {
-    try {
-      const response = await fetchWorkspaces(token, user._id, public_key);
-      if (response.status === 201) {
-        console.log(response.data.data);
-        const workspacesData = response.data.data;
-        const workspace = workspacesData.find(
-          (workspace: any) => workspace.default === true
-        );
-        dispatch(setWorkspaces(workspacesData));
-        dispatch(setDefaultWorkspace(workspace));
-      }
-    } catch (error: any) {
-      console.log(error.response);
-      toast.error(error.response.data.errors);
-    }
-  };
-
   useEffect(() => {
-    if (workspaces.length === 0) {
+    if (!defaultWorkspace) {
       dispatch(setShowCreateWorkspaceModal(true));
     }
   }, []);

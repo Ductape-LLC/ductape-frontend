@@ -1,25 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useMemo, useEffect } from 'react';
-import { Modal, Input, Select } from 'antd';
+import { Modal, Input, Select, Drawer } from 'antd';
 import CustomInput from '../../components/common/Input';
-import Image from 'next/image';
 import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Button from '../../components/common/Button';
 import { useFormik } from 'formik';
-import { useRouter } from 'next/router';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
-import { updateWorkspaceEnvs } from '@/api/workspaceClient';
 import { createApp, fetchApps } from '@/api/appsClient';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   SettingOutlined,
   PlusOutlined,
   SearchOutlined,
   UnorderedListOutlined,
   AppstoreOutlined,
+  EditOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import AppListItems from '@/components/AppListItems';
+import { useWorkspaces } from '@/hooks/useWorkspaces';
 
 const { TextArea } = Input;
 
@@ -32,6 +32,7 @@ interface ENV {
   env_name: string;
   slug: string;
   description: string;
+  _id?: string;
 }
 
 const createAppSchema = Yup.object().shape({
@@ -59,21 +60,25 @@ interface AppInterface {
 }
 
 const Dashboard = () => {
-  const router = useRouter();
+  const { saveEnvs, workspaces, defaultWorkspace } = useWorkspaces();
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [showCreateAppModal, setShowCreateAppModal] = useState(false);
-  const { defaultWorkspace } = useSelector(
-    (state: any) => state.workspace
-  );
+  // const { defaultWorkspace } = useSelector((state: any) => state.workspace);
   const { token, public_key, user } = useSelector((state: any) => state.user);
   const [loading, setLoading] = useState(false);
   const [apps, setApps] = useState<AppInterface[]>([]);
-  const [envs, setEnvs] = useState<ENV[]>(defaultWorkspace.defaultEnvs);
+  const [envs, setEnvs] = useState<ENV[]>(defaultWorkspace?.defaultEnvs || []);
   const [filterName, setFilterName] = useState('');
   const [appsStatus, setAppsStatus] = useState<string>('all');
   const [view, setView] = useState('grid');
+  const [visible, setVisible] = useState(false);
+  const [selectedEnv, setSelectedEnv] = useState<ENV>({
+    env_name: '',
+    slug: '',
+    description: '',
+  });
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
-  console.log(defaultWorkspace, 'defaultWorkspace');
   const fetchAllApps = async () => {
     try {
       const response = await fetchApps(
@@ -124,24 +129,32 @@ const Dashboard = () => {
     submitProps.resetForm();
   };
 
-  const saveEnvs = async () => {
-    console.log('envs', envs);
-    try {
-      setLoading(true);
-      toast.loading('Loading...');
-      const response = await updateWorkspaceEnvs(token, defaultWorkspace._id, {
-        envs,
-        user_id: user._id,
-        public_key,
-      });
+  const handleDeleteEnv = (index: number) => {
+    const newEnvs = envs.filter((_, i) => i !== index);
+    setEnvs(newEnvs);
+  };
 
-      if (response.status === 201) {
-        toast.success('Environments Saved successfully');
-        setLoading(false);
+  const selectEnv = (env: any, index: number) => {
+    setSelectedEnv(env);
+    setSelectedIndex(index);
+    setVisible(true);
+  };
+
+  const handleSelectedEnvChange = (e: any) => {
+    const { name, value } = e.target;
+    setSelectedEnv((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEditEnv = () => {
+    const newEnvs = envs.map((env, i) => {
+      if (i === selectedIndex) {
+        return selectedEnv;
       }
-    } catch (error: any) {
-      toast.error(error.response.data.errors);
-    }
+      return env;
+    });
+    setEnvs(newEnvs);
+    setSelectedEnv({ env_name: '', slug: '', description: '' });
+    setVisible(false);
   };
 
   const formik = useFormik<CreateAppFormValues>({
@@ -177,6 +190,7 @@ const Dashboard = () => {
             <div className="flex gap-7">
               <Button
                 onClick={() => setShowEnvModal(true)}
+                disabled={!defaultWorkspace}
                 className="font-semibold flex items-center text-sm border border-[#DC3444] text-[#DC3444] outline-none h-[40px] rounded px-[10px] gap-2"
               >
                 <SettingOutlined className="text-[#DC3444]" size={16} />
@@ -185,6 +199,7 @@ const Dashboard = () => {
               <Button
                 onClick={() => setShowCreateAppModal(true)}
                 className="bg-[#0846A6] text-white font-semibold text-sm flex items-center outline-none  h-[40px] rounded px-[10px] gap-2"
+                disabled={!defaultWorkspace}
               >
                 <PlusOutlined className="text-white" size={16} />
                 New App
@@ -204,11 +219,29 @@ const Dashboard = () => {
             />
 
             <div className="h-11 flex">
-              <div onClick={() =>setView('grid')} className={`bg-white rounded-l border w-[50px] h-11 flex items-center justify-center cursor-pointer ${view==='grid'&&'border-[#0846A6]'}`}>
-                <AppstoreOutlined className={`${view==='grid'?'text-[#0846A6]':"#232830"}`} />
+              <div
+                onClick={() => setView('grid')}
+                className={`bg-white rounded-l border w-[50px] h-11 flex items-center justify-center cursor-pointer ${
+                  view === 'grid' && 'border-[#0846A6]'
+                }`}
+              >
+                <AppstoreOutlined
+                  className={`${
+                    view === 'grid' ? 'text-[#0846A6]' : '#232830'
+                  }`}
+                />
               </div>
-              <div onClick={() =>setView('list')} className={`bg-white rounded-r border w-[50px] h-11 flex items-center justify-center cursor-pointer ${view==='list'&&'border-[#0846A6]'}`}>
-                <UnorderedListOutlined className={`${view==='list'?'text-[#0846A6]':"#232830"}`} />
+              <div
+                onClick={() => setView('list')}
+                className={`bg-white rounded-r border w-[50px] h-11 flex items-center justify-center cursor-pointer ${
+                  view === 'list' && 'border-[#0846A6]'
+                }`}
+              >
+                <UnorderedListOutlined
+                  className={`${
+                    view === 'list' ? 'text-[#0846A6]' : '#232830'
+                  }`}
+                />
               </div>
             </div>
             <Select
@@ -362,6 +395,17 @@ const Dashboard = () => {
                     </p>
                     <p className="text-sm font-semibold">{env.description}</p>
                   </div>
+
+                  <div className="flex">
+                    <EditOutlined
+                      onClick={() => selectEnv(env, i)}
+                      className="mr-2 outline-none"
+                    />
+                    <DeleteOutlined
+                      onClick={() => handleDeleteEnv(i)}
+                      className="outline-none"
+                    />
+                  </div>
                 </div>
               ))}
 
@@ -390,6 +434,11 @@ const Dashboard = () => {
                     onChange={envFormik.handleChange('description')}
                   />
                 </div>
+                <div className="flex">
+                  <EditOutlined className="mr-2 text-transparent" />
+
+                  <DeleteOutlined className="text-transparent" />
+                </div>
               </div>
 
               <Button
@@ -407,12 +456,70 @@ const Dashboard = () => {
 
           <div className="px-[30px] py-6 flex justify-end gap-5">
             <Button
-              onClick={saveEnvs}
+              onClick={() => saveEnvs(envs)}
               className="bg-[#0846A6] text-white font-semibold text-xs outline-none rounded h-[33px] px-6"
             >
               Save
             </Button>
           </div>
+
+          <Drawer
+            destroyOnClose={true}
+            title="Edit config variable"
+            width={'22%'}
+            onClose={() => {
+              setVisible(false);
+            }}
+            visible={visible}
+          >
+            <div className="h-full flex flex-col items-between">
+              <div className="flex-1">
+                <div>
+                  <label className="font-medium">Environment Name</label>
+                  <CustomInput
+                    className="mt-2"
+                    value={selectedEnv.env_name}
+                    name="env_name"
+                    onChange={handleSelectedEnvChange}
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="font-medium">Slug</label>
+                  <CustomInput
+                    className="mt-2"
+                    value={selectedEnv.slug}
+                    name="slug"
+                    onChange={handleSelectedEnvChange}
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="font-medium">Description</label>
+                  <CustomInput
+                    className="mt-2"
+                    value={selectedEnv.description}
+                    name="description"
+                    onChange={handleSelectedEnvChange}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 items-center">
+                <Button
+                  onClick={() => setVisible(false)}
+                  className="font-semibold text-xs border  text-[#232830] outline-none h-[33px] rounded px-6 gap-2 flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleEditEnv}
+                  className="text-white font-semibold text-xs outline-none rounded h-[33px] px-6 flex-1 bg-[#0846A6]"
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </Drawer>
         </div>
       </Modal>
     </Dashboard_layout>
