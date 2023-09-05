@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Modal, Input, Progress } from 'antd';
@@ -14,6 +15,9 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
+import { useApps } from '@/hooks/useApps';
 
 const data = [
   {
@@ -61,7 +65,13 @@ const data = [
 ];
 
 const MyApp = () => {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(true);
+  const { app, fetchAndSaveApp } = useApps();
+
+  useEffect(() => {
+    fetchAndSaveApp();
+  }, []);
 
   return (
     <Dashboard_layout activeTab="App">
@@ -81,17 +91,17 @@ const MyApp = () => {
             <div className="flex justify-between items-center mt-[52px] gap-4">
               <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
                 <p className="text-[#78797A] text-sm">ACTION</p>
-                <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+                <h1 className="text-[#232830] font-bold text-3xl mt-2">{app?.actions?.length || 0}</h1>
               </div>
 
               <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
                 <p className="text-[#78797A] text-sm">ENVIRONMENT</p>
-                <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+                <h1 className="text-[#232830] font-bold text-3xl mt-2">{app?.envs?.length || 0}</h1>
               </div>
 
               <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
                 <p className="text-[#78797A] text-sm">WEBHOOKS</p>
-                <h1 className="text-[#232830] font-bold text-3xl mt-2">3</h1>
+                <h1 className="text-[#232830] font-bold text-3xl mt-2">{app?.webhooks?.length || 0}</h1>
               </div>
             </div>
           </div>

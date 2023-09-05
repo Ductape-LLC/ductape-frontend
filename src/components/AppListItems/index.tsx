@@ -1,15 +1,23 @@
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
+import {setAppId} from '@/redux/slice/appSlice';
 
 const AppListItems = ({ app, view }: { app: any; view: string }) => {
+    const dispatch = useDispatch();
   const router = useRouter();
+
+  const toApp = (app_id: string) => {
+    dispatch(setAppId(app_id));
+    router.push('/apps/my-app');
+    };  
 
   if (view === 'list') {
     return (
       <div
         key={app._id}
-        onClick={() => router.push('/apps/my-app')}
+        onClick={() =>toApp(app._id)}
         className="flex px-[36px] h-[110px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]"
       >
         <div className="flex items-center gap-[25px]">
@@ -44,7 +52,7 @@ const AppListItems = ({ app, view }: { app: any; view: string }) => {
     return (
       <div
         key={app._id}
-        onClick={() => router.push('/apps/my-app')}
+        onClick={() =>toApp(app._id)}
         className="bg-white border text-[#232830] items-center rounded-[5px] mb-[25px] flex-1"
       >
         <div className="px-9 pt-5 pb-6 flex items-center justify-between w-full border-b">

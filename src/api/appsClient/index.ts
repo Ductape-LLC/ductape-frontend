@@ -47,3 +47,16 @@ export const fetchApps = async (token: string, data: {workspace_id: string, stat
       throw e;
   }
 }
+
+export const fetchApp = async (token: string, app_id: string, user_id: string, public_key: string) => {
+  const URL = Parameterize(
+    APP_FETCH_URL,
+    ":app_id",
+    app_id
+  );
+  try {
+      return await appsClient(token, "application/json").get(URL+`/?user_id=${user_id}public_key=${public_key}`)
+  } catch(e) {
+      throw e;
+  }
+}

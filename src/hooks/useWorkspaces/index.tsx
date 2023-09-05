@@ -9,7 +9,6 @@ import {
 import {
   fetchWorkspaceStats,
   changeDefaultWorkspace,
-  createWorkspace,
   fetchWorkspaces,
   updateWorkspaceEnvs,
 } from '@/api/workspaceClient';
