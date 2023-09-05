@@ -73,6 +73,7 @@ const MyApp = () => {
     fetchAndSaveApp();
   }, []);
 
+
   return (
     <Dashboard_layout activeTab="App">
       <Apps_Layout activeAppTab="My App">
@@ -85,7 +86,7 @@ const MyApp = () => {
                 height={32}
                 alt="facebook"
               />
-              <p className="text-[#232830] font-bold text-3xl">Facebook</p>
+              <p className="text-[#232830] font-bold text-3xl">{app.app_name}</p>
             </div>
 
             <div className="flex justify-between items-center mt-[52px] gap-4">

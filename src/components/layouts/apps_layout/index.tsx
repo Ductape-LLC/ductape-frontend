@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CircleBoxes } from '../../svgs';
-import { text } from 'stream/consumers';
+import { useSelector } from 'react-redux';
 interface AppsLayoutProps {
   children: React.ReactNode;
   activeAppTab: string;
@@ -14,6 +14,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
   children,
   activeAppTab = 'Get Started',
 }) => {
+  const {app} = useSelector((state: any) => state.app);
   const router = useRouter();
   return (
     <div className="w-screen fixed left-0 flex">
@@ -35,7 +36,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
             height={24}
             alt="facebook"
           />
-          <p className="text-[#232830] font-bold text-xl">Facebook</p>
+          <p className="text-[#232830] font-bold text-xl">{app.app_name}</p>
         </div>
 
         <div className="mt-[35px]">
