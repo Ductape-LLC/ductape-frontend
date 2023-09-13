@@ -84,6 +84,23 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
+                activeAppTab === 'Pricing'
+                  ? 'text-primary bg-[#E9ECF0]'
+                  : 'text-[#78797A]'
+              }`}
+            >
+              <CircleBoxes
+                color={activeAppTab === 'Pricing' ? '#0846A6' : '#78797A'}
+                height={24}
+                width={24}
+              />
+              <Link href="#" className="font-bold text-sm">
+                Pricing
+              </Link>
+            </div>
+
+            <div
+              className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
                 activeAppTab === 'Publish'
                   ? 'text-primary bg-[#E9ECF0]'
                   : 'text-[#78797A]'
@@ -104,7 +121,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
         <div className="mt-[31px]">
           <div className="flex mt-[35px] items-center">
             <span className="pr-3 text-[#979797] text-sm font-semibold ml-11">
-              SETUP
+              VALUES
             </span>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
@@ -153,21 +170,39 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Pricing'
+                activeAppTab === 'Application Variable'
                   ? 'text-primary bg-[#E9ECF0]'
                   : 'text-[#78797A]'
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Pricing' ? '#0846A6' : '#78797A'}
+                color={
+                  activeAppTab === 'Application Constants'
+                    ? '#0846A6'
+                    : '#78797A'
+                }
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
-                Pricing
+              <Link
+                href="/apps/application-constants"
+                className="font-bold text-sm"
+              >
+                Application Contants
               </Link>
             </div>
+          </div>
+        </div>
 
+        <div className="mt-[31px]">
+          <div className="flex mt-[35px] items-center">
+            <span className="pr-3 text-[#979797] text-sm font-semibold ml-11">
+              SETUP
+            </span>
+            <hr className="flex-grow border-t border-gray-300" />
+          </div>
+
+          <div className="mt-[27px]">
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
                 activeAppTab === 'Actions'
@@ -204,20 +239,20 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Authentication'
+                activeAppTab === 'Authorizations'
                   ? 'text-primary bg-[#E9ECF0]'
                   : 'text-[#78797A]'
               }`}
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Authentication' ? '#0846A6' : '#78797A'
+                  activeAppTab === 'Authorizations' ? '#0846A6' : '#78797A'
                 }
                 height={24}
                 width={24}
               />
               <Link href="#" className="font-bold text-sm">
-                Authentication
+                Authorizations
               </Link>
             </div>
           </div>
