@@ -14,7 +14,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
   children,
   activeAppTab = 'Get Started',
 }) => {
-  const {app} = useSelector((state: any) => state.app);
+  const { app } = useSelector((state: any) => state.app);
   const router = useRouter();
   return (
     <div className="w-screen fixed left-0 flex">
@@ -143,7 +143,10 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
+              <Link
+                href="/apps/application-variables"
+                className="font-bold text-sm"
+              >
                 Application Variables
               </Link>
             </div>

@@ -22,8 +22,7 @@ const Publish = () => {
           <div className="px-16 p-10">
             <div className="mt-20">
               <h1 className="text-4xl font-bold max-w-[724px]">
-                You do not have any environments. Create an environment to get
-                started.
+                You do not have any events. Create an event and actions to get started.
               </h1>
               <Button
                 onClick={() => setShowModal(true)}
@@ -33,38 +32,6 @@ const Publish = () => {
                 New Environment
               </Button>
             </div>
-
-            {/* <div>
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between">
-                <p className="font-bold text-lg">Production</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Production Environment
-                </p>
-              </div>
-
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
-                <p className="font-bold text-lg">Sandbox</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Sandbox Environment
-                </p>
-              </div>
-
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
-                <p className="font-bold text-lg">Test</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Test Environment
-                </p>
-              </div>
-            </div> */}
           </div>
         </div>
 

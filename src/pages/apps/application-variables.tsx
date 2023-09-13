@@ -13,24 +13,26 @@ const Publish = () => {
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Environments">
+      <Apps_Layout activeAppTab="Application Variable">
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">
-            <h1 className="text-[#232830] font-bold text-3xl">Environments</h1>
+            <h1 className="text-[#232830] font-bold text-3xl">
+              Application Variables
+            </h1>
           </div>
 
           <div className="px-16 p-10">
             <div className="mt-20">
-              <h1 className="text-4xl font-bold max-w-[724px]">
-                You do not have any environments. Create an environment to get
-                started.
+              <h1 className="text-4xl font-bold max-w-[850px]">
+                You do not have any application variables. Create an application
+                variable to get started.
               </h1>
               <Button
                 onClick={() => setShowModal(true)}
                 className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-12 px-4 rounded mt-8"
               >
                 <PlusOutlined />
-                New Environment
+                New Application Variable
               </Button>
             </div>
 
@@ -79,36 +81,30 @@ const Publish = () => {
         >
           <div>
             <h1 className="text-[#232830] text-xl font-bold border-b px-[30px] py-6">
-              Create Environment
+              Create Application Variable
             </h1>
             <div className="px-[30px] mt-4 pb-7 border-b">
               <form className="mt-[31px]">
-                <CustomInput placeholder="Base URL" />
-                <CustomInput placeholder="Content Type" className="mt-[26px]" />
+                <CustomInput placeholder="Variable Name" />
+                <CustomInput placeholder="Description" className="mt-[26px]" />
                 <TextArea
                   className="bg-white border rounded w-full p-3 text-sm text-[#232830] mt-[26px]"
-                  placeholder="Tell us about your app, what it does and how to use it"
+                  placeholder="Description"
                   rows={5}
+                />
+                <CustomSelect
+                  placeholder="Choose Variable Type"
+                  className="mt-[26px]"
                 />
 
                 <div>
-                  <div>
-                    <div className="flex items-center gap-1 mt-9">
-                      <InfoCircleOutlined />
-                      <p className="font-semibold tracking-[-0.4px] text-[#979797]">
-                        Require Whitelisted IPs
-                      </p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-
-                  <div className="flex items-center gap-1 mt-5">
+                  <div className="flex items-center gap-1 mt-9">
                     <InfoCircleOutlined />
                     <p className="font-semibold tracking-[-0.4px] text-[#979797]">
                       Active and open to connections?
                     </p>
                   </div>
-                  <Switch defaultChecked />
+                  <Switch defaultChecked  />
                 </div>
               </form>
             </div>

@@ -7,10 +7,10 @@ const ExtendedSelect: FC<any> = ({ className, options, ...inputProps }) => {
       className={`w-full h-10 border rounded flex items-center ${className}`}
     >
       <Select
-        defaultValue="Choose one"
         style={{ width: '100%' }}
         bordered={false}
         options={options}
+        {...inputProps}
       />
     </div>
   );
