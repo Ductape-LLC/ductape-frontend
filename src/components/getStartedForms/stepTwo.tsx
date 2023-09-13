@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { FC } from 'react';
 import Link from 'next/link';
 import { Button, Input } from 'antd';
 import CustomInput from '../common/Input';
 
-const StepTwo = () => {
+interface StepTwoProps {
+  setCurrentStep: (currentStep: number) => void;
+}
+
+const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
   return (
     <div className="border rounded bg-white">
       <div className="rounded-t border-b p-7">
@@ -34,11 +38,11 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-              <div className="border px-3 py-2 flex-1">
-                <p className="text-[#979797] text-[10px] font-semibold rounded">
-                  Description
-                </p>
-                <p className="text-sm font-semibold">Production Environment</p>
+            <div className="border px-3 py-2 flex-1">
+              <p className="text-[#979797] text-[10px] font-semibold rounded">
+                Description
+              </p>
+              <p className="text-sm font-semibold">Production Environment</p>
             </div>
           </div>
 
@@ -57,11 +61,11 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-              <div className="border px-3 py-2 flex-1">
-                <p className="text-[#979797] text-[10px] font-semibold rounded">
-                  Description
-                </p>
-                <p className="text-sm font-semibold">Production Environment</p>
+            <div className="border px-3 py-2 flex-1">
+              <p className="text-[#979797] text-[10px] font-semibold rounded">
+                Description
+              </p>
+              <p className="text-sm font-semibold">Production Environment</p>
             </div>
           </div>
 
@@ -80,15 +84,13 @@ const StepTwo = () => {
               <p className="text-sm font-semibold">Prd</p>
             </div>
 
-              <div className="border px-3 py-2 flex-1">
-                <p className="text-[#979797] text-[10px] font-semibold rounded">
-                  Description
-                </p>
-                <p className="text-sm font-semibold">Production Environment</p>
+            <div className="border px-3 py-2 flex-1">
+              <p className="text-[#979797] text-[10px] font-semibold rounded">
+                Description
+              </p>
+              <p className="text-sm font-semibold">Production Environment</p>
             </div>
           </div>
-          
-
 
           <div className="flex items-center justify-between gap-6 mt-6">
             <div className="flex-1">
@@ -106,10 +108,15 @@ const StepTwo = () => {
           </div>
         </div>
 
-        <Link href="#" className="text-primary font-semibold text-xs underline mt-3">Add New Environment</Link>
+        <Link
+          href="#"
+          className="text-primary font-semibold text-xs underline mt-3"
+        >
+          Add New Environment
+        </Link>
 
         <div className="flex justify-between items-center my-11">
-        <Button>Previous</Button>
+          <Button onClick={() => setCurrentStep(0)}>Previous</Button>
 
           <div className="flex gap-4">
             <Button>Save</Button>

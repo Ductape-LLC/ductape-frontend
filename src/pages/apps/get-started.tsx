@@ -8,8 +8,10 @@ import StepTwo from '@/components/getStartedForms/stepTwo';
 
 const { TextArea } = Input;
 
-const GetStarted = () => {
+
+const GetStarted = ({  }) => {
   const [showModal, setShowModal] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0);
 
   return (
     <Dashboard_layout activeTab="App">
@@ -20,7 +22,11 @@ const GetStarted = () => {
           </div>
 
           <div className="px-16 p-10">
-            <StepTwo/>
+            {currentStep === 0 ? (
+              <StepOne setCurrentStep={setCurrentStep} />
+            ) : (
+              <StepTwo setCurrentStep={setCurrentStep} />
+            )}
           </div>
         </div>
       </Apps_Layout>
