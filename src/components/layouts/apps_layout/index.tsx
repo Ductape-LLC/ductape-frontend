@@ -94,7 +94,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
+              <Link href="/apps/pricing" className="font-bold text-sm">
                 Pricing
               </Link>
             </div>

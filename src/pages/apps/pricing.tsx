@@ -1,20 +1,95 @@
 import React, { useState, useEffect } from 'react';
-// import { Select } from 'antd';
-import { FileUploader } from 'react-drag-drop-files';
+import { Modal, Input } from 'antd';
 import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Apps_Layout from '../../components/layouts/apps_layout';
-import { UploadOutlined } from '@ant-design/icons';
 import Button from '../../components/common/Button';
-import Select from '../../components/common/Select';
+import { PlusOutlined } from '@ant-design/icons';
+import StepOne from '@/components/pricingCreateForm/stepOne';
+import StepTwo from '@/components/pricingCreateForm/stepTwo';
 
 const Pricing = () => {
   const [showModal, setShowModal] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0);
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Pricing"></Apps_Layout>
+      <Apps_Layout activeAppTab="Pricing">
+        <div>
+          <div className="px-16 h-[110px]  border-b bg-white flex items-center">
+            <h1 className="text-[#232830] font-bold text-3xl">Pricing</h1>
+          </div>
+
+          <div className="px-16 p-10">
+            <div className="mt-20">
+              <h1 className="text-4xl font-bold max-w-[900px]">
+                You do not have any pricing plan set. Set a pricing plan to get
+                started.
+              </h1>
+              <Button
+                onClick={() => setShowModal(true)}
+                className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-12 px-4 rounded mt-8"
+              >
+                <PlusOutlined />
+                New Pricing
+              </Button>
+            </div>
+          </div>
+
+          <Modal
+            open={showModal}
+            width="730px"
+            className="rounded-none"
+            cancelButtonProps={{ style: { display: 'none' } }}
+            okButtonProps={{ style: { display: 'none' } }}
+            onCancel={() => setShowModal(false)}
+            style={{ padding: 0 }}
+          >
+            {
+              currentStep === 0 ? (
+                <StepOne setCurrentStep={setCurrentStep} setShowModal={setShowModal} />
+              ) : (
+                <StepTwo setCurrentStep={setCurrentStep} setShowModal={setShowModal} />
+              )
+            }
+          </Modal>
+        </div>
+      </Apps_Layout>
     </Dashboard_layout>
   );
 };
 
 export default Pricing;
+
+{
+  /* <div>
+              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between">
+                <p className="font-bold text-lg">Production</p>
+                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
+                  Inactive
+                </button>
+                <p className="underline text-xs font-semibold">
+                  Production Environment
+                </p>
+              </div>
+
+              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
+                <p className="font-bold text-lg">Sandbox</p>
+                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
+                  Inactive
+                </button>
+                <p className="underline text-xs font-semibold">
+                  Sandbox Environment
+                </p>
+              </div>
+
+              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
+                <p className="font-bold text-lg">Test</p>
+                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
+                  Inactive
+                </button>
+                <p className="underline text-xs font-semibold">
+                  Test Environment
+                </p>
+              </div>
+            </div> */
+}
