@@ -15,13 +15,20 @@ const Publish = () => {
     <Dashboard_layout activeTab="App">
       <Apps_Layout activeAppTab="Environments">
         <div>
-          <div className="px-16 h-[110px]  border-b bg-white flex items-center">
+          <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
             <h1 className="text-[#232830] font-bold text-3xl">Environments</h1>
+            <Button
+                onClick={() => setShowModal(true)}
+                className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-10 px-4 rounded"
+              >
+                <PlusOutlined />
+                New Environment
+              </Button>
           </div>
 
           <div className="px-16 p-10">
-            <div className="mt-20">
-              <h1 className="text-4xl font-bold max-w-[724px]">
+            {/* <div className="mt-20">
+              <h1 className="text-4xl font-bold">
                 You do not have any environments. Create an environment to get
                 started.
               </h1>
@@ -32,9 +39,9 @@ const Publish = () => {
                 <PlusOutlined />
                 New Environment
               </Button>
-            </div>
+            </div> */}
 
-            {/* <div>
+            <div>
               <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between">
                 <p className="font-bold text-lg">Production</p>
                 <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
@@ -64,7 +71,7 @@ const Publish = () => {
                   Test Environment
                 </p>
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
 
