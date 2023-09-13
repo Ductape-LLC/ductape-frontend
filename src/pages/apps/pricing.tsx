@@ -4,8 +4,9 @@ import Dashboard_layout from '../../components/layouts/dashboard_layout';
 import Apps_Layout from '../../components/layouts/apps_layout';
 import Button from '../../components/common/Button';
 import { PlusOutlined } from '@ant-design/icons';
-import StepOne from '@/components/pricingCreateForm/stepOne';
-import StepTwo from '@/components/pricingCreateForm/stepTwo';
+import StepOne from '@/components/pricing/stepOne';
+import StepTwo from '@/components/pricing/stepTwo';
+import PricingItem from '@/components/pricing/pricingItem';
 
 const Pricing = () => {
   const [showModal, setShowModal] = useState(true);
@@ -21,7 +22,7 @@ const Pricing = () => {
 
           <div className="px-16 p-10">
             <div className="mt-20">
-              <h1 className="text-4xl font-bold max-w-[900px]">
+              <h1 className="text-4xl font-bold">
                 You do not have any pricing plan set. Set a pricing plan to get
                 started.
               </h1>
@@ -30,9 +31,10 @@ const Pricing = () => {
                 className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-12 px-4 rounded mt-8"
               >
                 <PlusOutlined />
-                New Pricing
+                New Pricing Plan
               </Button>
             </div>
+            {/* <PricingItem /> */}
           </div>
 
           <Modal
@@ -60,36 +62,3 @@ const Pricing = () => {
 
 export default Pricing;
 
-{
-  /* <div>
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between">
-                <p className="font-bold text-lg">Production</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Production Environment
-                </p>
-              </div>
-
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
-                <p className="font-bold text-lg">Sandbox</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Sandbox Environment
-                </p>
-              </div>
-
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
-                <p className="font-bold text-lg">Test</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Test Environment
-                </p>
-              </div>
-            </div> */
-}
