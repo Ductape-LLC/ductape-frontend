@@ -170,7 +170,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Application Variable'
+                activeAppTab === 'Application Constants'
                   ? 'text-primary bg-[#E9ECF0]'
                   : 'text-[#78797A]'
               }`}
@@ -185,7 +185,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 width={24}
               />
               <Link
-                href="/apps/application-constants"
+                href="/apps/application-contants"
                 className="font-bold text-sm"
               >
                 Application Contants

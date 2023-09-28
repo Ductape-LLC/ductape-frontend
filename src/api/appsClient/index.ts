@@ -1,5 +1,5 @@
 import axios from "axios";
-import { APPS_BASE_URL, APPS_CREATE_URL, APPS_FETCH_URL, APP_FETCH_URL, APP_SETUP_FETCH, APP_SETUP_ENV_FETCH } from "./urls";
+import { APPS_BASE_URL, APPS_CREATE_URL, APPS_FETCH_URL, APP_FETCH_URL, APP_SETUP_FETCH, APP_SETUP_ENV_FETCH, APP_CREATE_CONSTANTS, APP_FETCH_CONSTANTS, APP_CREATE_VARIABLES, APP_FETCH_VARIABLES } from "./urls";
 import { Parameterize } from "../../utils";
 
 const source = axios.CancelToken.source();
@@ -55,8 +55,55 @@ export const fetchApp = async (token: string, app_id: string, user_id: string, p
     app_id
   );
   try {
-      return await appsClient(token, "application/json").get(URL+`/?user_id=${user_id}public_key=${public_key}`)
+      return await appsClient(token, "application/json").get(URL+`/?user_id=${user_id}&public_key=${public_key}`)
   } catch(e) {
       throw e;
   }
 }
+
+export const createAppConstant = async (token: string, payload: any) => {
+  try{
+      return await appsClient(token, "application/json").post(APP_CREATE_CONSTANTS, payload)
+  } catch(e) {
+      throw e;
+  }
+}
+
+export const fetchAppConstant = async (token: string, app_id: string, user_id: string, public_key: string) => {
+  const URL = Parameterize(
+    APP_FETCH_CONSTANTS,
+    ":app_id",
+    app_id
+  );
+
+  console.log(URL, 'url')
+  try {
+      return await appsClient(token, "application/json").get(URL+`/?user_id=${user_id}&public_key=${public_key}`)
+  } catch(e) {
+      throw e;
+  }
+}
+
+export const createAppVariable = async (token: string, payload: any) => {
+  try{
+      return await appsClient(token, "application/json").post(APP_CREATE_VARIABLES, payload)
+  } catch(e) {
+      throw e;
+  }
+}
+
+export const fetchAppVariable = async (token: string, app_id: string, user_id: string, public_key: string) => {
+  const URL = Parameterize(
+    APP_FETCH_VARIABLES,
+    ":app_id",
+    app_id
+  );
+
+  console.log(URL, 'url')
+  try {
+      return await appsClient(token, "application/json").get(URL+`/?user_id=${user_id}&public_key=${public_key}`)
+  } catch(e) {
+      throw e;
+  }
+}
+
