@@ -189,6 +189,7 @@ const ApplicationVariables = () => {
               <div>
                 {variables.map((variable: any) => (
                   <div
+                    key={variable._id}
                     onClick={() => openUpdateModal(variable)}
                     className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7 cursor-pointer"
                   >
@@ -273,7 +274,6 @@ const ApplicationVariables = () => {
                     onBlur={formik.handleBlur("min_length")}
                     value={formik.values.min_length}
                     onChange={formik.handleChange("min_length")}
-                    t
                   />
                   {formik.touched.key && formik.errors.min_length ? (
                     <p className="text-xs mt-1 text-error">
