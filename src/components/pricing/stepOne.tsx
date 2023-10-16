@@ -1,7 +1,7 @@
-import React, { FC } from 'react';
-import CustomInput from '../common/Input';
-import CustomSelect from '../common/Select';
-import Button from '../common/Button';
+import React, { FC } from "react";
+import CustomInput from "../common/Input";
+import CustomSelect from "../common/Select";
+import Button from "../common/Button";
 
 interface StepOneProps {
   setCurrentStep: (currentStep: number) => void;

@@ -2,19 +2,21 @@ import React, { FC } from "react";
 import { Select } from "antd";
 
 interface CustomSelectProps {
-  options: { value: string; label: string }[];
-  value: string;
-  onChange: (value: string) => void;
+  options: { value: string; label: string; disabled?: boolean }[];
+  value?: string;
+  onChange?: (value: string) => void;
   placeholder?: string;
   className?: string;
+  defaultValue?: string;
 }
 
-const ExtendedSelect: FC<CustomSelectProps> = ({
+const ExtendedSelect: FC<any> = ({
   options,
   value,
   onChange,
   placeholder,
   className,
+  defaultValue,
   ...props
 }) => {
   return (
@@ -28,6 +30,7 @@ const ExtendedSelect: FC<CustomSelectProps> = ({
         value={value || undefined}
         onChange={onChange}
         placeholder={placeholder}
+        defaultValue={defaultValue}
         {...props}
       />
     </div>

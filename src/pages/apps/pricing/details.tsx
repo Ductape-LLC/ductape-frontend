@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Input, Button } from 'antd';
-import Dashboard_layout from '@/components/layouts/dashboard_layout';
-import Apps_Layout from '@/components/layouts/apps_layout';
-import CustomInput from '@/components/common/Input';
-import CustomSelect from '@/components/common/Select';
-import { PlusOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import { Modal, Input, Button } from "antd";
+import Dashboard_layout from "@/components/layouts/dashboard_layout";
+import Apps_Layout from "@/components/layouts/apps_layout";
+import CustomInput from "@/components/common/Input";
+import CustomSelect from "@/components/common/Select";
+import { PlusOutlined } from "@ant-design/icons";
 
 const Pricing = () => {
   const [showModal, setShowModal] = useState(true);
@@ -44,7 +44,7 @@ const Pricing = () => {
                       <label className="font-semibold">
                         Mode (Type pf Charge)
                       </label>
-                      <CustomSelect value="Upfront" />
+                      <CustomSelect value="Upfront" options={[]} />
                     </div>
                   </div>
                 </div>
@@ -53,12 +53,12 @@ const Pricing = () => {
                   <div className="flex gap-[36px]">
                     <div className="flex-1">
                       <label className="font-semibold">Interval</label>
-                      <CustomSelect value="Montly" />
+                      <CustomSelect value="Montly" options={[]} />
                     </div>
 
                     <div className="flex-1">
                       <label className="font-semibold">Currency</label>
-                      <CustomSelect value="USD" />
+                      <CustomSelect value="USD" options={[]} />
                     </div>
                   </div>
                 </div>
