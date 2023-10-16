@@ -8,6 +8,8 @@ import {
   APP_SETUP_ENV_FETCH,
   APP_CREATE_CONSTANTS,
   APP_FETCH_CONSTANTS,
+  APP_UPDATE_CONSTANTS,
+  APP_DELETE_CONSTANTS,
   APP_CREATE_VARIABLES,
   APP_FETCH_VARIABLES,
   APP_UPDATE_VARIABLES,
@@ -109,6 +111,39 @@ export const fetchAppConstant = async (
   console.log(URL, "url");
   try {
     return await appsClient(token, "application/json").get(
+      URL + `/?user_id=${user_id}&public_key=${public_key}`
+    );
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const updateAppConstant = async (token: string, payload: any) => {
+  const { constant_id, user_id, public_key, key, value, description, type } =
+    payload;
+  const URL = Parameterize(APP_UPDATE_CONSTANTS, ":constant_id", constant_id);
+
+  try {
+    return await appsClient(token, "application/json").put(
+      URL + `/?user_id=${user_id}&public_key=${public_key}`,
+      {
+        key,
+        type,
+        value,
+        description,
+      }
+    );
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const deleteAppConstant = async (token: string, payload: any) => {
+  const { constant_id, user_id, public_key } = payload;
+  const URL = Parameterize(APP_DELETE_CONSTANTS, ":constant_id", constant_id);
+
+  try {
+    return await appsClient(token, "application/json").delete(
       URL + `/?user_id=${user_id}&public_key=${public_key}`
     );
   } catch (e) {

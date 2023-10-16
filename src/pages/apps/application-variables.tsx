@@ -199,9 +199,9 @@ const ApplicationVariables = () => {
                         {variable.description}
                       </p>
                     </div>
-                    <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm uppercase">
+                    <div className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm uppercase">
                       {variable.type}
-                    </button>
+                    </div>
                     <p className="text-xs font-semibold">
                       {variable.required ? "Required" : "Not Required"}
                     </p>
@@ -256,11 +256,18 @@ const ApplicationVariables = () => {
                   ) : null}
                 </div>
                 <div className="mt-[26px]">
-                  <CustomInput
+                  <CustomSelect
                     placeholder="Type"
-                    onBlur={formik.handleBlur("type")}
                     value={formik.values.type}
-                    onChange={formik.handleChange("type")}
+                    onChange={(value: string) =>
+                      formik.setFieldValue("type", value)
+                    }
+                    options={[
+                      {
+                        value: "string",
+                        label: "String",
+                      },
+                    ]}
                   />
                   {formik.touched.key && formik.errors.type ? (
                     <p className="text-xs mt-1 text-error">
