@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
-import { ArrowLeftOutlined } from '@ant-design/icons';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { CircleBoxes } from '../../svgs';
-import { useSelector } from 'react-redux';
+import React, { FC } from "react";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { CircleBoxes } from "../../svgs";
+import { useSelector } from "react-redux";
 interface AppsLayoutProps {
   children: React.ReactNode;
   activeAppTab: string;
@@ -12,7 +12,7 @@ interface AppsLayoutProps {
 
 const AppsLayout: FC<AppsLayoutProps> = ({
   children,
-  activeAppTab = 'Get Started',
+  activeAppTab = "Get Started",
 }) => {
   const { app } = useSelector((state: any) => state.app);
   const router = useRouter();
@@ -50,13 +50,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
           <div className="mt-[27px]">
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px]  ${
-                activeAppTab === 'My App'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "My App"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'My App' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "My App" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -67,13 +67,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 rounded-r-[10px] mr-10 ${
-                activeAppTab === 'Get Started'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Get Started"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Get Started' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Get Started" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -84,13 +84,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Pricing'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Pricing"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Pricing' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Pricing" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -101,13 +101,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Publish'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Publish"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Publish' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Publish" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -129,13 +129,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
           <div className="mt-[27px]">
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Environments'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Environments"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Environments' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Environments" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -146,16 +146,16 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Application Variable'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Application Variable"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Application Variable'
-                    ? '#0846A6'
-                    : '#78797A'
+                  activeAppTab === "Application Variable"
+                    ? "#0846A6"
+                    : "#78797A"
                 }
                 height={24}
                 width={24}
@@ -170,16 +170,16 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Application Constants'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Application Constants"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Application Constants'
-                    ? '#0846A6'
-                    : '#78797A'
+                  activeAppTab === "Application Constants"
+                    ? "#0846A6"
+                    : "#78797A"
                 }
                 height={24}
                 width={24}
@@ -205,13 +205,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
           <div className="mt-[27px]">
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Actions'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Actions"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Actions' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Actions" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -222,13 +222,13 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Events'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Events"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
-                color={activeAppTab === 'Events' ? '#0846A6' : '#78797A'}
+                color={activeAppTab === "Events" ? "#0846A6" : "#78797A"}
                 height={24}
                 width={24}
               />
@@ -239,19 +239,19 @@ const AppsLayout: FC<AppsLayoutProps> = ({
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Authorizations'
-                  ? 'text-primary bg-[#E9ECF0]'
-                  : 'text-[#78797A]'
+                activeAppTab === "Authorizations"
+                  ? "text-primary bg-[#E9ECF0]"
+                  : "text-[#78797A]"
               }`}
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Authorizations' ? '#0846A6' : '#78797A'
+                  activeAppTab === "Authorizations" ? "#0846A6" : "#78797A"
                 }
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
+              <Link href="/apps/authorizations" className="font-bold text-sm">
                 Authorizations
               </Link>
             </div>
