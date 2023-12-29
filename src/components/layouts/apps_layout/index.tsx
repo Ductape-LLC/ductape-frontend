@@ -60,8 +60,8 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="/apps/my-app" className="font-bold text-sm">
-                My App
+              <Link href={`/apps/${app._id}`} className="font-bold text-sm">
+                Dashboard
               </Link>
             </div>
 
@@ -77,7 +77,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="/apps/get-started" className="font-bold text-sm">
+              <Link href={`/apps/${app._id}/get-started`} className="font-bold text-sm">
                 Getting started
               </Link>
             </div>
@@ -94,7 +94,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="/apps/pricing" className="font-bold text-sm">
+              <Link href={`/apps/${app._id}/pricing`} className="font-bold text-sm">
                 Pricing
               </Link>
             </div>
@@ -111,7 +111,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="/apps/publish" className="font-bold text-sm">
+              <Link href={`/apps/${app._id}/publish`} className="font-bold text-sm">
                 Publish
               </Link>
             </div>
@@ -139,7 +139,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="/apps/environments" className="font-bold text-sm">
+              <Link href={`/apps/${app._id}/environments`} className="font-bold text-sm">
                 Environments
               </Link>
             </div>
@@ -153,7 +153,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Application Variable'
+                  activeAppTab === 'Variables'
                     ? '#0846A6'
                     : '#78797A'
                 }
@@ -161,23 +161,23 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 width={24}
               />
               <Link
-                href="/apps/application-variables"
+                href={`/apps/${app._id}/variables`}
                 className="font-bold text-sm"
               >
-                Application Variables
+                Variables
               </Link>
             </div>
 
             <div
               className={`flex items-center gap-3 mb-[9px] pl-11 py-2 mr-10 rounded-r-[10px] ${
-                activeAppTab === 'Application Constants'
+                activeAppTab === 'Constants'
                   ? 'text-primary bg-[#E9ECF0]'
                   : 'text-[#78797A]'
               }`}
             >
               <CircleBoxes
                 color={
-                  activeAppTab === 'Application Constants'
+                  activeAppTab === 'Constants'
                     ? '#0846A6'
                     : '#78797A'
                 }
@@ -185,10 +185,10 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 width={24}
               />
               <Link
-                href="/apps/application-contants"
+                href={`/apps/${app._id}/contants`}
                 className="font-bold text-sm"
               >
-                Application Contants
+                Contants
               </Link>
             </div>
           </div>

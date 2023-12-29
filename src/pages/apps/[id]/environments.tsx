@@ -1,15 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Modal, Input, Switch } from 'antd';
-import Dashboard_layout from '@/components/layouts/dashboard_layout';
-import Apps_Layout from '@/components/layouts/apps_layout';
-import CustomInput from '@/components/common/Input';
-import CustomSelect from '@/components/common/Select';
-import { PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import { Button, Modal, Input, Switch, Empty, Spin } from "antd";
+import Dashboard_layout from "@/components/layouts/dashboard_layout";
+import Apps_Layout from "@/components/layouts/apps_layout";
+import CustomInput from "@/components/common/Input";
+import CustomSelect from "@/components/common/Select";
+import {
+  PlusOutlined,
+  InfoCircleOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
+import { useRouter } from "next/router";
+import { useApps } from "@/hooks/useApps";
+import { IAppEnv } from "ductape-sdk/dist/types/appBuilder.types";
+import { Capitalize } from "@/utils";
 
 const { TextArea } = Input;
 
 const Publish = () => {
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const { app, builder, fetchAndSaveApp } = useApps();
+  const { id } = router.query;
+
+  useEffect(() => {
+    fetchAndSaveApp(String(id));
+  });
 
   return (
     <Dashboard_layout activeTab="App">
@@ -18,12 +33,12 @@ const Publish = () => {
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
             <h1 className="text-[#232830] font-bold text-3xl">Environments</h1>
             <Button
-                onClick={() => setShowModal(true)}
-                className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-10 px-4 rounded"
-              >
-                <PlusOutlined />
-                New Environment
-              </Button>
+              onClick={() => setShowModal(true)}
+              className="bg-primary text-white flex items-center text-sm font-bold tracking-[-0.4px] h-10 px-4 rounded"
+            >
+              <PlusOutlined />
+              New Environment
+            </Button>
           </div>
 
           <div className="px-16 p-10">
@@ -42,17 +57,40 @@ const Publish = () => {
             </div> */}
 
             <div>
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between">
-                <p className="font-bold text-lg">Production</p>
-                <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
-                  Inactive
-                </button>
-                <p className="underline text-xs font-semibold">
-                  Production Environment
-                </p>
-              </div>
-
-              <div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
+              {!app ? (
+                <Spin
+                  indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+                />
+              ) : app.envs && app.envs?.length > 0 ? (
+                <>
+                  {" "}
+                  {app.envs.map((env: IAppEnv) => {
+                    return (
+                      <div
+                        key={env._id}
+                        className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mb-7"
+                      >
+                        <p className="font-bold text-lg">{Capitalize(env.env_name)}</p>
+                        <button
+                          className={`${
+                            env.active
+                              ? "text-[#00875A] bg-[#00875A] border-[#00875A] border-[0.5px]"
+                              : "text-[#DC3444] bg-[#DC3444] border-[#DC3444] border-[0.5px]"
+                          } bg-opacity-[15%] border text-xs px-[14px] py-1 rounded-sm`}
+                        >
+                          {env.active ? "Active" : "Inactive"}
+                        </button>
+                        <p className="underline text-xs font-semibold">
+                          {Capitalize(env.description)}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <Empty />
+              )}
+              {/*<div className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7">
                 <p className="font-bold text-lg">Sandbox</p>
                 <button className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm">
                   Inactive
@@ -70,7 +108,7 @@ const Publish = () => {
                 <p className="underline text-xs font-semibold">
                   Test Environment
                 </p>
-              </div>
+              </div>*/}
             </div>
           </div>
         </div>
@@ -79,8 +117,8 @@ const Publish = () => {
           open={showModal}
           width="730px"
           className="rounded-none"
-          cancelButtonProps={{ style: { display: 'none' } }}
-          okButtonProps={{ style: { display: 'none' } }}
+          cancelButtonProps={{ style: { display: "none" } }}
+          okButtonProps={{ style: { display: "none" } }}
           onCancel={() => setShowModal(false)}
           style={{ padding: 0 }}
         >

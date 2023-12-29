@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Modal, Input, Progress } from 'antd';
-import Dashboard_layout from '../../components/layouts/dashboard_layout';
-import Apps_Layout from '../../components/layouts/apps_layout';
+import Dashboard_layout from '../../../components/layouts/dashboard_layout';
+import Apps_Layout from '../../../components/layouts/apps_layout';
 import {
   LineChart,
   Line,
@@ -68,9 +68,11 @@ const MyApp = () => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(true);
   const { app, fetchAndSaveApp } = useApps();
+  const { id } = router.query;
+
 
   useEffect(() => {
-    fetchAndSaveApp();
+    fetchAndSaveApp(String(id));
   }, []);
 
 
@@ -101,8 +103,8 @@ const MyApp = () => {
               </div>
 
               <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-                <p className="text-[#78797A] text-sm">WEBHOOKS</p>
-                <h1 className="text-[#232830] font-bold text-3xl mt-2">{app?.webhooks?.length || 0}</h1>
+                <p className="text-[#78797A] text-sm">EVENTS</p>
+                <h1 className="text-[#232830] font-bold text-3xl mt-2">{app?.events?.length || 0}</h1>
               </div>
             </div>
           </div>
