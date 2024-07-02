@@ -1,4 +1,6 @@
 import React, { FC } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import CustomInput from "../common/Input";
 import CustomSelect from "../common/Select";
 import Button from "../common/Button";
@@ -9,6 +11,32 @@ const { TextArea } = Input;
 interface StepOneProps {
   setCurrentStep: (currentStep: number) => void;
   setShowModal: (showModal: boolean) => void;
+}
+
+// {
+//     "public_key": "da41198023edc30476b29d661b5623bc6842c652",
+//     "user_id": "62cc17ec5a62fd899d256de0",
+//     "name": "Input Setup Key",
+//     "setup_type": "token_access",
+//     "expiry": "500",
+//     "period": "mins",
+//     "base_url": "https://walid.co",
+//     "resource": "/summaria",
+//     "method": "POST",
+//     "description": "Input Token Access",
+//     "envs": [
+//         "62e41dd25efa8a33c23d4cc5","62e41dd25efa8a33c23d4cc6"
+//     ],
+// }
+interface StepOneFormValues {
+  name: string;
+  setup_type: string;
+  tag: string;
+  action_id: string[];
+  method: string;
+  resource: string;
+  envs: string[];
+  description: string;
 }
 
 const StepOne: FC<StepOneProps> = ({ setCurrentStep, setShowModal }) => {

@@ -232,7 +232,7 @@ const AppsLayout: FC<AppsLayoutProps> = ({
                 height={24}
                 width={24}
               />
-              <Link href="#" className="font-bold text-sm">
+              <Link href="/apps/events" className="font-bold text-sm">
                 Events
               </Link>
             </div>
