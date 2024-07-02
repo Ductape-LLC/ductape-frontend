@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Modal, Input, Progress, Button } from 'antd';
-import Dashboard_layout from '../../components/layouts/dashboard_layout';
-import Apps_Layout from '../../components/layouts/apps_layout';
-import StepOne from '../../components/getStartedForms/stepOne';
+import Dashboard_layout from '../../../components/layouts/dashboard_layout';
+import Apps_Layout from '../../../components/layouts/apps_layout';
+import StepOne from '../../../components/getStartedForms/stepOne';
 import StepTwo from '@/components/getStartedForms/stepTwo';
 
 const { TextArea } = Input;

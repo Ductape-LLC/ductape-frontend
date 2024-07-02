@@ -8,7 +8,7 @@ import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import store from '../redux/store';
-import { LoadingOutlined } from '@ant-design/icons';
+import {LoadingOutlined} from "@ant-design/icons";
 
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());

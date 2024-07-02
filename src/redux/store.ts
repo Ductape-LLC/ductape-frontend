@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
 });
 
 const persistConfig = {
-  key: 'pastel-dashboard-2fa',
+  key: 'ductape-store',
   storage,
 };
 
