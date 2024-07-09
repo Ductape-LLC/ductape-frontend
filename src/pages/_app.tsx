@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import '@/styles/globals.css';
-import type { AppProps } from 'next/app';
-import { Raleway } from 'next/font/google';
-import Router from 'next/router';
-import NProgress from 'nprogress';
-import { Toaster } from 'react-hot-toast';
-import { Provider } from 'react-redux';
-import { persistStore } from 'redux-persist';
-import store from '../redux/store';
-import {LoadingOutlined} from "@ant-design/icons";
+import React, { useEffect, useState } from "react";
+import "@/styles/globals.css";
+import type { AppProps } from "next/app";
+import { Raleway } from "next/font/google";
+import Router from "next/router";
+import NProgress from "nprogress";
+import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { persistStore } from "redux-persist";
+import store from "../redux/store";
+import { LoadingOutlined } from "@ant-design/icons";
 
-Router.events.on('routeChangeComplete', () => NProgress.done());
-Router.events.on('routeChangeError', () => NProgress.done());
+Router.events.on("routeChangeComplete", () => NProgress.done());
+Router.events.on("routeChangeError", () => NProgress.done());
 
 const raleway = Raleway({
-  subsets: ['latin-ext'],
+  subsets: ["latin-ext"],
+  variable: "--font-raleway",
 });
 
 export default function App({ Component, pageProps }: AppProps) {

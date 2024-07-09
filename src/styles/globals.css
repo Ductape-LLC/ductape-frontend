@@ -28,6 +28,13 @@ body {
 }
 
 .ant-modal .ant-modal-content {
-  padding: 0
+  padding: 0;
 }
 
+pre,
+code {
+  font-family: var(--font-raleway) !important;
+  letter-spacing: 1px;
+  contain: inline-size;
+  overflow-x: auto;
+}
