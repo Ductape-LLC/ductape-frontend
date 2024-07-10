@@ -127,7 +127,7 @@ const ApplicationVariables = () => {
         public_key
       );
       if (response.status === 200) {
-        setVariables(response.data.data);
+        setVariables(response.data.data || []);
       }
     } catch (error: any) {
       toast.error(error.response.data.errors);

@@ -9,7 +9,12 @@ import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
 import CustomSelect from "@/components/common/Select";
 import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import {} from "@/api/appsClient";
+import {
+  createAppConstant,
+  deleteAppConstant,
+  fetchAppConstant,
+  updateAppConstant,
+} from "@/api/appsClient";
 import toast from "react-hot-toast";
 
 const { TextArea } = Input;
@@ -137,7 +142,7 @@ const ApplicationContants = () => {
         public_key
       );
       if (response.status === 200) {
-        setConstants(response.data.data);
+        setConstants(response.data.data || []);
       }
     } catch (error: any) {
       toast.error(error.response.data.errors);
