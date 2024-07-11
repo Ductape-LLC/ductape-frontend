@@ -67,13 +67,15 @@ const Publish = () => {
                   {app.envs.map((env: IAppEnv) => {
                     return (
                       <div
-                        key={env._id}
+                        key={env?._id}
                         className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mb-7"
                       >
-                        <p className="font-bold text-lg">{Capitalize(env.env_name)}</p>
+                        <p className="font-bold text-lg">
+                          {Capitalize(env?.env_name)}
+                        </p>
                         <button
                           className={`${
-                            env.active
+                            env?.active
                               ? "text-[#00875A] bg-[#00875A] border-[#00875A] border-[0.5px]"
                               : "text-[#DC3444] bg-[#DC3444] border-[#DC3444] border-[0.5px]"
                           } bg-opacity-[15%] border text-xs px-[14px] py-1 rounded-sm`}
@@ -81,7 +83,7 @@ const Publish = () => {
                           {env.active ? "Active" : "Inactive"}
                         </button>
                         <p className="underline text-xs font-semibold">
-                          {Capitalize(env.description)}
+                          {Capitalize(env?.description || "")}
                         </p>
                       </div>
                     );
