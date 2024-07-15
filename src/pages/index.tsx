@@ -133,7 +133,7 @@ export default function Home() {
               <div className="mt-16 grid sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-6 xl:gap-y-16">
                 <div className="border border-white rounded-lg p-5 lg:p-9 lg:pl-7 flex flex-col xl:h-[470px]">
                   <Image src="/images/ar.svg" width={48} height={48} alt="" />
-                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold">
+                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold leading-snug">
                     Rapid Feature Integration
                   </h3>
                   <p className="font-medium text-sm lg:text-xl text-white mt-8">
@@ -142,14 +142,14 @@ export default function Home() {
                     time-to-market.
                   </p>
                 </div>
-                <div className="border border-white rounded-lg p-5 lg:p-9 lg:pl-7 flex flex-col xl:h-[470px]">
+                <div className="border border-white rounded-lg p-5 lg:p-9 lg:pl-7 flex flex-col xl:h-[470px] leading-snug">
                   <Image
                     src="/images/rocket-alt.svg"
                     width={48}
                     height={48}
                     alt=""
                   />
-                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px]">
+                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px] leading-snug">
                     Comprehensive Testing before Deployment
                   </h3>
                   <p className="font-medium text-sm lg:text-xl text-white mt-8">
@@ -182,7 +182,7 @@ export default function Home() {
                     height={48}
                     alt=""
                   />
-                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px]">
+                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px] leading-snug">
                     Effective A/B Testing of Features
                   </h3>
                   <p className="font-medium text-sm lg:text-xl text-white mt-8">
@@ -198,7 +198,7 @@ export default function Home() {
                     height={48}
                     alt=""
                   />
-                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px]">
+                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px] leading-snug">
                     Execution of Long-Running Jobs
                   </h3>
                   <p className="font-medium text-sm lg:text-xl text-white mt-8">
@@ -209,7 +209,7 @@ export default function Home() {
                 </div>
                 <div className="border border-white rounded-lg p-5 lg:p-9 lg:pl-7 flex flex-col xl:h-[470px]">
                   <Image src="/images/code.svg" width={48} height={48} alt="" />
-                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px]">
+                  <h3 className="text-white text-xl lg:text-3.5xl mt-4 font-semibold lg:max-w-[355px] leading-snug">
                     Secure Database CRUD Operations
                   </h3>
                   <p className="font-medium text-sm lg:text-xl text-white mt-8">
@@ -224,7 +224,7 @@ export default function Home() {
           <section className="max-w-[1344px] mx-auto xl:pt-14 xl:pb-24">
             <div className="py-12 lg:py-28 flex items-center justify-between flex-wrap lg:flex-nowrap gap-12 lg:gap-6 xl:gap-0">
               <div className="flex flex-col lg:max-w-[539px]">
-                <h2 className="text-3xl lg:text-5xl text-grey leading-tight font-semibold lg:max-w-[270px]">
+                <h2 className="text-3xl lg:text-5xl text-grey leading-tight font-semibold lg:max-w-[270px] lg:leading-snug">
                   Ductape for developers
                 </h2>
                 <p className="mt-4 text-grey-500 font-medium">
