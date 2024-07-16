@@ -1,37 +1,68 @@
-import { connectDuctape } from "../sdk";
-import { AppComponents, PublicStates } from "ductape-sdk/dist/types/enums";
-import { IBuilderInit } from "ductape-sdk/dist/types/index.types";
-import { ICreateIntegrationsBuilder } from "ductape-sdk/dist/types/integrationsBuilder.types";
+import axios from "axios";
+import { INTEGRATIONS_BASE_URL, INTEGRATION_SUMMARY } from "./urls";
 
-export const createProject = async (payload: IBuilderInit, data: ICreateIntegrationsBuilder) => {
+const source = axios.CancelToken.source();
+const requestInterceptor = async (config: any) => {
+  config.cancelToken = source.token;
+  return config;
+};
+let instance: any;
+
+const integrationClient = (auth: string, contentType: string) => {
+  if (instance) return instance;
+  instance = axios.create({
+    baseURL: INTEGRATIONS_BASE_URL,
+    timeout: 5000,
+    headers: {
+      "Content-Type": contentType,
+      Authorization: auth,
+    },
+    withCredentials: false,
+  });
+
+  instance.interceptors.request.use(requestInterceptor);
+  return instance;
+};
+
+export const createProject = async (payload: any, data: any) => {
   try {
-    const project = await connectDuctape(payload).getIntegrationBuilder();
-
-    return project.createIntegration(data);
+    const response = await integrationClient("", "application/json").post(
+      "/integrationBuilder/createIntegration",
+      {
+        payload,
+        data,
+      }
+    );
+    return response.data;
   } catch (e) {
     throw e;
   }
 };
 
-export const fetchProjects = async (
-  payload: IBuilderInit,
-  status: PublicStates,
-) => {
+export const fetchProjects = async (payload: any, status: string) => {
   try {
-    return await connectDuctape(payload).fetchWorkspaceProjects(status);
+    const response = await integrationClient("", "application/json").get(
+      INTEGRATION_SUMMARY,
+      {
+        params: { ...payload, status },
+      }
+    );
+    return response.data;
   } catch (e) {
     throw e;
   }
 };
 
-export const fetchIntegration = async (
-  payload: IBuilderInit,
-  app_id: string,
-) => {
+export const fetchIntegration = async (payload: any, app_id: string) => {
   try {
-    const project= (await connectDuctape(payload).getIntegrationBuilder())
-    await project.initializeIntegration(app_id);
-    return project; // return builder instance
+    const response = await integrationClient("", "application/json").post(
+      `/integrationBuilder/initializeIntegration`,
+      {
+        payload,
+        app_id,
+      }
+    );
+    return response.data;
   } catch (e) {
     throw e;
   }

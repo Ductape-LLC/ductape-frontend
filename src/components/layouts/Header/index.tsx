@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Select, Button, Avatar } from 'antd';
-import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../../../redux/slice/userSlice';
-import { PlusOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Select, Button, Avatar } from "antd";
+import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../../redux/slice/userSlice";
+import { PlusOutlined } from "@ant-design/icons";
 import {
   setWorkspaceStats,
   setShowCreateWorkspaceModal,
   setDefaultWorkspace,
-} from '@/redux/slice/workspaceSlice';
+} from "@/redux/slice/workspaceSlice";
 import {
   fetchWorkspaceStats,
   changeDefaultWorkspace,
-} from '@/api/workspaceClient';
-import toast from 'react-hot-toast';
+} from "@/api/workspaceClient";
+import toast from "react-hot-toast";
 
 const { Option } = Select;
 
@@ -91,7 +91,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push('/');
+    router.push("/");
   };
 
   useEffect(() => {
