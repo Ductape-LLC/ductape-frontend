@@ -3,19 +3,20 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/navigation";
+import { Checkbox } from "antd";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
-import { Checkbox } from "antd";
 import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { registerUser } from "@/api/userClient";
+import { routes } from "@/constants/routes";
 
 interface FormValues {
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -23,15 +24,11 @@ interface FormValues {
 }
 
 const signupSchema = Yup.object().shape({
-  firstname: Yup.string().required("First name is Required"),
+  firstName: Yup.string().required("First name is Required"),
   lastname: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Last name is Required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$/,
-    //   'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
-    // )
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
@@ -48,10 +45,10 @@ export default function SignUp() {
       submitProps.setSubmitting(false);
       setLoading(true);
       toast.loading("Loading...");
-      const { firstname, lastname, email, password } = values;
+      const { firstName, lastName, email, password } = values;
       const user = {
-        firstname,
-        lastname,
+        firstName,
+        lastName,
         email,
         password,
       };
@@ -71,8 +68,8 @@ export default function SignUp() {
 
   const formik = useFormik<FormValues>({
     initialValues: {
-      firstname: "",
-      lastname: "",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -83,27 +80,27 @@ export default function SignUp() {
   });
 
   return (
-    <div className="bg-[#F9FAFC] py-8 pr-[21px] flex">
-      <div className="pt-20 w-[30%] mx-[55px]">
-        <Image src="/images/logo.png" width={129} height={44} alt="logo" />
+    <div className="min-h-screen bg-white-500 py-8 pr-5 flex">
+      <div className="pt-20 w-[30%] mx-14">
+        <Image src="/images/logo.svg" width={129} height={33} alt="logo" />
 
-        <div className="max-w-[450px] mt-[68px]">
-          <h1 className={`font-bold text-2xl text-[#232830]`}>
+        <div className="max-w-[450px] mt-16">
+          <h1 className="font-bold text-2xl text-grey">
             Long Live the Integrations
           </h1>
-          <p className="text-[#232830]">Let’s get you setup</p>
-          <form className="mt-[51px]">
+          <p className="mt-3 text-grey-900">Let’s get you setup</p>
+          <form className="mt-12">
             <div>
               <Input
                 type="text"
                 placeholder="First Name"
-                onBlur={formik.handleBlur("firstname")}
-                value={formik.values.firstname}
-                onChange={formik.handleChange("firstname")}
+                onBlur={formik.handleBlur("firstName")}
+                value={formik.values.firstName}
+                onChange={formik.handleChange("firstName")}
               />
-              {formik.touched.firstname && formik.errors.firstname ? (
+              {formik.touched.firstName && formik.errors.firstName ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.firstname}
+                  {formik.errors.firstName}
                 </p>
               ) : null}
             </div>
@@ -112,12 +109,12 @@ export default function SignUp() {
                 type="text"
                 placeholder="Last Name"
                 onBlur={formik.handleBlur("lastname")}
-                value={formik.values.lastname}
+                value={formik.values.lastName}
                 onChange={formik.handleChange("lastname")}
               />
-              {formik.touched.lastname && formik.errors.lastname ? (
+              {formik.touched.lastName && formik.errors.lastName ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.lastname}
+                  {formik.errors.lastName}
                 </p>
               ) : null}
             </div>
@@ -163,29 +160,23 @@ export default function SignUp() {
               ) : null}
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex items-center gap-4">
               <Checkbox
                 value={formik.values.agreeToTerms}
                 name="agreeToTerms"
-                // onChange={formik.handleChange('agreeToTerms')}
                 onChange={(e: CheckboxChangeEvent) => {
                   formik.setFieldValue("agreeToTerms", e.target.checked);
                 }}
-              >
-                <p className="text-sm font-medium">
-                  By clicking the “Create Account” button, you agree to
-                  Ductape’s{" "}
-                  <span className="text-[#0052CC] underline">
-                    {" "}
-                    Term of Use{" "}
-                  </span>
-                  and{" "}
-                  <span className="text-[#0052CC] underline">
-                    {" "}
-                    Privacy Policy
-                  </span>
-                </p>
-              </Checkbox>
+              />
+              <p className="text-sm font-medium">
+                By clicking the “Create Account” button, you agree to Ductape’s{" "}
+                <span className="text-[#0052CC] underline"> Term of Use </span>
+                and{" "}
+                <span className="text-[#0052CC] underline">
+                  {" "}
+                  Privacy Policy
+                </span>
+              </p>
             </div>
             <div className="mt-[46px]">
               <Button
@@ -198,23 +189,23 @@ export default function SignUp() {
             </div>
           </form>
 
-          <div className="flex items-center mt-[35px]">
+          <div className="flex items-center mt-9">
             <hr className="flex-grow border-t border-gray-300" />
             <span className="px-3 text-gray-500">OR</span>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
 
-          <div className="flex justify-between items-center mt-[35px]">
-            <button className="text-[#232830] font-sm font-medium h-[41px] px-[21px] rounded bg-white border flex items-center gap-4">
+          <div className="flex justify-between items-center mt-9">
+            <button className="text-grey font-sm font-medium h-10 px-5 rounded bg-white border flex items-center gap-4">
               <Image
                 src="/images/google.svg"
                 width={20}
                 height={20}
                 alt="google"
               />{" "}
-              continue with google
+              Continue with Google
             </button>
-            <button className="h-[41px] px-[21px] rounded bg-white border">
+            <button className="h-10 px-5 rounded bg-white border">
               <Image
                 src="/images/github.svg"
                 width={20}
@@ -222,7 +213,7 @@ export default function SignUp() {
                 alt="github"
               />
             </button>
-            <button className="h-[41px] px-[21px] rounded bg-white border">
+            <button className="h-10 px-5 rounded bg-white border">
               <Image
                 src="/images/linkedin.svg"
                 width={20}
@@ -232,16 +223,19 @@ export default function SignUp() {
             </button>
           </div>
 
-          <p className="text-[#232830] mt-[95px] text-center">
+          <p className="text-grey mt-24 text-center">
             Already have an account?{" "}
-            <Link href="../" className="font-bold underline text-primary">
+            <Link
+              href={routes.LOGIN}
+              className="font-bold underline text-primary"
+            >
               Login
             </Link>
           </p>
         </div>
-        {/* <p className="absolute bottom-16 left-15 text-[#979797]">
-          © Ductape 2023
-        </p> */}
+        <p className="absolute bottom-16 left-15 text-grey-200">
+          © Ductape {new Date().getFullYear()}
+        </p>
       </div>
 
       <div className="pt-[93px] bg-white rounded-[10px] px-[51px] flex-1">

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
-import { useRouter } from "next/navigation";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { loginUser } from "@/api/userClient";
@@ -16,6 +16,7 @@ import {
   setWorkspaces,
   setDefaultWorkspace,
 } from "@/redux/slice/workspaceSlice";
+import { routes } from "@/constants/routes";
 
 interface FormValues {
   email: string;
@@ -29,40 +30,31 @@ const loginSchema = Yup.object().shape({
 
 export default function Login() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const response = await loginUser(values);
-      if (response.status === 201) {
-        setLoading(false);
-        const { _id, firstname, lastname, email, active } = response.data.data;
-        const data = {
-          user: { _id, firstname, lastname, email, active },
-          token: response.data.data.auth_token,
-          public_key: response.data.data.public_key,
-        };
-        const workspaces = response.data.data.workspaces;
-        const workspace = workspaces.find(
-          (workspace: any) => workspace.default === true
-        );
-        dispatch(setWorkspaces(workspaces));
-        dispatch(setDefaultWorkspace(workspace));
-        dispatch(login(data));
-        toast.success("Login successful");
-        router.push("/dashboard");
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
+  const { mutate, status } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (response) => {
+      const { _id, firstname, lastname, email, active } = response.data.data;
+      const data = {
+        user: { _id, firstname, lastname, email, active },
+        token: response.data.data.auth_token,
+        public_key: response.data.data.public_key,
+      };
+      const workspaces = response.data.data.workspaces;
+      const workspace = workspaces.find(
+        (workspace: { default: boolean }) => workspace.default === true
+      );
+      dispatch(setWorkspaces(workspaces));
+      dispatch(setDefaultWorkspace(workspace));
+      dispatch(login(data));
+      toast.success("Login successful");
+      router.push(routes.DASHBOARD);
+    },
+    onError: (error: any) => {
       toast.error(error.response.data.errors);
-    }
-  };
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -70,24 +62,26 @@ export default function Login() {
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      mutate(values);
+    },
   });
 
   return (
-    <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
-      <div className="pt-20 w-[30%] mx-[55px]">
-        <Image src="/images/logo.png" width={129} height={44} alt="logo" />
+    <div className="min-h-screen bg-white-500 py-8 pr-5 flex">
+      <div className="pt-20 w-[30%] mx-14">
+        <Image src="/images/logo.svg" width={129} height={33} alt="logo" />
 
-        <div className="max-w-[450px] mt-[68px]">
-          <h1 className={`font-bold text-2xl text-[#232830]`}>
+        <div className="max-w-[450px] mt-16">
+          <h1 className="font-bold text-2xl text-grey">
             Automate your Integrations
           </h1>
-          <p className="text-[#232830]">Continue to your profile</p>
-          <form className="mt-[71px]">
+          <p className="mt-3 text-grey-900">Continue to your profile</p>
+          <form className="mt-18" onSubmit={formik.handleSubmit}>
             <div>
               <Input
                 type="email"
-                placeholder="Email"
+                placeholder="Email address"
                 onBlur={formik.handleBlur("email")}
                 value={formik.values.email}
                 onChange={formik.handleChange("email")}
@@ -96,7 +90,7 @@ export default function Login() {
                 <p className="text-xs mt-1 text-error">{formik.errors.email}</p>
               ) : null}
             </div>
-            <div className="mt-[32px]">
+            <div className="mt-8">
               <Input
                 type="password"
                 placeholder="Password"
@@ -104,42 +98,36 @@ export default function Login() {
                 value={formik.values.password}
                 onChange={formik.handleChange("password")}
               />
-              <div className="flex justify-between w-full mt-1 items-center">
-                {formik.touched.password && formik.errors.password ? (
-                  <p className="text-xs mt-1 text-error">
-                    {formik.errors.password}
-                  </p>
-                ) : null}
-                <Link
-                  href="/auth/forgot-password"
-                  className={`font-bold text-primary flex-1 text-right`}
-                >
-                  Forgot your Password?
-                </Link>
-              </div>
+              {formik.touched.password && formik.errors.password ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.password}
+                </p>
+              ) : null}
             </div>
-            <div className="mt-[52px]">
-              <Button
-                disabled={!formik.isValid || !formik.dirty || loading}
-                type="submit"
-                onClick={() => formik.handleSubmit()}
-              >
-                Continue
+            <Link
+              href="/auth/forgot-password"
+              className="mt-3 font-bold text-primary text-right text-sm flex ml-auto w-fit"
+            >
+              Forgot your Password?
+            </Link>
+            <div className="mt-12">
+              <Button disabled={status === "pending"} type="submit">
+                Login
               </Button>
             </div>
           </form>
-          <p className="text-[#232830] mt-[97px] text-center">
-            New to Ductape?{" "}
+          <p className="mt-24 text-center">
+            <span className="font-medium text-grey">New to Ductape? </span>
             <Link
-              href="/auth/signup"
-              className="font-bold underline text-primary"
+              href={routes.SIGNUP}
+              className="font-bold underline text-blue"
             >
               Create an account
             </Link>
           </p>
         </div>
-        <p className="absolute bottom-16 left-15 text-[#979797]">
-          © Ductape 2023
+        <p className="absolute bottom-16 left-15 text-grey-200">
+          © Ductape {new Date().getFullYear()}
         </p>
       </div>
 

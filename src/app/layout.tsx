@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
-import store from "@/redux/store";
 import ReduxProvider from "@/context/redux-provider";
+import QueryProvider from "@/context/query-provider";
 
 const raleway = Raleway({
   subsets: ["latin-ext"],
@@ -32,7 +32,9 @@ export default function RootLayout({
           reverseOrder={false}
           containerStyle={{ zIndex: 99999999999 }}
         />
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

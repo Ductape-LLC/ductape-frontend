@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CustomButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -6,12 +6,20 @@ interface CustomButtonProps
   disabled?: boolean;
 }
 
-const CustomButton: React.FC<CustomButtonProps> = ({ disabled, children, ...props }) => {
+export default function CustomButton({
+  disabled,
+  children,
+  ...props
+}: CustomButtonProps) {
   return (
-    <button className={`${disabled?'bg-[#D9D9D9]':'bg-primary'} h-10 w-full text-white rounded text-sm`} disabled={disabled} {...props}>
+    <button
+      className={`${
+        disabled ? "bg-grey-300" : "bg-primary"
+      } h-10 w-full text-white rounded text-sm font-bold`}
+      disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   );
-};
-
-export default CustomButton;
+}
