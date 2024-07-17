@@ -17,6 +17,7 @@ import {
   setDefaultWorkspace,
 } from "@/redux/slice/workspaceSlice";
 import { routes } from "@/constants/routes";
+import { ApiError, Workspace } from "@/types/user.types";
 
 interface FormValues {
   email: string;
@@ -43,7 +44,7 @@ export default function Login() {
       };
       const workspaces = response.data.data.workspaces;
       const workspace = workspaces.find(
-        (workspace: { default: boolean }) => workspace.default === true
+        (workspace: Workspace) => workspace.default === true
       );
       dispatch(setWorkspaces(workspaces));
       dispatch(setDefaultWorkspace(workspace));
@@ -51,8 +52,8 @@ export default function Login() {
       toast.success("Login successful");
       router.push(routes.DASHBOARD);
     },
-    onError: (error: any) => {
-      toast.error(error.response.data.errors);
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
     },
   });
 

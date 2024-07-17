@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
-import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-hot-toast";
+import { useMutation } from "@tanstack/react-query";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { changePasswordUser } from "@/api/userClient";
+import { routes } from "@/constants/routes";
+import { ApiError } from "@/types/user.types";
 
 interface FormValues {
   otp: string;
@@ -26,40 +28,24 @@ const resetPasswordSchema = Yup.object().shape({
     .required("Confirm Password is required"),
 });
 
-export default function Home({
+export default function ResetPassword({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const { email } = searchParams as { email: string };
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    if (!email) return;
-    if (typeof email !== "string") return;
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const data = {
-        token: values.otp,
-        password: values.newPassword,
-        email,
-      };
-      const response = await changePasswordUser(data);
-      if (response.status === 201) {
-        setLoading(false);
-        toast.success("Password changed successfully");
-        router.push("/");
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
+  const { mutate, status } = useMutation({
+    mutationFn: changePasswordUser,
+    onSuccess: () => {
+      toast.success("Password changed successfully, please login");
+      router.push(routes.LOGIN);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -68,19 +54,25 @@ export default function Home({
       confirmPassword: "",
     },
     validationSchema: resetPasswordSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      const { otp, newPassword } = values;
+      if (!email || typeof email !== "string") {
+        toast.error("Please navigate to the previous page and try again");
+        return;
+      }
+
+      mutate({ token: otp, password: newPassword, email });
+    },
   });
 
   return (
-    <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
+    <div className="min-h-screen bg-white-500 py-8 pr-5 flex">
       <div className="pt-20 w-[30%] mx-[55px]">
-        <Image src="/images/logo.png" width={129} height={44} alt="logo" />
+        <Image src="/images/logo.svg" width={129} height={33} alt="logo" />
 
-        <div className="max-w-[450px] mt-[68px]">
-          <h1 className={`font-bold text-2xl text-[#232830]`}>
-            Create New Password
-          </h1>
-          <form className="mt-[71px]">
+        <div className="max-w-[450px] mt-16">
+          <h1 className="font-bold text-2xl text-grey">Create New Password</h1>
+          <form onSubmit={formik.handleSubmit} className="mt-18">
             <div>
               <Input
                 type="text"
@@ -93,7 +85,7 @@ export default function Home({
                 <p className="text-xs mt-1 text-error">{formik.errors.otp}</p>
               ) : null}
             </div>
-            <div className="mt-[32px]">
+            <div className="mt-8">
               <Input
                 type="password"
                 placeholder="New Password"
@@ -107,7 +99,7 @@ export default function Home({
                 </p>
               ) : null}
             </div>
-            <div className="mt-[32px]">
+            <div className="mt-8">
               <Input
                 type="password"
                 placeholder="Confirm Password"
@@ -123,19 +115,15 @@ export default function Home({
               ) : null}
             </div>
 
-            <div className="mt-[52px]">
-              <Button
-                disabled={!formik.isValid || !formik.dirty || loading}
-                type="submit"
-                onClick={() => formik.handleSubmit()}
-              >
+            <div className="mt-12">
+              <Button disabled={status === "pending"} type="submit">
                 Update password
               </Button>
             </div>
           </form>
         </div>
-        <p className="absolute bottom-16 left-15 text-[#979797]">
-          © Ductape 2023
+        <p className="absolute bottom-16 left-15 text-grey-200">
+          © Ductape {new Date().getFullYear()}
         </p>
       </div>
 

@@ -10,6 +10,35 @@ import {
   USER_VERIFY_OTP,
 } from "./urls";
 import { Parameterize } from "../../utils";
+import { AuthResponse } from "@/types/user.types";
+
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+interface RegisterPayload {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
+
+interface ChangePasswordPayload {
+  token: string;
+  password: string;
+  email: string;
+}
+
+interface OtpLoginPayload {
+  email: string;
+  otp: string;
+}
+
+interface VerifyLoginPayload {
+  user_id: string;
+  token: string;
+}
 
 const source = axios.CancelToken.source();
 const requestInterceptor = async (config: any) => {
@@ -35,14 +64,9 @@ const userClient = (auth: string, contentType: string) => {
   return instance;
 };
 
-type Register = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-export const registerUser = async (payload: Register) => {
+export const registerUser = async (
+  payload: RegisterPayload
+): Promise<AuthResponse> => {
   try {
     return await userClient("", "application/json").post(
       USER_CREATE_URL,
@@ -53,10 +77,9 @@ export const registerUser = async (payload: Register) => {
   }
 };
 
-export const loginUser = async (payload: {
-  email: string;
-  password: string;
-}) => {
+export const loginUser = async (
+  payload: LoginPayload
+): Promise<AuthResponse> => {
   try {
     return await userClient("", "application/json").post(
       USER_LOGIN_URL,
@@ -74,28 +97,18 @@ export const forgotUser = async (payload: { email: string }) => {
   );
 };
 
-export const changePasswordUser = async (payload: {
-  token: string;
-  password: string;
-  email: string;
-}) => {
+export const changePasswordUser = async (payload: ChangePasswordPayload) => {
   return await userClient("", "application/json").put(
     USER_CHANGE_PASSWORD,
     payload
   );
 };
 
-export const otpLogin = async (payload: {
-  user_id: string;
-  password: string;
-}) => {
+export const otpLogin = async (payload: OtpLoginPayload) => {
   return await userClient("", "application/json").post(USER_OTP_LOGIN, payload);
 };
 
-export const verifyLogin = async (payload: {
-  user_id: string;
-  token: string;
-}) => {
+export const verifyLogin = async (payload: VerifyLoginPayload) => {
   return await userClient("", "application/json").post(
     USER_VERIFY_OTP + "/" + payload.user_id,
     { token: payload.token }

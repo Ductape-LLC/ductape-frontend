@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,15 +7,17 @@ import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Checkbox } from "antd";
+import { useMutation } from "@tanstack/react-query";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { registerUser } from "@/api/userClient";
 import { routes } from "@/constants/routes";
+import { ApiError } from "@/types/user.types";
 
 interface FormValues {
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -24,7 +25,7 @@ interface FormValues {
 }
 
 const signupSchema = Yup.object().shape({
-  firstName: Yup.string().required("First name is Required"),
+  firstname: Yup.string().required("First name is Required"),
   lastname: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Last name is Required"),
   password: Yup.string()
@@ -38,45 +39,32 @@ const signupSchema = Yup.object().shape({
 
 export default function SignUp() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const { firstName, lastName, email, password } = values;
-      const user = {
-        firstName,
-        lastName,
-        email,
-        password,
-      };
-      const response = await registerUser(user);
-      if (response.status === 201) {
-        setLoading(false);
-        const { _id } = response.data.data;
-        router.push("/auth/verify?user_id=" + _id);
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
+  const { mutate, status } = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      toast.success("Account created successfully, proceed to login");
+      router.push(routes.LOGIN);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
       confirmPassword: "",
       agreeToTerms: false,
     },
     validationSchema: signupSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      const { confirmPassword, agreeToTerms, ...payload } = values;
+      mutate(payload);
+    },
   });
 
   return (
@@ -89,18 +77,18 @@ export default function SignUp() {
             Long Live the Integrations
           </h1>
           <p className="mt-3 text-grey-900">Let’s get you setup</p>
-          <form className="mt-12">
+          <form onSubmit={formik.handleSubmit} className="mt-12">
             <div>
               <Input
                 type="text"
                 placeholder="First Name"
-                onBlur={formik.handleBlur("firstName")}
-                value={formik.values.firstName}
-                onChange={formik.handleChange("firstName")}
+                onBlur={formik.handleBlur("firstname")}
+                value={formik.values.firstname}
+                onChange={formik.handleChange("firstname")}
               />
-              {formik.touched.firstName && formik.errors.firstName ? (
+              {formik.touched.firstname && formik.errors.firstname ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.firstName}
+                  {formik.errors.firstname}
                 </p>
               ) : null}
             </div>
@@ -109,12 +97,12 @@ export default function SignUp() {
                 type="text"
                 placeholder="Last Name"
                 onBlur={formik.handleBlur("lastname")}
-                value={formik.values.lastName}
+                value={formik.values.lastname}
                 onChange={formik.handleChange("lastname")}
               />
-              {formik.touched.lastName && formik.errors.lastName ? (
+              {formik.touched.lastname && formik.errors.lastname ? (
                 <p className="text-xs mt-1 text-error">
-                  {formik.errors.lastName}
+                  {formik.errors.lastname}
                 </p>
               ) : null}
             </div>
@@ -160,43 +148,40 @@ export default function SignUp() {
               ) : null}
             </div>
 
-            <div className="mt-6 flex items-center gap-4">
+            <div className="mt-6 flex flex-col items-start">
               <Checkbox
                 value={formik.values.agreeToTerms}
                 name="agreeToTerms"
                 onChange={(e: CheckboxChangeEvent) => {
                   formik.setFieldValue("agreeToTerms", e.target.checked);
                 }}
-              />
-              <p className="text-sm font-medium">
+                className="text-grey text-sm font-medium font-sans space-x-2"
+              >
                 By clicking the “Create Account” button, you agree to Ductape’s{" "}
-                <span className="text-[#0052CC] underline"> Term of Use </span>
-                and{" "}
-                <span className="text-[#0052CC] underline">
-                  {" "}
-                  Privacy Policy
-                </span>
-              </p>
+                <span className="text-blue underline"> Term of Use </span>
+                and <span className="text-blue underline"> Privacy Policy</span>
+              </Checkbox>
+              {formik.touched.agreeToTerms && formik.errors.agreeToTerms ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.agreeToTerms}
+                </p>
+              ) : null}
             </div>
             <div className="mt-[46px]">
-              <Button
-                type="submit"
-                disabled={!formik.isValid || !formik.dirty || loading}
-                onClick={() => formik.handleSubmit()}
-              >
+              <Button type="submit" disabled={status === "pending"}>
                 Create Account
               </Button>
             </div>
           </form>
 
           <div className="flex items-center mt-9">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="px-3 text-gray-500">OR</span>
-            <hr className="flex-grow border-t border-gray-300" />
+            <hr className="flex-grow border-t border-grey-800 opacity-10" />
+            <span className="px-3 text-grey-200 text-sm font-semibold">OR</span>
+            <hr className="flex-grow border-t border-grey-800 opacity-10" />
           </div>
 
-          <div className="flex justify-between items-center mt-9">
-            <button className="text-grey font-sm font-medium h-10 px-5 rounded bg-white border flex items-center gap-4">
+          <div className="flex gap-4 items-center mt-9">
+            <button className="text-grey text-sm font-medium h-10 px-5 rounded bg-white border flex items-center justify-center gap-6 grow">
               <Image
                 src="/images/google.svg"
                 width={20}

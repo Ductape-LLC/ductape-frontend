@@ -55,6 +55,7 @@ const config = {
         grey: {
           DEFAULT: "hsl(var(--grey))",
           900: "hsl(var(--grey-900))",
+          800: "hsl(var(--grey-800))",
           500: "hsl(var(--grey-500))",
           300: "hsl(var(--grey-300))",
           200: "hsl(var(--grey-200))",
@@ -69,6 +70,9 @@ const config = {
           DEFAULT: "hsl(var(--white))",
           500: "hsl(var(--white-500))",
         },
+      },
+      fontFamily: {
+        sans: ["var(--font-raleway)"],
       },
       fontSize: {
         "3.5xl": "2rem", // 32px

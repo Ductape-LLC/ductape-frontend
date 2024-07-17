@@ -1,14 +1,17 @@
 "use client";
-import React, { useState } from "react";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useFormik } from "formik";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import * as Yup from "yup";
+import { useMutation } from "@tanstack/react-query";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
 import { forgotUser } from "@/api/userClient";
+import { routes } from "@/constants/routes";
+import { ApiError } from "@/types/user.types";
 
 interface FormValues {
   email: string;
@@ -18,54 +21,50 @@ const forgotPasswordSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is Required"),
 });
 
-export default function ResetPassword() {
+export default function ForgotPassword() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const response = await forgotUser(values);
-      if (response.status === 201) {
-        setLoading(false);
-        router.push("/auth/reset-password?email=" + values.email);
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
+  const { mutate, status } = useMutation({
+    mutationFn: forgotUser,
+    onSuccess: () => {
+      toast.success("Password reset code sent successfully, check your email");
+      router.push(
+        `${routes.RESET_PASSWORD}?email=${encodeURIComponent(
+          formik.values.email
+        )}`
+      );
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
       email: "",
     },
     validationSchema: forgotPasswordSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      mutate(values);
+    },
   });
 
   return (
-    <div className="h-screen bg-[#F9FAFC] py-8 pr-[21px] flex">
-      <div className="pt-20 w-[30%] mx-[55px]">
-        <Image src="/images/logo.png" width={129} height={44} alt="logo" />
+    <div className="min-h-screen bg-white-500 py-8 pr-5 flex">
+      <div className="pt-20 w-[30%] mx-14">
+        <Image src="/images/logo.svg" width={129} height={33} alt="logo" />
 
-        <div className="max-w-[450px] mt-[68px]">
-          <h1 className={`font-bold text-2xl text-[#232830]`}>
-            Reset Password
-          </h1>
-          <p className="text-[#232830] max-w-[296px] mt-[12px]">
+        <div className="max-w-[450px] mt-16">
+          <h1 className="font-bold text-2xl text-grey">Reset Password</h1>
+          <p className="mt-3 text-grey-900">
             Enter your email address and we'll send you a code to reset your
             password
           </p>
-          <form className="mt-[71px]">
+          <form onSubmit={formik.handleSubmit} className="mt-18">
             <div>
               <Input
-                type="text"
-                placeholder="Email"
+                type="email"
+                placeholder="Email address"
                 onBlur={formik.handleBlur("email")}
                 value={formik.values.email}
                 onChange={formik.handleChange("email")}
@@ -74,24 +73,21 @@ export default function ResetPassword() {
                 <p className="text-xs mt-1 text-error">{formik.errors.email}</p>
               ) : null}
             </div>
-            <div className="mt-[52px]">
-              <Button
-                disabled={!formik.isValid || !formik.dirty || loading}
-                type="submit"
-                onClick={() => formik.handleSubmit()}
-              >
+            <div className="mt-12">
+              <Button disabled={status === "pending"} type="submit">
                 Send code
               </Button>
             </div>
           </form>
-          <p className="text-[#232830] mt-[97px] text-center">
-            <Link href="../" className="font-medium underline text-primary">
-              Return to Login
-            </Link>
-          </p>
+          <Link
+            href={routes.LOGIN}
+            className="mt-24 block w-fit mx-auto text-grey font-medium underline"
+          >
+            Return to Login
+          </Link>
         </div>
-        <p className="absolute bottom-16 left-15 text-[#979797]">
-          © Ductape 2023
+        <p className="absolute bottom-16 left-15 text-grey-200">
+          © Ductape {new Date().getFullYear()}
         </p>
       </div>
 
