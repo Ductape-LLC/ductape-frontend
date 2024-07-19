@@ -1,17 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter } from "next/navigation";
+import { Checkbox } from "antd";
+import { useMutation } from "@tanstack/react-query";
 import Input from "@/components/common/Input";
 import Button from "@/components/common/Button";
-import { Checkbox } from "antd";
 import type { CheckboxChangeEvent } from "antd/es/checkbox";
 import { registerUser } from "@/api/userClient";
+import { routes } from "@/constants/routes";
+import { ApiError } from "@/types/user.types";
 
 interface FormValues {
   firstname: string;
@@ -28,10 +31,6 @@ const signupSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Last name is Required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
-    // .matches(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{6,}$/,
-    //   'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
-    // )
     .required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
@@ -41,33 +40,21 @@ const signupSchema = Yup.object().shape({
 
 export default function SignUp() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    confirmPassword: false,
+  });
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const { firstname, lastname, email, password } = values;
-      const user = {
-        firstname,
-        lastname,
-        email,
-        password,
-      };
-      const response = await registerUser(user);
-      if (response.status === 201) {
-        setLoading(false);
-        const { _id } = response.data.data;
-        router.push("/auth/verify?user_id=" + _id);
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
+  const { mutate, status } = useMutation({
+    mutationFn: registerUser,
+    onSuccess: () => {
+      toast.success("Account created successfully, proceed to login");
+      router.push(routes.LOGIN);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
@@ -79,20 +66,23 @@ export default function SignUp() {
       agreeToTerms: false,
     },
     validationSchema: signupSchema,
-    onSubmit: handleSubmit,
+    onSubmit: (values) => {
+      const { confirmPassword, agreeToTerms, ...payload } = values;
+      mutate(payload);
+    },
   });
 
   return (
-    <div className="bg-[#F9FAFC] py-8 pr-[21px] flex">
-      <div className="pt-20 w-[30%] mx-[55px]">
-        <Image src="/images/logo.png" width={129} height={44} alt="logo" />
+    <div className="min-h-screen bg-white-500 py-8 pr-5 flex">
+      <div className="pt-20 w-[30%] mx-14">
+        <Image src="/images/logo.svg" width={129} height={33} alt="logo" />
 
-        <div className="max-w-[450px] mt-[68px]">
-          <h1 className={`font-bold text-2xl text-[#232830]`}>
+        <div className="max-w-[450px] mt-16">
+          <h1 className="font-bold text-2xl text-grey">
             Long Live the Integrations
           </h1>
-          <p className="text-[#232830]">Let’s get you setup</p>
-          <form className="mt-[51px]">
+          <p className="mt-3 text-grey-900">Let’s get you setup</p>
+          <form onSubmit={formik.handleSubmit} className="mt-12">
             <div>
               <Input
                 type="text"
@@ -134,13 +124,38 @@ export default function SignUp() {
               ) : null}
             </div>
             <div className="mt-6">
-              <Input
-                type="password"
-                placeholder="Password"
-                onBlur={formik.handleBlur("password")}
-                value={formik.values.password}
-                onChange={formik.handleChange("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.password ? "text" : "password"}
+                  placeholder="Password"
+                  onBlur={formik.handleBlur("password")}
+                  value={formik.values.password}
+                  onChange={formik.handleChange("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      password: !showPassword.password,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.password
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.password ? "hide password" : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.password && formik.errors.password ? (
                 <p className="text-xs mt-1 text-error">
                   {formik.errors.password}
@@ -148,13 +163,40 @@ export default function SignUp() {
               ) : null}
             </div>
             <div className="mt-6">
-              <Input
-                type="password"
-                placeholder="Confirm Password"
-                onBlur={formik.handleBlur("confirmPassword")}
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange("confirmPassword")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.confirmPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  onBlur={formik.handleBlur("confirmPassword")}
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      confirmPassword: !showPassword.confirmPassword,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.confirmPassword
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.confirmPassword
+                        ? "hide password"
+                        : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.confirmPassword &&
               formik.errors.confirmPassword ? (
                 <p className="text-xs mt-1 text-error">
@@ -163,58 +205,49 @@ export default function SignUp() {
               ) : null}
             </div>
 
-            <div className="mt-6">
+            <div className="mt-6 flex flex-col items-start">
               <Checkbox
                 value={formik.values.agreeToTerms}
                 name="agreeToTerms"
-                // onChange={formik.handleChange('agreeToTerms')}
                 onChange={(e: CheckboxChangeEvent) => {
                   formik.setFieldValue("agreeToTerms", e.target.checked);
                 }}
+                className="text-grey text-sm font-medium font-sans space-x-2"
               >
-                <p className="text-sm font-medium">
-                  By clicking the “Create Account” button, you agree to
-                  Ductape’s{" "}
-                  <span className="text-[#0052CC] underline">
-                    {" "}
-                    Term of Use{" "}
-                  </span>
-                  and{" "}
-                  <span className="text-[#0052CC] underline">
-                    {" "}
-                    Privacy Policy
-                  </span>
-                </p>
+                By clicking the “Create Account” button, you agree to Ductape’s{" "}
+                <span className="text-blue underline"> Term of Use </span>
+                and <span className="text-blue underline"> Privacy Policy</span>
               </Checkbox>
+              {formik.touched.agreeToTerms && formik.errors.agreeToTerms ? (
+                <p className="text-xs mt-1 text-error">
+                  {formik.errors.agreeToTerms}
+                </p>
+              ) : null}
             </div>
             <div className="mt-[46px]">
-              <Button
-                type="submit"
-                disabled={!formik.isValid || !formik.dirty || loading}
-                onClick={() => formik.handleSubmit()}
-              >
+              <Button type="submit" disabled={status === "pending"}>
                 Create Account
               </Button>
             </div>
           </form>
 
-          <div className="flex items-center mt-[35px]">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="px-3 text-gray-500">OR</span>
-            <hr className="flex-grow border-t border-gray-300" />
+          <div className="flex items-center mt-9">
+            <hr className="flex-grow border-t border-grey-800 opacity-10" />
+            <span className="px-3 text-grey-200 text-sm font-semibold">OR</span>
+            <hr className="flex-grow border-t border-grey-800 opacity-10" />
           </div>
 
-          <div className="flex justify-between items-center mt-[35px]">
-            <button className="text-[#232830] font-sm font-medium h-[41px] px-[21px] rounded bg-white border flex items-center gap-4">
+          <div className="flex gap-4 items-center mt-9">
+            <button className="text-grey text-sm font-medium h-10 px-5 rounded bg-white border flex items-center justify-center gap-6 grow">
               <Image
                 src="/images/google.svg"
                 width={20}
                 height={20}
                 alt="google"
               />{" "}
-              continue with google
+              Continue with Google
             </button>
-            <button className="h-[41px] px-[21px] rounded bg-white border">
+            <button className="h-10 px-5 rounded bg-white border">
               <Image
                 src="/images/github.svg"
                 width={20}
@@ -222,7 +255,7 @@ export default function SignUp() {
                 alt="github"
               />
             </button>
-            <button className="h-[41px] px-[21px] rounded bg-white border">
+            <button className="h-10 px-5 rounded bg-white border">
               <Image
                 src="/images/linkedin.svg"
                 width={20}
@@ -232,16 +265,19 @@ export default function SignUp() {
             </button>
           </div>
 
-          <p className="text-[#232830] mt-[95px] text-center">
+          <p className="text-grey mt-24 text-center">
             Already have an account?{" "}
-            <Link href="../" className="font-bold underline text-primary">
+            <Link
+              href={routes.LOGIN}
+              className="font-bold underline text-primary"
+            >
               Login
             </Link>
           </p>
         </div>
-        {/* <p className="absolute bottom-16 left-15 text-[#979797]">
-          © Ductape 2023
-        </p> */}
+        <p className="absolute bottom-16 left-15 text-grey-200">
+          © Ductape {new Date().getFullYear()}
+        </p>
       </div>
 
       <div className="pt-[93px] bg-white rounded-[10px] px-[51px] flex-1">
