@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -32,6 +33,7 @@ const loginSchema = Yup.object().shape({
 export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, status } = useMutation({
     mutationFn: loginUser,
@@ -92,13 +94,29 @@ export default function Login() {
               ) : null}
             </div>
             <div className="mt-8">
-              <Input
-                type="password"
-                placeholder="Password"
-                onBlur={formik.handleBlur("password")}
-                value={formik.values.password}
-                onChange={formik.handleChange("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  onBlur={formik.handleBlur("password")}
+                  value={formik.values.password}
+                  onChange={formik.handleChange("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword ? "/images/eye-off.svg" : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={showPassword ? "hide password" : "show password"}
+                  />
+                </button>
+              </div>
               {formik.touched.password && formik.errors.password ? (
                 <p className="text-xs mt-1 text-error">
                   {formik.errors.password}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
@@ -35,6 +36,10 @@ export default function ResetPassword({
 }) {
   const router = useRouter();
   const { email } = searchParams as { email: string };
+  const [showPassword, setShowPassword] = useState({
+    newPassword: false,
+    confirmPassword: false,
+  });
 
   const { mutate, status } = useMutation({
     mutationFn: changePasswordUser,
@@ -86,13 +91,40 @@ export default function ResetPassword({
               ) : null}
             </div>
             <div className="mt-8">
-              <Input
-                type="password"
-                placeholder="New Password"
-                onBlur={formik.handleBlur("newPassword")}
-                value={formik.values.newPassword}
-                onChange={formik.handleChange("newPassword")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.newPassword ? "text" : "password"}
+                  placeholder="New Password"
+                  onBlur={formik.handleBlur("newPassword")}
+                  value={formik.values.newPassword}
+                  onChange={formik.handleChange("newPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      newPassword: !showPassword.newPassword,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.newPassword
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.newPassword
+                        ? "hide password"
+                        : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.newPassword && formik.errors.newPassword ? (
                 <p className="text-xs mt-1 text-error">
                   {formik.errors.newPassword}
@@ -100,13 +132,40 @@ export default function ResetPassword({
               ) : null}
             </div>
             <div className="mt-8">
-              <Input
-                type="password"
-                placeholder="Confirm Password"
-                onBlur={formik.handleBlur("confirmPassword")}
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange("confirmPassword")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.confirmPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  onBlur={formik.handleBlur("confirmPassword")}
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      confirmPassword: !showPassword.confirmPassword,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.confirmPassword
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.confirmPassword
+                        ? "hide password"
+                        : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.confirmPassword &&
               formik.errors.confirmPassword ? (
                 <p className="text-xs mt-1 text-error">

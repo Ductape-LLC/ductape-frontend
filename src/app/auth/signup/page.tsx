@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,6 +40,10 @@ const signupSchema = Yup.object().shape({
 
 export default function SignUp() {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    confirmPassword: false,
+  });
 
   const { mutate, status } = useMutation({
     mutationFn: registerUser,
@@ -119,13 +124,38 @@ export default function SignUp() {
               ) : null}
             </div>
             <div className="mt-6">
-              <Input
-                type="password"
-                placeholder="Password"
-                onBlur={formik.handleBlur("password")}
-                value={formik.values.password}
-                onChange={formik.handleChange("password")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.password ? "text" : "password"}
+                  placeholder="Password"
+                  onBlur={formik.handleBlur("password")}
+                  value={formik.values.password}
+                  onChange={formik.handleChange("password")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      password: !showPassword.password,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.password
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.password ? "hide password" : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.password && formik.errors.password ? (
                 <p className="text-xs mt-1 text-error">
                   {formik.errors.password}
@@ -133,13 +163,40 @@ export default function SignUp() {
               ) : null}
             </div>
             <div className="mt-6">
-              <Input
-                type="password"
-                placeholder="Confirm Password"
-                onBlur={formik.handleBlur("confirmPassword")}
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange("confirmPassword")}
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword.confirmPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  onBlur={formik.handleBlur("confirmPassword")}
+                  value={formik.values.confirmPassword}
+                  onChange={formik.handleChange("confirmPassword")}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowPassword({
+                      ...showPassword,
+                      confirmPassword: !showPassword.confirmPassword,
+                    });
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                >
+                  <Image
+                    src={
+                      showPassword.confirmPassword
+                        ? "/images/eye-off.svg"
+                        : "/images/eye.svg"
+                    }
+                    width={22}
+                    height={22}
+                    alt={
+                      showPassword.confirmPassword
+                        ? "hide password"
+                        : "show password"
+                    }
+                  />
+                </button>
+              </div>
               {formik.touched.confirmPassword &&
               formik.errors.confirmPassword ? (
                 <p className="text-xs mt-1 text-error">

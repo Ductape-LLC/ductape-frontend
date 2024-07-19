@@ -10,7 +10,7 @@ export default function ExtendedInput({
 }: ExtendedInputProps) {
   return (
     <input
-      className={`h-10 bg-white border rounded w-full p-3 text-sm text-grey ${className}`}
+      className={`h-10 bg-white border rounded w-full p-3 text-sm text-grey font-semibold placeholder:text-grey-200 placeholder:font-medium ${className}`}
       {...inputProps}
     />
   );
