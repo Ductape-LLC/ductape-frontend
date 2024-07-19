@@ -41,7 +41,7 @@ export default function DashboardLayout({
         <Tabs activeTab={activeTab} />
       </div>
 
-      <div className="bg-[#F7F8FA] mt-36">{children}</div>
+      <div className="bg-white-500 min-h-screen mt-36">{children}</div>
     </>
   );
 }

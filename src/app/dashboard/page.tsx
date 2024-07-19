@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { Modal } from "antd";
-import Dashboard_layout from "@/components/layouts/dashboard-layout";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import Input from "@/components/common/Input";
@@ -12,10 +12,26 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+// import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { createWorkspace } from "@/api/workspaceClient";
 import { setShowCreateWorkspaceModal } from "@/redux/slice/workspaceSlice";
 import { useWorkspaces } from "@/hooks/useWorkspaces";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { TrendingUp } from "lucide-react";
 
 const data = [
   {
@@ -61,6 +77,32 @@ const data = [
     amt: 2100,
   },
 ];
+
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+  { month: "July", desktop: 273, mobile: 180 },
+  { month: "August", desktop: 273, mobile: 180 },
+  { month: "September", desktop: 273, mobile: 180 },
+  { month: "October", desktop: 273, mobile: 180 },
+  { month: "November", desktop: 273, mobile: 180 },
+  { month: "December", desktop: 273, mobile: 180 },
+];
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "#5243AA",
+  },
+  mobile: {
+    label: "Mobile",
+    color: "#00875A",
+  },
+} satisfies ChartConfig;
 
 interface FormValues {
   name: string;
@@ -122,8 +164,8 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <Dashboard_layout activeTab="Dashboard">
-      <div className="w-screen">
+    <DashboardLayout activeTab="Dashboard">
+      <div>
         <div className="px-20 pt-[47px] border-b flex flex-col justify-between h-[237px] bg-white">
           <div>
             <p className="font-semibold text-[#979797]">
@@ -138,31 +180,37 @@ export default function Dashboard() {
             </p>
           </div>
 
-          <div className="flex justify-between items-center mt-[68px] gap-4">
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">APPS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+          <div className="grid grid-cols-4 mt-16 gap-14">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">APPS</p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.apps.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">INTEGRATIONS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">
+                INTEGRATIONS
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.integrations.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">Inbound Requests</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">
+                Inbound Requests
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.inbound_requests.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">Outbount Request</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">
+                Outbount Request
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.outbound_requests.toLocaleString()}
               </h1>
             </div>
@@ -170,90 +218,111 @@ export default function Dashboard() {
         </div>
 
         <div className="px-20 pt-[106px]">
-          <div className="flex items-center gap-[57px]">
-            <div className="flex-1 border bg-white rounded">
-              <div className="px-[30px] py-6 border-b">
-                <h2 className="text-[#232830] text-2xl font-bold">
-                  Request Overtime
-                </h2>
-                <p className="text-[#979797]">
+          <div className="flex items-center gap-14 basis-full">
+            <Card className="basis-[64%]">
+              <CardHeader>
+                <CardTitle className="font-bold">Requests Overtime</CardTitle>
+                <CardDescription className="text-base text-grey-200">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Some
                   text content here
-                </p>
-              </div>
-
-              <div className="h-96 py-6">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
+                </CardDescription>
+              </CardHeader>
+              <div className="mb-6 w-full bg-white-400 h-[1px]" />
+              <CardContent>
+                <ChartContainer config={chartConfig} className="h-80 w-full">
+                  <AreaChart
+                    accessibilityLayer
+                    data={chartData}
                     margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
+                      left: 12,
+                      right: 12,
                     }}
                   >
-                    {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    {/* <Tooltip />
-                    <Legend /> */}
-                    <Line
-                      type="monotone"
-                      dataKey="pv"
-                      activeDot={{ r: 8 }}
-                      strokeWidth={3}
-                      stroke="#5243AA"
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tickFormatter={(value) => value.slice(0, 3)}
+                      fontSize={16}
+                      fontWeight={600}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="uv"
-                      stroke="#00875A"
-                      strokeWidth={3}
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tickFormatter={(value) => `${value}`}
+                      fontSize={14}
+                      fontWeight={500}
                     />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="w-[35%] border bg-white rounded">
-              <div className="px-[30px] py-6 border-b">
-                <h2 className="text-[#232830] text-2xl font-bold">
-                  Integrations
-                </h2>
-                <p className="text-[#979797]">
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="dot" />}
+                    />
+                    <Area
+                      dataKey="mobile"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-mobile)"
+                      stackId="a"
+                      strokeWidth={4}
+                    />
+                    <Area
+                      dataKey="desktop"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-desktop)"
+                      stackId="a"
+                      strokeWidth={4}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+            <Card className="basis-[36%]">
+              <CardHeader>
+                <CardTitle className="font-bold">Integrations</CardTitle>
+                <CardDescription className="text-base text-grey-200">
                   Lorem ipsum dolor sit amet, consectetur.
-                </p>
-              </div>
-
-              <div className="h-96 py-6">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
+                </CardDescription>
+              </CardHeader>
+              <div className="mb-6 w-full bg-white-400 h-[1px]" />
+              <CardContent>
+                <ChartContainer config={chartConfig} className="h-80 w-full">
+                  <AreaChart
+                    accessibilityLayer
+                    data={chartData}
                     margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
+                      left: 12,
+                      right: 12,
                     }}
                   >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Line
-                      type="monotone"
-                      dataKey="pv"
-                      stroke="#5243AA"
-                      strokeWidth={3}
-                      activeDot={{ r: 8 }}
+                    <CartesianGrid vertical={false} />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="dot" />}
                     />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+                    <Area
+                      dataKey="mobile"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-mobile)"
+                      stackId="a"
+                      strokeWidth={4}
+                    />
+                    <Area
+                      dataKey="desktop"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-desktop)"
+                      stackId="a"
+                      strokeWidth={4}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
@@ -309,6 +378,6 @@ export default function Dashboard() {
         </Modal>
         <div className="h-20" />
       </div>
-    </Dashboard_layout>
+    </DashboardLayout>
   );
 }

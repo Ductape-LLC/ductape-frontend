@@ -17,6 +17,15 @@ import {
   changeDefaultWorkspace,
 } from "@/api/workspaceClient";
 import toast from "react-hot-toast";
+import { ChevronDownIc } from "@/components/icons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const { Option } = Select;
 
@@ -108,9 +117,10 @@ const Header = () => {
 
         <Select
           defaultValue={defaultWorkspace?.workspace_name}
+          suffixIcon={<ChevronDownIc />}
           // onChange={handleChange}
           style={{ width: 180 }}
-          className="ml-[147px]"
+          className="ml-36 h-9"
           dropdownStyle={{ minWidth: 180 }}
           onChange={handleChange}
           dropdownRender={(menu) => (
@@ -120,7 +130,7 @@ const Header = () => {
                 className="flex items-center justify-between px-1 py-2 cursor-pointer"
                 onClick={() => dispatch(setShowCreateWorkspaceModal(true))}
               >
-                <p className="text-[#0846A6] flex items-center gap-2 text-sm">
+                <p className="text-primary flex items-center gap-2 text-sm">
                   <PlusOutlined />
                   Add a new workspace
                 </p>
@@ -148,23 +158,29 @@ const Header = () => {
         </Select>
       </div>
 
-      <div className="flex items-center gap-8">
-        <Link href="" className="text-[#232830] font-semibold">
-          Doc
-        </Link>
-        <Link href="" className="text-[#232830] font-semibold">
-          Support
-        </Link>
+      <div className="flex items-center gap-16">
+        <div className="flex items-center gap-9">
+          <Link href="" className="text-grey font-semibold">
+            Docs
+          </Link>
+          <Link href="" className="text-grey font-semibold">
+            Support
+          </Link>
+        </div>
         <Image src="/images/Bell.svg" width={32} height={32} alt="bell" />
-        <Button
-          icon={
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex gap-5 bg-primary text-white font-semibold px-5 h-9 items-center rounded shadow-[2px_4px_16px_4px_hsla(0,0%,0%,0.25)] outline outline-1 outline-primary">
             <Image src="/images/user.svg" height={20} width={20} alt="user" />
-          }
-          className="bg-[#0846A6] text-white font-semibold flex items-center outline-none"
-          onClick={handleLogout}
-        >
-          {`${user?.firstname} . ${user?.lastname.charAt().toUpperCase()}`}
-        </Button>
+            <span>
+              {`${user?.firstname} ${user?.lastname.charAt().toUpperCase()}.`}
+            </span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[136px]">
+            <DropdownMenuItem className="font-medium" onClick={handleLogout}>
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
