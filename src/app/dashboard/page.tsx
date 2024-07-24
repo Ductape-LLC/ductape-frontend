@@ -2,69 +2,73 @@
 
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { Modal } from "antd";
-import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import Input from "@/components/common/Input";
-import Button from "@/components/common/Button";
 import toast from "react-hot-toast";
-import Link from "next/link";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { createWorkspace } from "@/api/workspaceClient";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import DashboardLayout from "@/components/layouts/dashboard-layout";
+import Input from "@/components/common/Input";
+import Button from "@/components/common/Button";
+import { createWorkspace, fetchWorkspaceStats } from "@/api/workspaceClient";
 import { setShowCreateWorkspaceModal } from "@/redux/slice/workspaceSlice";
 import { useWorkspaces } from "@/hooks/useWorkspaces";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { ApiError } from "@/types/user.types";
 
-const data = [
-  {
-    name: "Page A",
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: "Page B",
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: "Page C",
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: "Page D",
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: "Page E",
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: "Page F",
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
+
+const chartConfig = {
+  success: {
+    label: "Success",
+    color: "#00875A",
+  },
+  failed: {
+    label: "Failed",
+    color: "#5243AA",
+  },
+  requests: {
+    label: "Requests",
+    color: "#5243AA",
+  },
+} satisfies ChartConfig;
 
 interface FormValues {
   name: string;
 }
+
+const roundUpToMultiple = (value: number, multiple: number) => {
+  return Math.ceil(value / multiple) * multiple;
+};
 
 const createWorkSpaceSchema = Yup.object().shape({
   name: Yup.string().required("Workspace name is required"),
@@ -73,46 +77,71 @@ const createWorkSpaceSchema = Yup.object().shape({
 export default function Dashboard() {
   const dispatch = useDispatch();
   const { fetchAndSaveWorkSacpes } = useWorkspaces();
-  const {
-    workspaces,
-    defaultWorkspace,
-    workspaceStats,
-    showCreateWorkspaceModal,
-  } = useSelector((state: any) => state.workspace);
+  const [showModal, setShowModal] = useState(false);
+  const { workspaces, defaultWorkspace, workspaceStats } = useSelector(
+    (state: any) => state.workspace
+  );
   const { token, public_key, user } = useSelector((state: any) => state.user);
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: FormValues, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const data = {
-        name: values.name,
+  const { data } = useQuery({
+    queryKey: ["workspaceStats"],
+    queryFn: () => fetchWorkspaceStats(token, defaultWorkspace._id, public_key),
+    enabled: !!defaultWorkspace,
+  });
+
+  const requestHistory = data?.data?.data?.requests_history;
+  const integrationHistory = data?.data?.data?.integration_history;
+
+  const requestHistoryChartData =
+    requestHistory?.map(
+      (item: { month: number; success: number; failed: number }) => ({
+        month: monthNames[item.month - 1],
+        Success: item.success,
+        Failed: item.failed,
+      })
+    ) || [];
+
+  const integrationChartData =
+    integrationHistory?.map((item: { month: number; requests: number }) => ({
+      month: monthNames[item.month - 1],
+      Requests: item.requests,
+    })) || [];
+
+  const maxRequestHistorySuccess = Math.max(
+    ...requestHistoryChartData.map((item: { Success: number }) => item.Success)
+  );
+  const maxRequestHistoryFailed = Math.max(
+    ...requestHistoryChartData.map((item: { Failed: number }) => item.Failed)
+  );
+  const maxValue = Math.max(maxRequestHistorySuccess, maxRequestHistoryFailed);
+
+  const yAxisMax = roundUpToMultiple(maxValue, 3000);
+
+  const { mutate, status } = useMutation({
+    mutationFn: () =>
+      createWorkspace(token, {
+        name: formik.values.name,
         public_key,
         user_id: user._id,
-      };
-      const response = await createWorkspace(token, data);
-      if (response.status === 201) {
-        setLoading(false);
-        toast.success("Workspace created successful");
-        fetchAndSaveWorkSacpes();
-        dispatch(setShowCreateWorkspaceModal(false));
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
-    }
-  };
+      }),
+    onSuccess: () => {
+      toast.success("Workspace created successful");
+      setShowModal(false);
+      fetchAndSaveWorkSacpes();
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
       name: "",
     },
     validationSchema: createWorkSpaceSchema,
-    onSubmit: handleSubmit,
+    onSubmit: () => {
+      mutate();
+    },
   });
 
   useEffect(() => {
@@ -122,47 +151,53 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <Dashboard_layout activeTab="Dashboard">
-      <div className="w-screen">
-        <div className="px-20 pt-[47px] border-b flex flex-col justify-between h-[237px] bg-white">
+    <DashboardLayout activeTab="Dashboard">
+      <div>
+        <div className="px-20 pt-12 border-b flex flex-col justify-between h-[237px] bg-white">
           <div>
-            <p className="font-semibold text-[#979797]">
+            <p className="font-semibold text-grey-200">
               Dashboard /{" "}
-              <span className="text-[#232830]">
+              <span className="text-grey">
                 {moment().format("dddd D MMMM, YYYY")}
               </span>
             </p>
-            <p className="text-[28px] text-[#232830]">
+            <p className="text-[1.75rem] text-grey">
               Welcome Back,{" "}
               <span className="font-semibold">{user?.firstname}</span>
             </p>
           </div>
 
-          <div className="flex justify-between items-center mt-[68px] gap-4">
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">APPS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+          <div className="grid grid-cols-4 mt-16 gap-14">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">APPS</p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.apps.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">INTEGRATIONS</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">
+                INTEGRATIONS
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.integrations.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">Inbound Requests</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase text-">
+                Inbound Requests
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.inbound_requests.toLocaleString()}
               </h1>
             </div>
 
-            <div className="border w-[280px] h-[110px] px-[22px] pt-[18px] pb-7 rounded-[5px] bg-white">
-              <p className="text-[#78797A] text-sm">Outbount Request</p>
-              <h1 className="text-[#232830] font-bold text-3xl mt-2">
+            <div className="border h-[110px] px-5 pt-4 pb-7 rounded bg-white">
+              <p className="text-grey-900 font-bold text-sm uppercase">
+                Outbount Request
+              </p>
+              <h1 className="text-grey font-bold text-3xl mt-2">
                 {workspaceStats.outbound_requests.toLocaleString()}
               </h1>
             </div>
@@ -170,110 +205,131 @@ export default function Dashboard() {
         </div>
 
         <div className="px-20 pt-[106px]">
-          <div className="flex items-center gap-[57px]">
-            <div className="flex-1 border bg-white rounded">
-              <div className="px-[30px] py-6 border-b">
-                <h2 className="text-[#232830] text-2xl font-bold">
-                  Request Overtime
-                </h2>
-                <p className="text-[#979797]">
+          <div className="flex items-center gap-14 basis-full">
+            <Card className="basis-[64%]">
+              <CardHeader>
+                <CardTitle className="font-bold">Requests Overtime</CardTitle>
+                <CardDescription className="text-base text-grey-200">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Some
                   text content here
-                </p>
-              </div>
-
-              <div className="h-96 py-6">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
+                </CardDescription>
+              </CardHeader>
+              <div className="mb-6 w-full bg-white-400 h-[1px]" />
+              <CardContent>
+                <ChartContainer config={chartConfig} className="h-80 w-full">
+                  <AreaChart
+                    accessibilityLayer
+                    data={requestHistoryChartData}
                     margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
+                      left: 12,
+                      right: 12,
                     }}
                   >
-                    {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    {/* <Tooltip />
-                    <Legend /> */}
-                    <Line
-                      type="monotone"
-                      dataKey="pv"
-                      activeDot={{ r: 8 }}
-                      strokeWidth={3}
-                      stroke="#5243AA"
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tickFormatter={(value) => value.slice(0, 3)}
+                      fontSize={16}
+                      fontWeight={600}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="uv"
-                      stroke="#00875A"
-                      strokeWidth={3}
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      fontSize={16}
+                      fontWeight={600}
+                      domain={[0, yAxisMax]}
                     />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="w-[35%] border bg-white rounded">
-              <div className="px-[30px] py-6 border-b">
-                <h2 className="text-[#232830] text-2xl font-bold">
-                  Integrations
-                </h2>
-                <p className="text-[#979797]">
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="dot" />}
+                    />
+                    <Area
+                      dataKey="Success"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-success)"
+                      stackId="success"
+                      strokeWidth={4}
+                    />
+                    <Area
+                      dataKey="Failed"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-failed)"
+                      stackId="failed"
+                      strokeWidth={4}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+            <Card className="basis-[36%]">
+              <CardHeader>
+                <CardTitle className="font-bold">Integrations</CardTitle>
+                <CardDescription className="text-base text-grey-200">
                   Lorem ipsum dolor sit amet, consectetur.
-                </p>
-              </div>
-
-              <div className="h-96 py-6">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
+                </CardDescription>
+              </CardHeader>
+              <div className="mb-6 w-full bg-white-400 h-[1px]" />
+              <CardContent>
+                <ChartContainer config={chartConfig} className="h-80 w-full">
+                  <AreaChart
+                    accessibilityLayer
+                    data={integrationChartData}
                     margin={{
-                      top: 5,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
+                      left: 12,
+                      right: 12,
                     }}
                   >
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Line
-                      type="monotone"
-                      dataKey="pv"
-                      stroke="#5243AA"
-                      strokeWidth={3}
-                      activeDot={{ r: 8 }}
+                    <CartesianGrid vertical={false} />
+                    <ChartTooltip
+                      cursor={false}
+                      content={<ChartTooltipContent indicator="dot" />}
                     />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
+                    <XAxis
+                      dataKey="month"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      tickFormatter={(value) => value.slice(0, 3)}
+                      fontSize={16}
+                      fontWeight={600}
+                      height={0}
+                    />
+                    <Area
+                      dataKey="Requests"
+                      type="natural"
+                      fill="transparent"
+                      stroke="var(--color-requests)"
+                      stackId="a"
+                      strokeWidth={4}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         <Modal
-          open={false}
+          open={workspaces.length === 0 || showModal}
           width="50%"
           className="rounded-none"
           cancelButtonProps={{ style: { display: "none" } }}
           okButtonProps={{ style: { display: "none" } }}
-          onCancel={() => dispatch(setShowCreateWorkspaceModal(false))}
+          onCancel={() => setShowModal(false)}
         >
           <div className="py-14 px-12">
-            <h1 className="text-[#232830] text-2xl font-bold">
-              Welcome to Ductape
-            </h1>
-            <p className="text-[#232830] mt-3 max-w-[482px] text-base">
+            <h1 className="text-grey text-2xl font-bold">Welcome to Ductape</h1>
+            <p className="text-grey mt-3 max-w-[482px] text-base">
               To get started, you need to create a workspace or join an existing
               workspace.
             </p>
-            <form className="mt-[49px]">
+            <form className="mt-12" onSubmit={formik.handleSubmit}>
               <div>
                 <Input
                   placeholder="Workspace Name"
@@ -287,12 +343,8 @@ export default function Dashboard() {
                   </p>
                 ) : null}
               </div>
-              <div className="mt-[35px]">
-                <Button
-                  disabled={!formik.isValid || !formik.dirty || loading}
-                  type="submit"
-                  onClick={() => formik.handleSubmit()}
-                >
+              <div className="mt-9">
+                <Button disabled={status === "pending"} type="submit">
                   Create Workspace
                 </Button>
               </div>
@@ -309,6 +361,6 @@ export default function Dashboard() {
         </Modal>
         <div className="h-20" />
       </div>
-    </Dashboard_layout>
+    </DashboardLayout>
   );
 }

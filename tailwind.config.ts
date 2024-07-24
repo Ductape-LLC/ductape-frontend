@@ -69,6 +69,7 @@ const config = {
         white: {
           DEFAULT: "hsl(var(--white))",
           500: "hsl(var(--white-500))",
+          400: "hsl(var(--white-400))",
         },
       },
       fontFamily: {
