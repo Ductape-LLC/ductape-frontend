@@ -35,7 +35,11 @@ const applicationConstantSchema = Yup.object().shape({
   type: Yup.string().required("Required"),
 });
 
-export default function Constants() {
+export default function Constants({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -157,7 +161,7 @@ export default function Constants() {
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Application Constants">
+      <Apps_Layout activeAppTab="Application Constants" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
             <h1 className="text-[#232830] font-bold text-3xl">

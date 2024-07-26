@@ -9,12 +9,16 @@ import { UploadOutlined } from "@ant-design/icons";
 import Button from "@/components/common/Button";
 import Select from "@/components/common/Select";
 
-export default function Publish() {
+export default function Publish({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const [showModal, setShowModal] = useState(true);
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Publish">
+      <Apps_Layout activeAppTab="Publish" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">
             <h1 className="text-[#232830] font-bold text-3xl">Publish</h1>

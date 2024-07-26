@@ -14,6 +14,7 @@ import {
   APP_FETCH_VARIABLES,
   APP_UPDATE_VARIABLES,
   APP_DELETE_VARIABLES,
+  APP_FETCH_TAGS,
 } from "./urls";
 import { Parameterize } from "../../utils";
 
@@ -50,7 +51,7 @@ type CREATE_APP = {
 export const createApp = async (token: string, payload: CREATE_APP) => {
   try {
     return await appsClient(token, "application/json").post(
-      APPS_CREATE_URL + `/?public_key=${payload.public_key}`,
+      APPS_CREATE_URL,
       payload
     );
   } catch (e) {
@@ -60,25 +61,30 @@ export const createApp = async (token: string, payload: CREATE_APP) => {
 
 export const fetchApps = async (
   token: string,
-  data: { workspace_id: string; status: string },
+  data: { workspace_id: string; status: string; user_id: string },
   public_key: string
 ) => {
   try {
     return await appsClient(token, "application/json").get(
       APPS_FETCH_URL +
-        `/${data.workspace_id}/${data.status}/?public_key=${public_key}`
+        `/${data.workspace_id}/${data.status}/?public_key=${public_key}&user_id=${data.user_id}`
     );
   } catch (e) {
     throw e;
   }
 };
 
-export const fetchApp = async (
-  token: string,
-  app_id: string,
-  user_id: string,
-  public_key: string
-) => {
+export const fetchApp = async ({
+  token,
+  app_id,
+  user_id,
+  public_key,
+}: {
+  token: string;
+  app_id: string;
+  user_id: string;
+  public_key: string;
+}) => {
   const URL = Parameterize(APP_FETCH_URL, ":app_id", app_id);
   try {
     return await appsClient(token, "application/json").get(
@@ -86,6 +92,21 @@ export const fetchApp = async (
     );
   } catch (e) {
     throw e;
+  }
+};
+
+export const fetchAppByTag = async (token: string, tag: string) => {
+  try {
+    return await appsClient(token, "application/json").get(
+      APP_FETCH_TAGS + `?tag=${tag}`
+    );
+  } catch (e: any) {
+    // Interpreting the response as "tag doesn't exist" if "App not found" error occurs
+    if (e.response?.data?.errors === "App not found") {
+      return null;
+    } else {
+      throw e;
+    }
   }
 };
 
@@ -206,12 +227,17 @@ export const deleteAppVariable = async (token: string, payload: any) => {
   }
 };
 
-export const fetchAppVariable = async (
-  token: string,
-  app_id: string,
-  user_id: string,
-  public_key: string
-) => {
+export const fetchAppVariable = async ({
+  token,
+  app_id,
+  user_id,
+  public_key,
+}: {
+  token: string;
+  app_id: string;
+  user_id: string;
+  public_key: string;
+}) => {
   const URL = Parameterize(APP_FETCH_VARIABLES, ":app_id", app_id);
 
   try {

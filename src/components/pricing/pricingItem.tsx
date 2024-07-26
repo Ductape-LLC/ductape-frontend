@@ -1,12 +1,12 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import React from "react";
+import { useRouter } from "next/navigation";
 
 const PricingItem = () => {
   const router = useRouter();
 
   return (
     <div
-      onClick={() => router.push('/apps/pricing/details')}
+      onClick={() => router.push("/apps/pricing/details")}
       className="border rounded bg-white h-[110px] flex items-center px-7 justify-between cursor-pointer"
     >
       <p className="font-bold text-lg">Starter</p>

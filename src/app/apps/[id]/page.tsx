@@ -18,8 +18,9 @@ import {
 } from "recharts";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import { useApps } from "@/hooks/useApps";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { fetchApp } from "@/api/appsClient";
 
 const data = [
   {
@@ -66,19 +67,35 @@ const data = [
   },
 ];
 
-export default function App() {
+export default function App({ params: { id } }: { params: { id: string } }) {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(true);
-  const { app, fetchAndSaveApp } = useApps();
-  const { id } = router.query;
+  const { token, public_key, user } = useSelector((state: any) => state.user);
 
-  useEffect(() => {
-    fetchAndSaveApp(String(id));
-  }, []);
+  const [showModal, setShowModal] = useState(true);
+
+  const payload = {
+    token,
+    app_id: id,
+    user_id: user?._id,
+    public_key,
+  };
+
+  const { data: appData, status: appLoadingStatus } = useQuery({
+    queryKey: ["app", id],
+    queryFn: () => fetchApp(payload),
+  });
+
+  if (appLoadingStatus === "pending") {
+    return <p>Loading...</p>;
+  }
+
+  const app = appData?.data?.data;
+
+  console.log(app, "app");
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="My App">
+      <Apps_Layout activeAppTab="My App" id={id}>
         <div>
           <div className="px-16 pt-8 h-[170px] border-b bg-white">
             <div className="flex items-center gap-3">

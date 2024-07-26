@@ -3,6 +3,7 @@ export const APPS_BASE_URL =
 export const APPS_CREATE_URL = "/apps/v1/create";
 export const APPS_FETCH_URL = "/apps/v1/workspace";
 export const APP_FETCH_URL = "/apps/v1/:app_id";
+export const APP_FETCH_TAGS = "/apps/v1/fetch/tag";
 export const APP_SETUP_FETCH = "/apps/v1/setup/:app_id";
 export const APP_SETUP_ENV_FETCH = "/apps/v1/setup/:app_id/:env_id";
 export const APP_CREATE_CONSTANTS = "/apps/v1/constants";

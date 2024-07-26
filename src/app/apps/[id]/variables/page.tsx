@@ -18,6 +18,7 @@ import {
   deleteAppVariable,
 } from "@/api/appsClient";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 const { TextArea } = Input;
 
@@ -39,7 +40,11 @@ const applicationVariableSchema = Yup.object().shape({
   required: Yup.boolean().required("Required"),
 });
 
-export default function Variables() {
+export default function Variables({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +53,18 @@ export default function Variables() {
   const { app } = useSelector((state: any) => state.app);
   const [actionType, setActionType] = useState("create");
   const [variableId, setVariableId] = useState("");
+
+  const payload = {
+    token,
+    app_id: id,
+    user_id: user?._id,
+    public_key,
+  };
+
+  const { data: appData, status: appVariableLoadingStatus } = useQuery({
+    queryKey: ["app-variable", id],
+    queryFn: () => fetchAppVariable(payload),
+  });
 
   const handleSubmit = async (values: VariableProps, submitProps: any) => {
     try {
@@ -66,7 +83,6 @@ export default function Variables() {
           setShowModal(false);
           toast.success("Application variable created successfully");
           submitProps.resetForm();
-          fetchVariables();
         }
       } else {
         const response = await updateAppVariable(token, {
@@ -77,7 +93,6 @@ export default function Variables() {
           setShowModal(false);
           toast.success("Application variable updated successfully");
           submitProps.resetForm();
-          fetchVariables();
         }
       }
     } catch (error: any) {
@@ -99,7 +114,6 @@ export default function Variables() {
       if (response.status === 200) {
         setShowModal(false);
         toast.success("Application variable deleted successfully");
-        fetchVariables();
       }
     } catch (error: any) {
       console.log(error.response);
@@ -120,22 +134,6 @@ export default function Variables() {
     onSubmit: handleSubmit,
   });
 
-  const fetchVariables = async () => {
-    try {
-      const response = await fetchAppVariable(
-        token,
-        app._id,
-        user._id,
-        public_key
-      );
-      if (response.status === 200) {
-        setVariables(response.data.data || []);
-      }
-    } catch (error: any) {
-      toast.error(error.response.data.errors);
-    }
-  };
-
   const openCreateModal = () => {
     setShowModal(true);
     setActionType("create");
@@ -149,13 +147,13 @@ export default function Variables() {
     setVariableId(variable._id);
   };
 
-  useEffect(() => {
-    fetchVariables();
-  }, []);
+  if (appVariableLoadingStatus === "pending") {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Application Variable">
+      <Apps_Layout activeAppTab="Application Variable" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
             <h1 className="text-[#232830] font-bold text-3xl">

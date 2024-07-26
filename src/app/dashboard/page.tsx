@@ -150,6 +150,10 @@ export default function Dashboard() {
     }
   }, []);
 
+  const isWorkspaceEmpty = (workspace: string | any[]): boolean => {
+    return workspace.length === 1 && Object.keys(workspace[0]).length === 0;
+  };
+
   return (
     <DashboardLayout activeTab="Dashboard">
       <div>
@@ -316,7 +320,7 @@ export default function Dashboard() {
         </div>
 
         <Modal
-          open={workspaces.length === 0 || showModal}
+          open={isWorkspaceEmpty(workspaces) || showModal}
           width="50%"
           className="rounded-none"
           cancelButtonProps={{ style: { display: "none" } }}

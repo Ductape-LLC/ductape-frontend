@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button, Modal, Input, Switch, Empty, Spin } from "antd";
+import { useSelector } from "react-redux";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
@@ -13,21 +14,40 @@ import {
 import { useApps } from "@/hooks/useApps";
 import { IAppEnv } from "ductape-sdk/dist/types/appBuilder.types";
 import { Capitalize } from "@/utils";
+import { fetchApp } from "@/api/appsClient";
+import { useQuery } from "@tanstack/react-query";
 
 const { TextArea } = Input;
 
-export default function Environments() {
+export default function Environments({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const [showModal, setShowModal] = useState(false);
-  const { app, fetchAndSaveApp } = useApps();
-  const id = "123";
+  const { token, public_key, user } = useSelector((state: any) => state.user);
 
-  useEffect(() => {
-    fetchAndSaveApp(String(id));
+  const payload = {
+    token,
+    app_id: id,
+    user_id: user?._id,
+    public_key,
+  };
+
+  const { data, status: appLoadingStatus } = useQuery({
+    queryKey: ["app", id],
+    queryFn: () => fetchApp(payload),
   });
+
+  if (appLoadingStatus === "pending") {
+    return <p>Loading...</p>;
+  }
+
+  const app = data?.data?.data;
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Environments">
+      <Apps_Layout activeAppTab="Environments" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
             <h1 className="text-[#232830] font-bold text-3xl">Environments</h1>
@@ -41,7 +61,7 @@ export default function Environments() {
           </div>
 
           <div className="px-16 p-10">
-            {/* <div className="mt-20">
+            <div className="mt-20">
               <h1 className="text-4xl font-bold">
                 You do not have any environments. Create an environment to get
                 started.
@@ -53,7 +73,7 @@ export default function Environments() {
                 <PlusOutlined />
                 New Environment
               </Button>
-            </div> */}
+            </div>
 
             <div>
               {!app ? (

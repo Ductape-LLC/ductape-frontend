@@ -10,13 +10,17 @@ import StepOne from "@/components/pricing/stepOne";
 import StepTwo from "@/components/pricing/stepTwo";
 import PricingItem from "@/components/pricing/pricingItem";
 
-export default function Pricing() {
+export default function Pricing({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Pricing">
+      <Apps_Layout activeAppTab="Pricing" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between ">
             <h1 className="text-[#232830] font-bold text-3xl">Pricing</h1>
@@ -30,7 +34,7 @@ export default function Pricing() {
           </div>
 
           <div className="px-16 p-10">
-            {/* <div className="mt-20">
+            <div className="mt-20">
               <h1 className="text-4xl font-bold">
                 You do not have any pricing plan set. Set a pricing plan to get
                 started.
@@ -42,7 +46,7 @@ export default function Pricing() {
                 <PlusOutlined />
                 New Pricing Plan
               </Button>
-            </div> */}
+            </div>
             <PricingItem />
           </div>
 

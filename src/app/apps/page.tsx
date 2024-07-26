@@ -1,14 +1,9 @@
 "use client";
 
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useMemo, useEffect } from "react";
-import { Modal, Input, Select, Drawer, Empty, Spin } from "antd";
-import CustomInput from "../../components/common/Input";
-import Dashboard_layout from "../../components/layouts/dashboard-layout";
-import Button from "../../components/common/Button";
-import { useFormik } from "formik";
+import React, { useState } from "react";
+import { Modal, Input, Select, Empty, Spin } from "antd";
 import toast from "react-hot-toast";
-import { createApp, fetchApps } from "@/api/appsClient";
+import { useFormik } from "formik";
 import { useSelector } from "react-redux";
 import {
   SettingOutlined,
@@ -16,21 +11,23 @@ import {
   SearchOutlined,
   UnorderedListOutlined,
   AppstoreOutlined,
-  EditOutlined,
   LoadingOutlined,
-  DeleteOutlined,
 } from "@ant-design/icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useDebounceValue } from "usehooks-ts";
+import { createApp, fetchAppByTag, fetchApps } from "@/api/appsClient";
+import CustomInput from "../../components/common/Input";
+import Dashboard_layout from "../../components/layouts/dashboard-layout";
+import Button from "../../components/common/Button";
 import { useWorkspaces } from "@/hooks/useWorkspaces";
 import { createAppSchema } from "@/schemas/app.schemas";
 import { ENV } from "@/types/env.types";
 import { PublicStates } from "ductape-sdk/dist/types/enums";
-import {
-  IApp,
-  ICreateAppBuilder,
-} from "ductape-sdk/dist/types/appBuilder.types";
+import { ICreateAppBuilder } from "ductape-sdk/dist/types/appBuilder.types";
 import ListItems from "@/components/listItems";
 import { Components } from "@/types";
 import WorkspaceEnvsModal from "@/components/workspaceEnvs";
+import { ApiError } from "@/types/user.types";
 
 const { TextArea } = Input;
 
@@ -38,62 +35,41 @@ export default function Apps() {
   const { defaultWorkspace } = useWorkspaces();
   const [showEnvModal, setShowEnvModal] = useState(false);
   const [showCreateAppModal, setShowCreateAppModal] = useState(false);
-  // const { defaultWorkspace } = useSelector((state: any) => state.workspace);
   const { token, public_key, user } = useSelector((state: any) => state.user);
-  const [loading, setLoading] = useState(false);
-  const [loadingData, setLoadingData] = useState(false);
-  const [apps, setApps] = useState<IApp[]>([]);
   const [envs, setEnvs] = useState<ENV[]>(defaultWorkspace?.defaultEnvs || []);
   const [filterName, setFilterName] = useState("");
   const [appsStatus, setAppsStatus] = useState<PublicStates>(PublicStates.ALL);
   const [view, setView] = useState("grid");
+  const queryClient = useQueryClient();
 
-  const fetchAllApps = async () => {
-    try {
-      setLoadingData(true);
-      console.log("DEAFULT WORKSPACE =======>>>>>", defaultWorkspace);
-      const auth = {
-        workspace_id: defaultWorkspace.workspace_id,
-        user_id: user._id,
-        public_key,
+  const { data, status: appsLoadingStatus } = useQuery({
+    queryKey: ["apps", defaultWorkspace?.workspace_id, appsStatus],
+    queryFn: () =>
+      fetchApps(
         token,
-      };
+        {
+          workspace_id: defaultWorkspace.workspace_id,
+          status: appsStatus,
+          user_id: user._id,
+        },
+        public_key
+      ),
+    enabled: !!defaultWorkspace,
+  });
 
-      // const response = await fetchApps(auth, appsStatus);
-      // setLoadingData(false);
-      // if (response) {
-      //   setApps(response);
-      // }
-    } catch (error: any) {
-      setLoadingData(false);
-      toast.error(error);
-    }
+  const apps = data?.data?.data;
+
+  const tagify = (str: string) => {
+    return str?.replace(/[^A-Z0-9]/gi, "_").toLowerCase();
   };
 
-  const handleSubmit = async (values: any, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const auth = {
-        token,
-        public_key,
-        user_id: user._id,
-        workspace_id: defaultWorkspace._id,
-      };
-
-      const response = await createApp(auth.token, values);
-      if (response) {
-        setLoading(false);
-        fetchAllApps();
-        toast.success("Workspace created successful");
-      }
-      setLoading(false);
-      submitProps.resetForm();
-    } catch (error: any) {
-      setLoading(false);
-      toast.error(error.response.data.errors);
+  const handleFormSubmit = async () => {
+    const tagExists = tags !== null;
+    if (tagExists) {
+      toast.error("App name already exists. Please choose a different name.");
+      return;
     }
+    mutate();
   };
 
   const formik = useFormik<ICreateAppBuilder>({
@@ -102,13 +78,45 @@ export default function Apps() {
       description: "",
     },
     validationSchema: createAppSchema,
-    onSubmit: handleSubmit,
+    onSubmit: handleFormSubmit,
   });
 
-  useEffect(() => {
-    if (!defaultWorkspace) return;
-    fetchAllApps();
-  }, [defaultWorkspace, appsStatus]);
+  const appName = formik.values.app_name;
+  const description = formik.values.description;
+
+  const tag = `${tagify(defaultWorkspace?.workspace_name)}:${tagify(appName)}`;
+
+  const payload = {
+    user_id: user?._id,
+    app_name: appName,
+    ...(description && { description }),
+    public_key,
+    tag,
+    workspace_id: defaultWorkspace?.workspace_id,
+  };
+
+  const { mutate, status: creatingApp } = useMutation({
+    mutationFn: () => createApp(token, payload),
+    onSuccess: () => {
+      toast.success("App created successfully");
+      formik.resetForm();
+      queryClient.invalidateQueries({
+        queryKey: ["apps"],
+      });
+      setShowCreateAppModal(false);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
+
+  const [debouncedTag] = useDebounceValue(tag, 500);
+
+  const { data: tags, status: loadingTags } = useQuery({
+    queryKey: ["tags", debouncedTag],
+    queryFn: () => fetchAppByTag(token, debouncedTag),
+    enabled: !!debouncedTag.split(":")[1] && !!formik.values.app_name,
+  });
 
   return (
     <Dashboard_layout activeTab="App">
@@ -188,17 +196,17 @@ export default function Apps() {
             />
           </div>
 
-          {!loadingData && apps.length > 0 ? (
+          {appsLoadingStatus === "success" && apps?.length > 0 ? (
             <div
               className={`mt-[51px] ${
                 view === "grid" && "grid gap-8 md:grid-cols-2 lg:grid-cols-3"
               }`}
             >
               {apps
-                .filter((app) =>
+                ?.filter((app: { app_name: string }) =>
                   app.app_name.toLowerCase().includes(filterName.toLowerCase())
                 )
-                .map((app) => (
+                .map((app: { _id: React.Key }) => (
                   <ListItems
                     key={app._id}
                     data={app}
@@ -207,11 +215,11 @@ export default function Apps() {
                   />
                 ))}
             </div>
-          ) : apps.length === 0 && !loadingData ? (
+          ) : apps?.length === 0 && appsLoadingStatus === "success" ? (
             <div className="mt-[51px]">
               <Empty />
             </div>
-          ) : loadingData ? (
+          ) : appsLoadingStatus === "pending" ? (
             <div className="mt-[51px]">
               <Spin
                 indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
@@ -230,20 +238,20 @@ export default function Apps() {
         cancelButtonProps={{ style: { display: "none" } }}
         okButtonProps={{ style: { display: "none" } }}
         onCancel={() => setShowCreateAppModal(false)}
-        style={{ padding: 0 }}
+        style={{ paddingInline: 0 }}
       >
-        <div>
-          <h1 className="text-[#232830] text-2xl font-bold border-b px-[30px] py-6">
+        <div className="px-3">
+          <h1 className="text-grey text-2xl font-bold py-6 border-b">
             Create App
           </h1>
-          <div className="px-[30px] mt-4 pb-7 border-b">
-            <p className="mt-3 text-sm font-medium tracking-[-0.4px] opacity-90">
+          <div className="mt-4">
+            <p className="mt-3 text-sm font-medium">
               Each app defines its own environments, workflows and rules for
               authorization, authentication and integration. Allowing for secure
               communication between your webservices and integration partners.
             </p>
 
-            <form className="mt-[31px]">
+            <form className="mt-8" onSubmit={formik.handleSubmit}>
               <div>
                 <CustomInput
                   placeholder="App Name"
@@ -262,9 +270,9 @@ export default function Apps() {
                   className="bg-white border rounded w-full p-3 text-sm text-[#232830] mt-6"
                   placeholder="App description"
                   rows={4}
-                  onBlur={formik.handleBlur("app_description")}
+                  onBlur={formik.handleBlur("description")}
                   value={formik.values.description}
-                  onChange={formik.handleChange("app_description")}
+                  onChange={formik.handleChange("description")}
                 />{" "}
                 {formik.touched.description && formik.errors.description ? (
                   <p className="text-xs mt-1 text-error">
@@ -272,28 +280,27 @@ export default function Apps() {
                   </p>
                 ) : null}
               </div>
+              <div className="mt-7 pt-6 flex justify-end gap-5 border-t">
+                <Button
+                  type="button"
+                  onClick={() => setShowCreateAppModal(false)}
+                  className="font-semibold text-xs border  text-[#232830] outline-none h-[33px] rounded px-6 gap-2"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className={`${
+                    creatingApp === "pending" ? "bg-[#D9D9D9]" : "bg-primary"
+                  } text-white font-semibold text-xs outline-none rounded h-[33px] px-6`}
+                  disabled={
+                    creatingApp === "pending" || loadingTags === "pending"
+                  }
+                  type="submit"
+                >
+                  Create
+                </Button>
+              </div>
             </form>
-          </div>
-
-          <div className="px-[30px] py-6 flex justify-end gap-5">
-            <Button
-              onClick={() => setShowCreateAppModal(false)}
-              className="font-semibold text-xs border  text-[#232830] outline-none h-[33px] rounded px-6 gap-2"
-            >
-              Cancel
-            </Button>
-            <Button
-              className={`${
-                !formik.isValid || !formik.dirty || loading
-                  ? "bg-[#D9D9D9]"
-                  : "bg-primary"
-              } text-white font-semibold text-xs outline-none rounded h-[33px] px-6`}
-              disabled={!formik.isValid || !formik.dirty || loading}
-              type="submit"
-              onClick={() => formik.handleSubmit()}
-            >
-              Create
-            </Button>
           </div>
         </div>
       </Modal>
