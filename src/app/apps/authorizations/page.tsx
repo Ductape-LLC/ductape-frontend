@@ -9,13 +9,17 @@ import { PlusOutlined } from "@ant-design/icons";
 import CreateAuthorizationForm from "@/components/authorization/CreateAutorizationForm";
 import AuthorizationItem from "@/components/authorization/AuthorizationItem";
 
-const Pricing = () => {
+export default function Authorizations({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const [showModal, setShowModal] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Authorizations">
+      <Apps_Layout activeAppTab="Authorizations" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between ">
             <h1 className="text-[#232830] font-bold text-3xl">
@@ -65,6 +69,4 @@ const Pricing = () => {
       </Apps_Layout>
     </Dashboard_layout>
   );
-};
-
-export default Pricing;
+}

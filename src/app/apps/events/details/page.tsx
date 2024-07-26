@@ -9,13 +9,17 @@ import CustomSelect from "@/components/common/Select";
 
 const { TextArea } = Input;
 
-const Pricing = () => {
+export default function EventsDetails({
+  params: { id },
+}: {
+  params: { id: string };
+}) {
   const [showModal, setShowModal] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
     <Dashboard_layout activeTab="App">
-      <Apps_Layout activeAppTab="Events">
+      <Apps_Layout activeAppTab="Events" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">
             <h1 className="text-[#232830] font-bold text-3xl">Events</h1>
@@ -119,6 +123,4 @@ const Pricing = () => {
       </Apps_Layout>
     </Dashboard_layout>
   );
-};
-
-export default Pricing;
+}
