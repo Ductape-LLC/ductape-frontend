@@ -11,7 +11,6 @@ import {
   InfoCircleOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
-import { useApps } from "@/hooks/useApps";
 import { IAppEnv } from "ductape-sdk/dist/types/appBuilder.types";
 import { Capitalize } from "@/utils";
 import { fetchApp } from "@/api/appsClient";
