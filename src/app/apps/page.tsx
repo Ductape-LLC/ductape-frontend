@@ -119,7 +119,7 @@ export default function Apps() {
   });
 
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <div className="w-screen h-screen">
         <div className="px-20 border-b h-[115px] flex flex-col justify-center  bg-white">
           <div className="flex justify-between utems-center">
@@ -150,7 +150,7 @@ export default function Apps() {
             <Input
               size="large"
               placeholder="Search"
-              className="bg-white  border rounded w-full px-3 h-11 text-sm text-[#232830] outline-none"
+              className="bg-white  border rounded w-full px-3 h-11 text-sm text-grey outline-none"
               prefix={<SearchOutlined />}
               onChange={(e) => setFilterName(e.target.value)}
             />
@@ -198,8 +198,10 @@ export default function Apps() {
 
           {appsLoadingStatus === "success" && apps?.length > 0 ? (
             <div
-              className={`mt-[51px] ${
-                view === "grid" && "grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+              className={`mt-12 ${
+                view === "grid"
+                  ? "grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+                  : "flex flex-col gap-6"
               }`}
             >
               {apps

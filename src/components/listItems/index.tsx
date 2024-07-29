@@ -1,8 +1,5 @@
-import React from "react";
+import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setApp } from "@/redux/slice/appSlice";
 import { Components } from "@/types";
 
 const ListItems = ({
@@ -14,24 +11,17 @@ const ListItems = ({
   view: string;
   type: string;
 }) => {
-  const dispatch = useDispatch();
-  const router = useRouter();
-
-  const toType = (data: any) => {
-    router.push(`/${type}/${data._id}`);
-  };
-
   if (view === "list") {
     return (
-      <div
+      <Link
+        href={`/${type}/${data._id}`}
         key={data._id}
-        onClick={() => toType(data)}
-        className="flex px-[36px] h-[110px] bg-white border text-[#232830] justify-between items-center rounded-[5px] mb-[25px]"
+        className="flex px-9 h-[110px] bg-white border text-grey justify-between items-center rounded-[5px] hover:shadow-md transition-all"
       >
-        <div className="flex items-center gap-[25px]">
+        <div className="flex items-center gap-6">
           <Image src="/images/google.svg" width={42} height={42} alt="google" />
           <div>
-            <p className="font-bold text-xl text-[#232830]">
+            <p className="font-bold text-xl text-grey">
               {type === Components.APP ? data.app_name : data.name}
             </p>
             <p className="text-sm text-[#979797] mt-1">{data.status}</p>
@@ -40,15 +30,15 @@ const ListItems = ({
 
         <div className="flex items-center gap-[37px]">
           {type === Components.APP ? (
-            <p className="font-semibold text-[#232830]">
+            <p className="font-semibold text-grey">
               {data.actions.length} actions
             </p>
           ) : (
-            <p className="font-semibold text-[#232830]">
+            <p className="font-semibold text-grey">
               {data.features.length} features
             </p>
           )}
-          <p className="font-semibold text-[#232830]">
+          <p className="font-semibold text-grey">
             {data.envs.length} environaments
           </p>
         </div>
@@ -62,17 +52,17 @@ const ListItems = ({
         >
           {data.active ? "Active" : "Inactive"}
         </div>
-      </div>
+      </Link>
     );
   } else {
     return (
-      <div
+      <Link
+        href={`/${type}/${data._id}`}
         key={data._id}
-        onClick={() => toType(data)}
-        className="bg-white border text-[#232830] items-center rounded-[5px] mb-[25px] flex-1"
+        className="block bg-white border text-grey items-center rounded-[5px] flex-1 hover:shadow-md transition-all"
       >
         <div className="px-9 pt-5 pb-6 flex items-center justify-between w-full border-b">
-          <div className="flex items-center gap-[25px]">
+          <div className="flex items-center gap-6">
             <Image
               src="/images/google.svg"
               width={42}
@@ -80,7 +70,7 @@ const ListItems = ({
               alt="google"
             />
             <div>
-              <p className="font-bold text-xl text-[#232830]">
+              <p className="font-bold text-xl text-grey">
                 {type === Components.APP ? data.app_name : data.name}
               </p>
               <p className="text-sm text-[#979797] mt-1">{data.status}</p>
@@ -100,23 +90,23 @@ const ListItems = ({
           <div className="w-1/2 h-10">
             <div className="border-r my-2 flex justify-center items-center">
               {type === Components.APP ? (
-                <p className="font-semibold text-[#232830]">
+                <p className="font-semibold text-grey">
                   {data.actions.length} actions
                 </p>
               ) : (
-                <p className="font-semibold text-[#232830]">
+                <p className="font-semibold text-grey">
                   {data.features.length} features
                 </p>
               )}
             </div>
           </div>
           <div className="w-1/2 my-2 flex justify-center items-center">
-            <p className="font-semibold text-[#232830]">
+            <p className="font-semibold text-grey">
               {data.envs.length} environments
             </p>
           </div>
         </div>
-      </div>
+      </Link>
     );
   }
 };

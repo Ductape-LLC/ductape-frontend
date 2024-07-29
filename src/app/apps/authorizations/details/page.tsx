@@ -18,7 +18,7 @@ export default function AuthorizationsDetails({
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="Pricing" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">

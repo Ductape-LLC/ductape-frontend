@@ -17,7 +17,7 @@ export default function Publish({
   const [showModal, setShowModal] = useState(true);
 
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="Publish" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">

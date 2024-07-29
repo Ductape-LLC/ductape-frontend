@@ -91,10 +91,8 @@ export default function App({ params: { id } }: { params: { id: string } }) {
 
   const app = appData?.data?.data;
 
-  console.log(app, "app");
-
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="My App" id={id}>
         <div>
           <div className="px-16 pt-8 h-[170px] border-b bg-white">

@@ -1,24 +1,23 @@
 "use client";
 
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Modal, Input, Switch } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
 import CustomSelect from "@/components/common/Select";
-import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import {
   createAppVariable,
-  fetchAppVariable,
   updateAppVariable,
   deleteAppVariable,
+  fetchApp,
 } from "@/api/appsClient";
-import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
 
 const { TextArea } = Input;
 
@@ -45,12 +44,9 @@ export default function Variables({
 }: {
   params: { id: string };
 }) {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [variables, setVariables] = useState([]);
   const { token, public_key, user } = useSelector((state: any) => state.user);
-  const { app } = useSelector((state: any) => state.app);
   const [actionType, setActionType] = useState("create");
   const [variableId, setVariableId] = useState("");
 
@@ -61,10 +57,13 @@ export default function Variables({
     public_key,
   };
 
-  const { data: appData, status: appVariableLoadingStatus } = useQuery({
-    queryKey: ["app-variable", id],
-    queryFn: () => fetchAppVariable(payload),
+  const { data, status: appLoadingStatus } = useQuery({
+    queryKey: ["app", id],
+    queryFn: () => fetchApp(payload),
   });
+
+  const app = data?.data?.data;
+  const variables = app?.variables || [];
 
   const handleSubmit = async (values: VariableProps, submitProps: any) => {
     try {
@@ -147,12 +146,12 @@ export default function Variables({
     setVariableId(variable._id);
   };
 
-  if (appVariableLoadingStatus === "pending") {
+  if (appLoadingStatus === "pending") {
     return <p>Loading...</p>;
   }
 
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="Application Variable" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
@@ -169,7 +168,7 @@ export default function Variables({
           </div>
 
           <div className="px-16 p-10">
-            {variables.length < 1 && (
+            {!variables.length ? (
               <div className="mt-20">
                 <h1 className="text-4xl font-bold">
                   You do not have any application variables. Create an
@@ -183,9 +182,7 @@ export default function Variables({
                   New Application Variable
                 </Button>
               </div>
-            )}
-
-            {variables.length > 0 && (
+            ) : (
               <div>
                 {variables.map((variable: any) => (
                   <div

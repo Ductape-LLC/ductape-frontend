@@ -10,14 +10,16 @@ import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
 import CustomSelect from "@/components/common/Select";
-import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import {
   createAppConstant,
   deleteAppConstant,
+  fetchApp,
   fetchAppConstant,
   updateAppConstant,
 } from "@/api/appsClient";
 import toast from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
 
 const { TextArea } = Input;
 
@@ -43,11 +45,24 @@ export default function Constants({
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [constants, setConstants] = useState([]);
   const { token, public_key, user } = useSelector((state: any) => state.user);
-  const { app } = useSelector((state: any) => state.app);
   const [actionType, setActionType] = useState("create");
   const [constantId, setConstantId] = useState("");
+
+  const payload = {
+    token,
+    app_id: id,
+    user_id: user?._id,
+    public_key,
+  };
+
+  const { data, status: appLoadingStatus } = useQuery({
+    queryKey: ["app", id],
+    queryFn: () => fetchApp(payload),
+  });
+
+  const app = data?.data?.data;
+  const constants = app?.constants || [];
 
   const handleSubmit = async (values: ConstantProps, submitProps: any) => {
     const { key, value, description, type } = values;
@@ -70,7 +85,6 @@ export default function Constants({
           toast.success("Application constant created successfully");
           submitProps.resetForm();
           setShowModal(false);
-          fetchContants();
         }
       } else {
         const response = await updateAppConstant(token, {
@@ -81,7 +95,6 @@ export default function Constants({
           toast.success("Application constant updated successfully");
           submitProps.resetForm();
           setShowModal(false);
-          fetchContants();
         }
       }
     } catch (error: any) {
@@ -105,7 +118,6 @@ export default function Constants({
       if (response.status === 200) {
         toast.success("Application constant deleted successfully");
         setShowModal(false);
-        fetchContants();
       }
     } catch (error: any) {
       console.log(error.response);
@@ -139,32 +151,16 @@ export default function Constants({
     onSubmit: handleSubmit,
   });
 
-  const fetchContants = async () => {
-    try {
-      const response = await fetchAppConstant(
-        token,
-        app._id,
-        user._id,
-        public_key
-      );
-      if (response.status === 200) {
-        setConstants(response.data.data || []);
-      }
-    } catch (error: any) {
-      toast.error(error.response.data.errors);
-    }
-  };
-
-  useEffect(() => {
-    fetchContants();
-  }, []);
+  if (appLoadingStatus === "pending") {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <Dashboard_layout activeTab="App">
+    <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="Application Constants" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center justify-between">
-            <h1 className="text-[#232830] font-bold text-3xl">
+            <h1 className="text-grey font-bold text-3xl">
               Application Constants
             </h1>
             {constants.length > 0 && (
@@ -228,10 +224,10 @@ export default function Constants({
           style={{ padding: 0 }}
         >
           <div>
-            <h1 className="text-[#232830] text-xl font-bold border-b px-[30px] py-6">
+            <h1 className="text-grey text-xl font-bold border-b px-7 py-6">
               Create Application Contants
             </h1>
-            <div className="px-[30px] mt-4 pb-7 border-b">
+            <div className="px-7 mt-4 pb-7 border-b">
               <form className="mt-[31px]">
                 <div>
                   <CustomInput
@@ -246,7 +242,7 @@ export default function Constants({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-6">
                   <CustomInput
                     placeholder="Value"
                     onBlur={formik.handleBlur("value")}
@@ -259,7 +255,7 @@ export default function Constants({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-6">
                   <CustomSelect
                     placeholder="Type"
                     value={formik.values.type}
@@ -280,9 +276,9 @@ export default function Constants({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-6">
                   <TextArea
-                    className="bg-white border rounded w-full p-3 text-sm text-[#232830]"
+                    className="bg-white border rounded w-full p-3 text-sm text-grey"
                     placeholder="Description"
                     rows={5}
                     onBlur={formik.handleBlur("description")}
@@ -298,11 +294,11 @@ export default function Constants({
               </form>
             </div>
 
-            <div className="py-6 flex justify-between items-center px-[30px]">
+            <div className="py-6 flex justify-between items-center px-7">
               {actionType === "update" && (
                 <Button
                   onClick={handleDelete}
-                  className="font-semibold text-sm border  text-white bg-[#DC3444] outline-none h-[33px] rounded px-6 gap-2"
+                  className="font-semibold text-sm border  text-white bg-[#DC3444] outline-none h-8 rounded px-6 gap-2"
                 >
                   Delete Application Constant
                 </Button>
@@ -311,12 +307,12 @@ export default function Constants({
               <div className="flex justify-end w-full gap-5">
                 <Button
                   onClick={() => setShowModal(false)}
-                  className="font-semibold text-sm border  text-[#232830] outline-none h-[33px] rounded px-6"
+                  className="font-semibold text-sm border  text-grey outline-none h-8 rounded px-6"
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-[33px] px-6"
+                  className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-8 px-6"
                   disabled={!formik.isValid || !formik.dirty || loading}
                   onClick={() => formik.handleSubmit()}
                 >
