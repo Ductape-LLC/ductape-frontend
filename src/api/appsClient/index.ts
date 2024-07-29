@@ -110,12 +110,14 @@ export const fetchAppByTag = async (token: string, tag: string) => {
   }
 };
 
-export const createAppConstant = async (token: string, payload: any) => {
+export const createAppConstant = async (
+  token: string,
+  payload: any,
+  app_id: string
+) => {
   try {
-    return await appsClient(token, "application/json").post(
-      APP_CREATE_CONSTANTS,
-      payload
-    );
+    const URL = Parameterize(APP_CREATE_CONSTANTS, ":app_id", app_id);
+    return await appsClient(token, "application/json").put(URL, payload);
   } catch (e) {
     throw e;
   }
@@ -129,7 +131,6 @@ export const fetchAppConstant = async (
 ) => {
   const URL = Parameterize(APP_FETCH_CONSTANTS, ":app_id", app_id);
 
-  console.log(URL, "url");
   try {
     return await appsClient(token, "application/json").get(
       URL + `/?user_id=${user_id}&public_key=${public_key}`
@@ -139,34 +140,27 @@ export const fetchAppConstant = async (
   }
 };
 
-export const updateAppConstant = async (token: string, payload: any) => {
-  const { constant_id, user_id, public_key, key, value, description, type } =
-    payload;
-  const URL = Parameterize(APP_UPDATE_CONSTANTS, ":constant_id", constant_id);
-
+export const updateAppConstant = async (
+  token: string,
+  payload: any,
+  app_id: string
+) => {
   try {
-    return await appsClient(token, "application/json").put(
-      URL + `/?user_id=${user_id}&public_key=${public_key}`,
-      {
-        key,
-        type,
-        value,
-        description,
-      }
-    );
+    const URL = Parameterize(APP_CREATE_CONSTANTS, ":app_id", app_id);
+    return await appsClient(token, "application/json").put(URL, payload);
   } catch (e) {
     throw e;
   }
 };
 
-export const deleteAppConstant = async (token: string, payload: any) => {
-  const { constant_id, user_id, public_key } = payload;
-  const URL = Parameterize(APP_DELETE_CONSTANTS, ":constant_id", constant_id);
-
+export const deleteAppConstant = async (
+  token: string,
+  payload: any,
+  app_id: string
+) => {
   try {
-    return await appsClient(token, "application/json").delete(
-      URL + `/?user_id=${user_id}&public_key=${public_key}`
-    );
+    const URL = Parameterize(APP_CREATE_CONSTANTS, ":app_id", app_id);
+    return await appsClient(token, "application/json").delete(URL, payload);
   } catch (e) {
     throw e;
   }

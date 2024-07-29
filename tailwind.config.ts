@@ -55,7 +55,7 @@ const config = {
         grey: {
           DEFAULT: "hsl(var(--grey))",
           900: "hsl(var(--grey-900))",
-          800: "hsl(var(--grey-800))",
+          800: "hsl(var(--grey-800), <alpha-value>)",
           500: "hsl(var(--grey-500))",
           300: "hsl(var(--grey-300))",
           200: "hsl(var(--grey-200))",

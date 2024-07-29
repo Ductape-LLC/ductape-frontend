@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
-import { Modal, Input, Progress, Button } from "antd";
+import { Input } from "antd";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import StepOne from "@/components/getStartedForms/stepOne";
 import StepTwo from "@/components/getStartedForms/stepTwo";
-
-const { TextArea } = Input;
+import StepThree from "@/components/getStartedForms/stepThree";
+import StepFour from "@/components/getStartedForms/stepFour";
 
 export default function GetStarted({
   params: { id },
@@ -23,14 +22,18 @@ export default function GetStarted({
       <Apps_Layout activeAppTab="Get Started" id={id}>
         <div>
           <div className="px-16 h-[110px]  border-b bg-white flex items-center">
-            <h1 className="text-[#232830] font-bold text-3xl">Get Started</h1>
+            <h1 className="text-grey font-bold text-3xl">Get Started</h1>
           </div>
 
           <div className="px-16 p-10">
             {currentStep === 0 ? (
               <StepOne setCurrentStep={setCurrentStep} />
-            ) : (
+            ) : currentStep === 1 ? (
               <StepTwo setCurrentStep={setCurrentStep} />
+            ) : currentStep === 2 ? (
+              <StepThree setCurrentStep={setCurrentStep} />
+            ) : (
+              <StepFour setCurrentStep={setCurrentStep} />
             )}
           </div>
         </div>
