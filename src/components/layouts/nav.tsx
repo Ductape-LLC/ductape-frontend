@@ -36,7 +36,7 @@ export default function Nav() {
   }, [isMenuOpen]);
 
   return (
-    <header className="max-w-[1344px] mx-auto relative">
+    <header className="max-w-[1344px] mx-auto relative py-2.5">
       <nav className="flex items-center justify-between">
         <Link href="/">
           <Image src="/images/logo.svg" width={129} height={44} alt="logo" />
@@ -73,12 +73,7 @@ export default function Nav() {
             href="#"
             className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white font-semibold"
           >
-            <Image
-              src="/images/github-white.svg"
-              width={24}
-              height={24}
-              alt="cta"
-            />
+            <Image src="/images/ductape.svg" width={24} height={24} alt="cta" />
             Download Ductape v0.2.4
           </a>
         </div>
