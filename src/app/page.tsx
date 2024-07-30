@@ -30,7 +30,7 @@ const StyledJson = () => {
   return (
     <pre>
       <code
-        className="text-[#F3AD65] xl:text-base text-sm"
+        className="text-[#F3AD65] text-sm font-code font-medium"
         dangerouslySetInnerHTML={{ __html: formattedJson.trim() }}
       />
     </pre>
@@ -39,7 +39,7 @@ const StyledJson = () => {
 
 export default function Home() {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen bg-[url('/images/homepage-linear-bg.svg')] bg-no-repeat bg-contain bg-top">
       <div className="px-4 pt-6">
         <Nav />
         <main className="max-w-[1344px] mx-auto flex items-center justify-between py-16 gap-6 xl:gap-0 flex-wrap lg:flex-nowrap">
@@ -57,7 +57,7 @@ export default function Home() {
                 className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white"
               >
                 <Image
-                  src="/images/github-white.svg"
+                  src="/images/ductape.svg"
                   width={24}
                   height={24}
                   alt="cta"
@@ -73,8 +73,96 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="bg-grey-300 w-[669px] h-[528px]"></div>
+          <Image
+            src="/images/hero-code-snippet.svg"
+            width={680}
+            height={528}
+            alt="ductape"
+            priority
+          />
         </main>
+
+        <section className="pt-20 pb-28 bg-[url('/images/software-section-art.svg')] bg-no-repeat bg-auto bg-[right_-45px_bottom_0] -mx-4">
+          <div className="max-w-[1344px] mx-auto">
+            <h3 className="text-[2.5rem] max-w-[998px] text-grey font-medium leading-snug">
+              As a software company building on top of 3rd party integrations,
+              you’re likely to want to solve one or more of these problems:
+            </h3>
+
+            <div className="mt-14 grid grid-cols-2 gap-14 max-w-[1011px]">
+              <div className="flex items-start gap-2.5">
+                <Image
+                  src="/images/rectangle.svg"
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+                <p className="-mt-1 text-grey font-medium text-xl">
+                  You have an existing backlog of integrations to build and are
+                  experiencing pressure from your clients
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Image
+                  src="/images/rectangle.svg"
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+                <p className="-mt-1 text-grey font-medium text-xl">
+                  You struggle with having a standard operating procedure for
+                  your integrations
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Image
+                  src="/images/rectangle.svg"
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+                <p className="-mt-1 text-grey font-medium text-xl">
+                  You have to constantly build tools to monitor performance,
+                  handle retries and rollbacks, error troubleshooting and
+                  maintenance
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Image
+                  src="/images/rectangle.svg"
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+                <p className="-mt-1 text-grey font-medium text-xl">
+                  You want your services to keep running even when there are
+                  network outages or server crashes
+                </p>
+              </div>
+              <div className="flex items-start gap-2.5">
+                <Image
+                  src="/images/rectangle.svg"
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+                <p className="-mt-1 text-grey font-medium text-xl">
+                  You have to build custom logic to handle multiple service
+                  providers and aggregate functionality between them while
+                  ensuring that performance doesn’t suffer
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-16 text-grey text-2xl font-semibold max-w-[910px]">
+              Ductape is a comprehensive integration framework with built-in
+              tools for performance monitoring, automated retries, rollbacks,
+              and error handling that helps simplify development, maintain
+              performance, and reduce complexity.
+            </p>
+          </div>
+        </section>
+
         <section className="bg-primary pt-20 pb-32 -mx-4">
           <div className="max-w-[1344px] mx-auto flex flex-col px-4">
             <div className="flex items-center gap-2 text-white font-semibold px-6 py-3 border border-white rounded-full w-fit">
@@ -271,7 +359,7 @@ export default function Home() {
                 className="bg-white rounded-full px-6 py-4 flex items-center gap-4 text-primary font-semibold"
               >
                 <Image
-                  src="/images/github-blue.svg"
+                  src="/images/ductape-blue.svg"
                   width={24}
                   height={24}
                   alt="cta"

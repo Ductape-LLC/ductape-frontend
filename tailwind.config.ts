@@ -74,6 +74,7 @@ const config = {
       },
       fontFamily: {
         sans: ["var(--font-raleway)"],
+        code: ["var(--font-source-code-pro)"],
       },
       fontSize: {
         "3.5xl": "2rem", // 32px
