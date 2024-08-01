@@ -8,6 +8,8 @@ import StepOne from "@/components/getStartedForms/stepOne";
 import StepTwo from "@/components/getStartedForms/stepTwo";
 import StepThree from "@/components/getStartedForms/stepThree";
 import StepFour from "@/components/getStartedForms/stepFour";
+import StepFive from "@/components/getStartedForms/stepFive";
+import StepSix from "@/components/getStartedForms/stepSix";
 
 export default function GetStarted({
   params: { id },
@@ -32,8 +34,12 @@ export default function GetStarted({
               <StepTwo setCurrentStep={setCurrentStep} />
             ) : currentStep === 2 ? (
               <StepThree setCurrentStep={setCurrentStep} />
-            ) : (
+            ) : currentStep === 3 ? (
               <StepFour setCurrentStep={setCurrentStep} />
+            ) : currentStep === 4 ? (
+              <StepFive setCurrentStep={setCurrentStep} />
+            ) : (
+              <StepSix setCurrentStep={setCurrentStep} />
             )}
           </div>
         </div>

@@ -47,8 +47,6 @@ export default function Constants({
   const [actionType, setActionType] = useState("create");
   const queryClient = useQueryClient();
 
-  console.log(token, "assja");
-
   const payload = {
     token,
     app_id: id,

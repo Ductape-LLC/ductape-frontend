@@ -1,19 +1,98 @@
 import React, { FC, useMemo } from "react";
 import Image from "next/image";
-import { useDropzone } from "react-dropzone";
+import { FileRejection, useDropzone } from "react-dropzone";
+import * as Yup from "yup";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import Button from "@/components/common/Button";
+import { useSelector } from "react-redux";
+import { usePathname } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchApp } from "@/api/appsClient";
+import { connectDuctape } from "@/api/sdk";
+import toast from "react-hot-toast";
+import { Button } from "../ui/button";
 
-const MAX_UPLOAD_SIZE = 200 * 1024 * 1024; // 200 MB
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
 
 interface StepOneProps {
   setCurrentStep: (currentStep: number) => void;
 }
 
 const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
-  const onDrop = (acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
+  const pathname = usePathname();
+  const id = pathname.split("/")[2];
+
+  const { token, public_key, user } = useSelector((state: any) => state.user);
+
+  const payload = {
+    token,
+    app_id: id,
+    user_id: user?._id,
+    public_key,
+  };
+
+  const { data } = useQuery({
+    queryKey: ["app", id],
+    queryFn: () => fetchApp(payload),
+  });
+
+  const app = data?.data?.data;
+
+  const ductape = useMemo(
+    () =>
+      connectDuctape({
+        workspace_id: app?.workspace_id,
+        user_id: user?._id,
+        token,
+        public_key,
+      }),
+    []
+  );
+
+  const { mutate, status: uploadingAppStatus } = useMutation({
+    mutationFn: async (jsonContent: any) => {
+      const importer = await ductape.getActionImporter();
+      return importer.importPostmanV21(jsonContent);
+    },
+  });
+
+  const onDrop = async (
+    acceptedFiles: File[],
+    fileRejections: FileRejection[]
+  ) => {
+    fileRejections.forEach(({ file, errors }) => {
+      errors.forEach((error) => {
+        toast.error(`${file.name}:${error.message}`);
+      });
+    });
+
+    if (acceptedFiles.length) {
+      const file = acceptedFiles[0];
+      const reader = new FileReader();
+
+      reader.onload = async (event: ProgressEvent<FileReader>) => {
+        if (event.target?.result) {
+          try {
+            const jsonContent = JSON.parse(event.target.result as string);
+            console.log(jsonContent, "jsonContent");
+
+            mutate(jsonContent, {
+              onSuccess: () => {
+                toast.success("Import successful");
+              },
+              onError: (error) => {
+                toast.error(error.message);
+              },
+            });
+            console.log("Import successful");
+          } catch (error) {
+            console.error("Error importing JSON:", error);
+          }
+        }
+      };
+
+      reader.readAsText(file);
+    }
   };
 
   const memoizedOnDrop = useMemo(() => onDrop, []);
@@ -21,12 +100,16 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   const { getRootProps, getInputProps, open, acceptedFiles, fileRejections } =
     useDropzone({
       onDrop: memoizedOnDrop,
-      accept: { "text/csv": [".csv"] },
+      accept: { "application/json": [".json"] },
       noClick: true,
       noKeyboard: true,
       multiple: false,
       maxSize: MAX_UPLOAD_SIZE,
     });
+
+  const acceptedFileItems = acceptedFiles.map((file) => (
+    <li key={file.name}>{file.name}</li>
+  ));
 
   return (
     <div className="border rounded bg-white">
@@ -46,7 +129,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
       </div>
 
       <div className="px-7 pt-5">
-        <div className=" gap-4">
+        <div className="grid gap-4">
           <p className="font-lg font-semibold">API Documentation Type</p>
           <RadioGroup className="mt-5 gap-4" defaultValue="option-one">
             <div className="flex items-center space-x-2">
@@ -97,12 +180,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
               <input {...getInputProps()} />
               <p className="font-medium text-sm text-grey">
                 Drag and Drop or{" "}
-                <button
-                  // disabled={status === "pending"}
-                  type="button"
-                  className="text-primary"
-                  onClick={open}
-                >
+                <button type="button" className="text-primary" onClick={open}>
                   Browse
                 </button>{" "}
                 to upload
@@ -112,15 +190,27 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
                 uploading company data or other banned files.
               </p>
             </div>
+            <div className="mt-3 flex flex-col-reverse">
+              {acceptedFileItems.length > 0 && (
+                <ul className="text-primary text-sm font-medium">
+                  {acceptedFileItems}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
 
         <div className="flex justify-end items-center my-11">
           <div className="flex gap-4">
-            <Button className="font-semibold text-xs bg-white text-grey px-7 rounded border border-grey-300">
+            <Button
+              variant="secondary"
+              disabled={uploadingAppStatus === "pending"}
+              className="font-semibold text-xs h-8 px-7 rounded border border-grey-300"
+            >
               Save
             </Button>
             <Button
+              disabled={uploadingAppStatus === "pending"}
               onClick={() => setCurrentStep(1)}
               className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
             >

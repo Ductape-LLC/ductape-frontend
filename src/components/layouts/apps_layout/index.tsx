@@ -25,8 +25,6 @@ export default function AppsLayout({
     public_key,
   };
 
-  console.log(payload, "instead");
-
   const { data, status } = useQuery({
     queryKey: ["app", id],
     queryFn: () => fetchApp(payload),
