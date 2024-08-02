@@ -52,7 +52,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   const { mutate, status: uploadingAppStatus } = useMutation({
     mutationFn: async (jsonContent: any) => {
       const importer = await ductape.getActionImporter();
-      return importer.importPostmanV21(jsonContent);
+      return importer.importPostmanV21(jsonContent, true, id);
     },
   });
 
@@ -81,6 +81,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
                 toast.success("Import successful");
               },
               onError: (error) => {
+                console.log(error);
                 toast.error(error.message);
               },
             });
