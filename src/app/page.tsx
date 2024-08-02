@@ -42,8 +42,8 @@ export default function Home() {
     <div className="bg-white min-h-screen bg-[url('/images/homepage-linear-bg.svg')] bg-no-repeat bg-contain bg-top">
       <div className="px-4 pt-6">
         <Nav />
-        <main className="max-w-[1344px] mx-auto flex items-center justify-between py-16 gap-6 xl:gap-0 flex-wrap lg:flex-nowrap">
-          <div className="flex flex-col max-w-[580px] text-center md:text-start">
+        <main className="max-w-[1344px] mx-auto flex items-center justify-center lg:justify-between py-16 gap-6 xl:gap-0 flex-wrap lg:flex-nowrap">
+          <div className="flex flex-col items-center lg:items-start max-w-[580px] text-center lg:text-start">
             <h1 className="text-grey font-bold text-4xl lg:text-[3.5rem] lg:w-4/5 leading-tight">
               Build products that scale
             </h1>
@@ -73,7 +73,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="relative w-[680px] h-[528px]">
+          <div className="hidden md:block relative w-[680px] h-[528px]">
             <Image
               src="/images/hero-code-snippet.svg"
               fill
@@ -81,9 +81,19 @@ export default function Home() {
               priority
             />
           </div>
+
+          <div className="md:hidden">
+            <Image
+              src="/images/hero-code-snippet.svg"
+              width={680}
+              height={528}
+              alt="ductape"
+              priority
+            />
+          </div>
         </main>
 
-        <section className="pt-20 pb-28 bg-[url('/images/software-section-art.svg')] bg-no-repeat bg-auto bg-[right_-45px_bottom_0] -mx-4">
+        <section className="md:pt-20 pb-28 bg-[url('/images/software-section-art.svg')] bg-no-repeat bg-auto bg-[right_-45px_bottom_0] -mx-4">
           <div className="max-w-[1344px] mx-auto px-4">
             <h3 className="text-2xl lg:text-[2.5rem] max-w-[998px] text-grey font-medium leading-snug">
               As a software company building on top of 3rd party integrations,
@@ -321,7 +331,12 @@ export default function Home() {
               </div>
             </div>
             <div className="flex flex-col grow max-w-[668px]">
-              <div className="bg-[#201741] p-6 border-b-2 border-b-primary">
+              <div
+                className="bg-[#201741] p-6 border-b-2 border-b-primary overflow-x-auto"
+                style={{
+                  contain: "inline-size",
+                }}
+              >
                 <StyledJson />
               </div>
               <div className="bg-[#16102D] px-6 py-7 flex flex-col gap-4">
