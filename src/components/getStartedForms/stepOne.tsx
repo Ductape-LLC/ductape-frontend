@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSelector } from "react-redux";
 import { usePathname } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchApp } from "@/api/appsClient";
 import { connectDuctape } from "@/api/sdk";
 import toast from "react-hot-toast";
 import { Button } from "../ui/button";
+import { PostmanCollectionV21 } from "ductape-sdk/dist/imports/imports.types";
 
 const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
 
@@ -21,6 +22,7 @@ interface StepOneProps {
 const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
+  const queryClient = useQueryClient();
 
   const { token, public_key, user } = useSelector((state: any) => state.user);
 
@@ -50,7 +52,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   );
 
   const { mutate, status: uploadingAppStatus } = useMutation({
-    mutationFn: async (jsonContent: any) => {
+    mutationFn: async (jsonContent: PostmanCollectionV21) => {
       const importer = await ductape.getActionImporter();
       return importer.importPostmanV21(jsonContent, true, id);
     },
@@ -78,10 +80,11 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
 
             mutate(jsonContent, {
               onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ["app", id] });
                 toast.success("Import successful");
               },
               onError: (error) => {
-                console.log(error);
+                console.error(error);
                 toast.error(error.message);
               },
             });
