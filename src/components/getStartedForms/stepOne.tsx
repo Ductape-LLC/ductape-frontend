@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useState } from "react";
 import Image from "next/image";
 import { FileRejection, useDropzone } from "react-dropzone";
 import * as Yup from "yup";
@@ -23,6 +23,8 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const queryClient = useQueryClient();
+  const [uploadedFileContent, setUploadedFileContent] =
+    useState<PostmanCollectionV21 | null>(null);
 
   const { token, public_key, user } = useSelector((state: any) => state.user);
 
@@ -48,7 +50,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
         token,
         public_key,
       }),
-    []
+    [app?.workspace_id, public_key, token, user?._id]
   );
 
   const { mutate, status: uploadingAppStatus } = useMutation({
@@ -76,19 +78,8 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
         if (event.target?.result) {
           try {
             const jsonContent = JSON.parse(event.target.result as string);
-            console.log(jsonContent, "jsonContent");
 
-            mutate(jsonContent, {
-              onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ["app", id] });
-                toast.success("Import successful");
-              },
-              onError: (error) => {
-                console.error(error);
-                toast.error(error.message);
-              },
-            });
-            console.log("Import successful");
+            setUploadedFileContent(jsonContent);
           } catch (error) {
             console.error("Error importing JSON:", error);
           }
@@ -101,15 +92,35 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
 
   const memoizedOnDrop = useMemo(() => onDrop, []);
 
-  const { getRootProps, getInputProps, open, acceptedFiles, fileRejections } =
-    useDropzone({
-      onDrop: memoizedOnDrop,
-      accept: { "application/json": [".json"] },
-      noClick: true,
-      noKeyboard: true,
-      multiple: false,
-      maxSize: MAX_UPLOAD_SIZE,
-    });
+  const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
+    onDrop: memoizedOnDrop,
+    accept: { "application/json": [".json"] },
+    noClick: true,
+    noKeyboard: true,
+    multiple: false,
+    maxSize: MAX_UPLOAD_SIZE,
+  });
+
+  const handleSubmit = async () => {
+    if (uploadedFileContent) {
+      try {
+        mutate(uploadedFileContent, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["app", id] });
+            toast.success("Import successful");
+          },
+          onError: (error) => {
+            console.error(error);
+            toast.error(error.message);
+          },
+        });
+      } catch (error) {
+        console.error("Error importing JSON:", error);
+      }
+    } else {
+      toast.error("Please upload a file first.");
+    }
+  };
 
   const acceptedFileItems = acceptedFiles.map((file) => (
     <li key={file.name}>{file.name}</li>
@@ -132,7 +143,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
         </p>
       </div>
 
-      <div className="px-7 pt-5">
+      <form className="px-7 pt-5">
         <div className="grid gap-4">
           <p className="font-lg font-semibold">API Documentation Type</p>
           <RadioGroup className="mt-5 gap-4" defaultValue="option-one">
@@ -210,19 +221,26 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
               variant="secondary"
               disabled={uploadingAppStatus === "pending"}
               className="font-semibold text-xs h-8 px-7 rounded border border-grey-300"
+              onClick={handleSubmit}
+              type="button"
             >
               Save
             </Button>
             <Button
               disabled={uploadingAppStatus === "pending"}
-              onClick={() => setCurrentStep(1)}
+              onClick={() => {
+                handleSubmit();
+
+                setCurrentStep(1);
+              }}
+              type="button"
               className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
             >
               Next
             </Button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 };

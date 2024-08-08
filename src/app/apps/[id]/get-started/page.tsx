@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Input } from "antd";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import StepOne from "@/components/getStartedForms/stepOne";
@@ -29,7 +28,7 @@ export default function GetStarted({
 
           <div className="px-16 p-10">
             {currentStep === 0 ? (
-              <StepOne setCurrentStep={setCurrentStep} />
+              <StepSix setCurrentStep={setCurrentStep} />
             ) : currentStep === 1 ? (
               <StepTwo setCurrentStep={setCurrentStep} />
             ) : currentStep === 2 ? (
