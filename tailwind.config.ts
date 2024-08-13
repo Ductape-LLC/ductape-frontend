@@ -25,7 +25,7 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
+          DEFAULT: "hsl(var(--primary), <alpha-value>)",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
@@ -55,7 +55,7 @@ const config = {
         grey: {
           DEFAULT: "hsl(var(--grey))",
           900: "hsl(var(--grey-900))",
-          800: "hsl(var(--grey-800))",
+          800: "hsl(var(--grey-800), <alpha-value>)",
           500: "hsl(var(--grey-500))",
           300: "hsl(var(--grey-300))",
           200: "hsl(var(--grey-200))",
@@ -67,7 +67,7 @@ const config = {
           DEFAULT: "hsl(var(--blue))",
         },
         white: {
-          DEFAULT: "hsl(var(--white))",
+          DEFAULT: "hsl(var(--white), <alpha-value>)",
           500: "hsl(var(--white-500))",
           400: "hsl(var(--white-400))",
         },

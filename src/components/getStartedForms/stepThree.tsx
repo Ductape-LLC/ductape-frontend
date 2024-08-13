@@ -1,45 +1,43 @@
 import React, { FC } from "react";
 import { usePathname } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSelector } from "react-redux";
-import toast from "react-hot-toast";
-import { Formik, Field, Form, FieldArray, ErrorMessage } from "formik";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import toast from "react-hot-toast";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
-  fetchApp,
   createAppConstant,
+  fetchApp,
   updateAppConstant,
 } from "@/api/appsClient";
 import { ApiError } from "@/types/user.types";
 import { Button } from "../ui/button";
 
-interface StepTwoProps {
+interface StepThreeProps {
   setCurrentStep: (currentStep: number) => void;
 }
 
-interface Environment {
-  slug: string;
-  env_name: string;
+interface Constant {
+  key: string;
+  value: string;
   description: string;
-  base_url: string;
   update: boolean;
 }
 
 const validationSchema = Yup.object().shape({
-  environments: Yup.array().of(
+  constants: Yup.array().of(
     Yup.object().shape({
-      env_name: Yup.string().required("Environment Name is required"),
-      slug: Yup.string().max(3, "Slug should not exceed 3 characters"),
-      base_url: Yup.string().required("Base URL is required"),
+      key: Yup.string().required("Constant key is required"),
+      value: Yup.string().required("Base URL is required"),
       description: Yup.string().required("Description is required"),
     })
   ),
 });
 
-const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
+const StepThree: FC<StepThreeProps> = ({ setCurrentStep }) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const queryClient = useQueryClient();
@@ -59,9 +57,10 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
   });
 
   const app = data?.data?.data;
-
-  const envs: Environment[] =
-    app?.envs.map((env: any) => ({ ...env, update: false })) || [];
+  const constants: Constant[] = app?.constants.map((constant: any) => ({
+    ...constant,
+    update: false,
+  }));
 
   const submitData = async (data: any, actionType: string, token: string) => {
     if (actionType === "create") {
@@ -77,7 +76,7 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["app", id] });
-      toast.success("All environments processed successfully");
+      toast.success("All constants processed successfully");
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.errors || "An error occurred");
@@ -85,22 +84,20 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
   });
 
   const handleSubmit = async (values: any) => {
-    const requests = values.environments.map((env: Environment) => {
+    const requests = values.constants.map((constant: Constant) => {
       const data = {
         user_id: user._id,
-        public_key: public_key,
-        env_name: env.env_name,
-        description: env.description,
-        base_url: env.base_url,
-        action: env.update ? "update" : "create",
-        component: "env",
+        public_key,
+        key: constant.key,
+        value: constant.value,
+        description: constant.description,
+        action: constant.update ? "update" : "create",
+        type: "string",
+        component: "constants",
         workspace_id: app.workspace_id,
-        slug: env.slug,
-        whitelist: false,
-        active: false,
       };
 
-      const actionType = env.update ? "update" : "create";
+      const actionType = constant.update ? "update" : "create";
       return submitData(data, actionType, token);
     });
 
@@ -112,30 +109,31 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
       <div className="rounded-t border-b p-7">
         <div className="flex items-center gap-2">
           <div className="bg-primary px-3.5 py-2 text-white h-9 rounded font-semibold">
-            Step 2 of 6
+            Step 3 of 6
           </div>
-          <p className="text-grey font-semibold text-lg">Environments</p>
+          <p className="text-grey font-semibold text-lg">Setup Contants</p>
         </div>
-        <p className="text-[#979797] text-sm mt-5 font-semibold">
-          Create and configure environments for your applications
+
+        <p className="text-grey-200 text-sm mt-5 font-semibold">
+          Create and configure application constants
         </p>
       </div>
 
       <div className="px-7 pt-5">
         <Formik
-          initialValues={{ environments: envs }}
+          initialValues={{ constants }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, handleChange }) => (
             <Form>
-              <FieldArray name="environments">
+              <FieldArray name="constants">
                 {({ push }) => (
                   <>
-                    <div className="grid gap-6">
-                      {values.environments.map((env, index) => (
+                    <div className="grid gap-9">
+                      {values.constants.map((constant, index) => (
                         <div key={index} className="flex items-center gap-4">
-                          <Field name={`environments[${index}].update`}>
+                          <Field name={`constants[${index}].update`}>
                             {({ field }: any) => (
                               <Checkbox
                                 {...field}
@@ -143,7 +141,7 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
                                 onCheckedChange={(value) => {
                                   handleChange({
                                     target: {
-                                      name: `environments[${index}].update`,
+                                      name: `constants[${index}].update`,
                                       value: value,
                                     },
                                   });
@@ -151,73 +149,53 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
                               />
                             )}
                           </Field>
-                          <div className="flex items-start justify-between gap-6 border-b pb-6 w-full">
+                          <div className="flex items-center justify-between gap-6 w-full">
                             <div className="flex-1">
                               <Label
-                                htmlFor={`environments[${index}].env_name`}
-                              >
-                                Environment Name
-                              </Label>
-                              <Field
-                                type="text"
-                                name={`environments[${index}].env_name`}
-                                as={Input}
-                                placeholder="Environment Name"
-                              />
-                              <ErrorMessage
-                                name={`environments[${index}].env_name`}
-                                component="div"
-                                className="text-red-600 text-sm mt-1"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <Label htmlFor={`environments[${index}].slug`}>
-                                Slug
-                              </Label>
-                              <Field
-                                type="text"
-                                name={`environments[${index}].slug`}
-                                as={Input}
-                                placeholder="Slug"
-                              />
-                              <ErrorMessage
-                                name={`environments[${index}].slug`}
-                                component="div"
-                                className="text-red-600 text-sm mt-1"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <Label
-                                htmlFor={`environments[${index}].base_url`}
-                              >
-                                Base URL
-                              </Label>
-                              <Field
-                                type="text"
-                                name={`environments[${index}].base_url`}
-                                as={Input}
-                                placeholder="Base URL"
-                              />
-                              <ErrorMessage
-                                name={`environments[${index}].base_url`}
-                                component="div"
-                                className="text-red-600 text-sm mt-1"
-                              />
-                            </div>
-                            <div className="flex-1">
-                              <Label
-                                htmlFor={`environments[${index}].description`}
+                                htmlFor={`constants[${index}].description`}
                               >
                                 Description
                               </Label>
                               <Field
                                 type="text"
-                                name={`environments[${index}].description`}
+                                name={`constants[${index}].description`}
                                 as={Input}
                                 placeholder="Description"
                               />
                               <ErrorMessage
-                                name={`environments[${index}].description`}
+                                name={`constants[${index}].description`}
+                                component="div"
+                                className="text-red-600 text-sm mt-1"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <Label htmlFor={`constants[${index}].key`}>
+                                Key
+                              </Label>
+                              <Field
+                                type="text"
+                                name={`constants[${index}].key`}
+                                as={Input}
+                                placeholder="Key"
+                              />
+                              <ErrorMessage
+                                name={`constants[${index}].key`}
+                                component="div"
+                                className="text-red-600 text-sm mt-1"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <Label htmlFor={`constants[${index}].value`}>
+                                Value
+                              </Label>
+                              <Field
+                                type="text"
+                                name={`constants[${index}].value`}
+                                as={Input}
+                                placeholder="Value"
+                              />
+                              <ErrorMessage
+                                name={`constants[${index}].value`}
                                 component="div"
                                 className="text-red-600 text-sm mt-1"
                               />
@@ -232,21 +210,20 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
                       className="p-0 text-primary font-semibold text-xs underline mt-5 block"
                       onClick={() =>
                         push({
-                          env_name: "",
-                          slug: "",
+                          key: "",
+                          value: "",
                           description: "",
-                          base_url: "",
                           update: false,
                         })
                       }
                     >
-                      + Add Environment
+                      +Add Constants
                     </Button>
 
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center my-11">
                       <Button
                         className="font-semibold text-xs bg-white text-primary px-7 rounded border border-primary h-8"
-                        onClick={() => setCurrentStep(0)}
+                        onClick={() => setCurrentStep(1)}
                       >
                         Previous
                       </Button>
@@ -266,14 +243,14 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
                           <Button
                             type="button"
                             disabled={status === "pending"}
-                            className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
                             onClick={() => {
                               handleSubmit(values);
 
                               setTimeout(() => {
-                                setCurrentStep(2);
+                                setCurrentStep(3);
                               }, 2000);
                             }}
+                            className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
                           >
                             Next
                           </Button>
@@ -291,4 +268,4 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
   );
 };
 
-export default StepTwo;
+export default StepThree;

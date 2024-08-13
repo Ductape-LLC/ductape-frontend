@@ -91,18 +91,18 @@ const ListItems = ({
             <div className="border-r my-2 flex justify-center items-center">
               {type === Components.APP ? (
                 <p className="font-semibold text-grey">
-                  {data.actions.length} actions
+                  {data?.actions?.length} actions
                 </p>
               ) : (
                 <p className="font-semibold text-grey">
-                  {data.features.length} features
+                  {data?.features?.length} features
                 </p>
               )}
             </div>
           </div>
           <div className="w-1/2 my-2 flex justify-center items-center">
             <p className="font-semibold text-grey">
-              {data.envs.length} environments
+              {data?.envs?.length} environments
             </p>
           </div>
         </div>

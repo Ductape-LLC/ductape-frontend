@@ -1,23 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Modal, Input, Switch } from "antd";
+import { Modal, Input, Switch } from "antd";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
 import CustomSelect from "@/components/common/Select";
 import {
-  createAppVariable,
-  updateAppVariable,
   deleteAppVariable,
   fetchApp,
+  createAppConstant,
+  updateAppConstant,
 } from "@/api/appsClient";
+import { ApiError } from "@/types/user.types";
+import { Button } from "@/components/ui/button";
 
 const { TextArea } = Input;
 
@@ -44,11 +46,12 @@ export default function Variables({
 }: {
   params: { id: string };
 }) {
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { token, public_key, user } = useSelector((state: any) => state.user);
   const [actionType, setActionType] = useState("create");
+  const [requiredStatus, setRequiredStatus] = useState(false);
   const [variableId, setVariableId] = useState("");
+  const queryClient = useQueryClient();
 
   const payload = {
     token,
@@ -65,42 +68,54 @@ export default function Variables({
   const app = data?.data?.data;
   const variables = app?.variables || [];
 
-  const handleSubmit = async (values: VariableProps, submitProps: any) => {
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const data = {
-        user_id: user._id,
-        app_id: app._id,
-        public_key: public_key,
-        ...values,
-      };
-      if (actionType === "create") {
-        const response = await createAppVariable(token, data);
-        if (response.status === 200) {
-          setShowModal(false);
-          toast.success("Application variable created successfully");
-          submitProps.resetForm();
-        }
-      } else {
-        const response = await updateAppVariable(token, {
-          ...data,
-          variable_id: variableId,
-        });
-        if (response.status === 200) {
-          setShowModal(false);
-          toast.success("Application variable updated successfully");
-          submitProps.resetForm();
-        }
-      }
-    } catch (error: any) {
-      console.log(error.response);
-      toast.error(error.response.data.errors);
-    } finally {
-      setLoading(false);
+  const submitData = async (data: any, actionType: string, token: string) => {
+    if (actionType === "create") {
+      return await createAppConstant(token, data, app._id);
+    } else {
+      return await updateAppConstant(token, data, app._id);
     }
   };
+
+  const handleSubmit = (values: VariableProps) => {
+    const { key, type, description, min_length, max_length } = values;
+    const data = {
+      user_id: user._id,
+      public_key,
+      key,
+      type,
+      description,
+      minlength: min_length,
+      maxlength: max_length,
+      required: requiredStatus,
+      action: actionType,
+      component: "variables",
+      workspace_id: app.workspace_id,
+    };
+
+    mutate({ data, actionType, token });
+  };
+
+  const { mutate, status: appMutationStatus } = useMutation({
+    mutationFn: ({
+      data,
+      actionType,
+      token,
+    }: {
+      data: any;
+      actionType: string;
+      token: string;
+    }) => submitData(data, actionType, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["app", id],
+      });
+      toast.success("Application variable updated successfully");
+      setShowModal(false);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
 
   const handleDelete = async () => {
     try {
@@ -219,11 +234,11 @@ export default function Variables({
           style={{ padding: 0 }}
         >
           <div>
-            <h1 className="text-[#232830] text-xl font-bold border-b px-[30px] py-6">
+            <h1 className="text-grey text-xl font-bold border-b px-8 py-6">
               Create Application Variable
             </h1>
-            <div className="px-[30px] mt-4 pb-7 border-b">
-              <form className="mt-[31px]">
+            <div className="px-7 mt-4 pb-7">
+              <form className="mt-8" onSubmit={formik.handleSubmit}>
                 <div>
                   <CustomInput
                     placeholder="Key"
@@ -237,9 +252,9 @@ export default function Variables({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-7">
                   <TextArea
-                    className="bg-white border rounded w-full p-3 text-sm text-[#232830]"
+                    className="bg-white border rounded w-full p-3 text-sm text-grey"
                     placeholder="Description"
                     rows={5}
                     onBlur={formik.handleBlur("description")}
@@ -252,7 +267,7 @@ export default function Variables({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-7">
                   <CustomSelect
                     placeholder="Type"
                     value={formik.values.type}
@@ -264,6 +279,10 @@ export default function Variables({
                         value: "string",
                         label: "String",
                       },
+                      {
+                        value: "object",
+                        label: "Object",
+                      },
                     ]}
                   />
                   {formik.touched.key && formik.errors.type ? (
@@ -272,7 +291,7 @@ export default function Variables({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-7">
                   <CustomInput
                     placeholder="Minimum Length"
                     onBlur={formik.handleBlur("min_length")}
@@ -285,7 +304,7 @@ export default function Variables({
                     </p>
                   ) : null}
                 </div>
-                <div className="mt-[26px]">
+                <div className="mt-7">
                   <CustomInput
                     placeholder="Maximum Length"
                     onBlur={formik.handleBlur("max_length")}
@@ -303,44 +322,44 @@ export default function Variables({
                   <div className="flex items-center gap-1 mt-9">
                     <InfoCircleOutlined />
                     <p className="font-semibold tracking-[-0.4px] text-[#979797]">
-                      Active and open to connections?
+                      Required
                     </p>
                   </div>
                   <Switch
-                    checked={formik.values.required}
-                    onChange={(checked: boolean) => {
-                      formik.setFieldValue("required", checked);
+                    checked={requiredStatus}
+                    onChange={() => {
+                      setRequiredStatus(!requiredStatus);
                     }}
                   />
                 </div>
+                <div className="py-6 flex justify-between items-center px-7">
+                  {actionType === "update" && (
+                    <Button
+                      onClick={handleDelete}
+                      className="font-semibold text-sm border text-white bg-[#DC3444] outline-none h-8 rounded px-6 gap-2"
+                    >
+                      Delete Application Variable
+                    </Button>
+                  )}
+
+                  <div className="flex justify-end w-full gap-5">
+                    <Button
+                      variant="secondary"
+                      onClick={() => setShowModal(false)}
+                      className="font-semibold text-sm text-grey outline-none h-8 rounded px-6"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-primary text-white font-semibold text-sm outline-none rounded h-8 px-6"
+                      disabled={appMutationStatus === "pending"}
+                    >
+                      {actionType === "create" ? "Create" : "Update"}
+                    </Button>
+                  </div>
+                </div>
               </form>
-            </div>
-
-            <div className="py-6 flex justify-between items-center px-[30px]">
-              {actionType === "update" && (
-                <Button
-                  onClick={handleDelete}
-                  className="font-semibold text-sm border  text-white bg-[#DC3444] outline-none h-[33px] rounded px-6 gap-2"
-                >
-                  Delete Application Variable
-                </Button>
-              )}
-
-              <div className="flex justify-end w-full gap-5">
-                <Button
-                  onClick={() => setShowModal(false)}
-                  className="font-semibold text-sm border  text-[#232830] outline-none h-[33px] rounded px-6"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-[33px] px-6"
-                  disabled={!formik.isValid || !formik.dirty || loading}
-                  onClick={() => formik.handleSubmit()}
-                >
-                  {actionType === "create" ? "Create" : "Update"}
-                </Button>
-              </div>
             </div>
           </div>
         </Modal>

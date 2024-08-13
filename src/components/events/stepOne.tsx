@@ -92,8 +92,6 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep, setShowModal }) => {
               <CustomSelect
                 options={[]}
                 placeholder="Select action for this event"
-                
-
               />
             </div>
             <div className="mt-[26px]">

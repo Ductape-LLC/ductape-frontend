@@ -1,11 +1,10 @@
 "use client";
 
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
-import { Button, Modal, Input, Select } from "antd";
+import React, { useState } from "react";
+import { Modal, Input } from "antd";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Dashboard_layout from "@/components/layouts/dashboard-layout";
 import Apps_Layout from "@/components/layouts/apps_layout";
 import CustomInput from "@/components/common/Input";
@@ -15,11 +14,12 @@ import {
   createAppConstant,
   deleteAppConstant,
   fetchApp,
-  fetchAppConstant,
   updateAppConstant,
 } from "@/api/appsClient";
 import toast from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ApiError } from "@/types/user.types";
+import Button from "@/components/common/Button";
 
 const { TextArea } = Input;
 
@@ -42,12 +42,10 @@ export default function Constants({
 }: {
   params: { id: string };
 }) {
-  const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
-  const [loading, setLoading] = useState(false);
   const { token, public_key, user } = useSelector((state: any) => state.user);
   const [actionType, setActionType] = useState("create");
-  const [constantId, setConstantId] = useState("");
+  const queryClient = useQueryClient();
 
   const payload = {
     token,
@@ -64,68 +62,73 @@ export default function Constants({
   const app = data?.data?.data;
   const constants = app?.constants || [];
 
-  const handleSubmit = async (values: ConstantProps, submitProps: any) => {
-    const { key, value, description, type } = values;
-    try {
-      submitProps.setSubmitting(false);
-      setLoading(true);
-      toast.loading("Loading...");
-      const data = {
-        user_id: user._id,
-        app_id: app._id,
-        public_key: public_key,
-        key,
-        value,
-        description,
-        type,
-      };
-      if (actionType === "create") {
-        const response = await createAppConstant(token, data);
-        if (response.status === 200) {
-          toast.success("Application constant created successfully");
-          submitProps.resetForm();
-          setShowModal(false);
-        }
-      } else {
-        const response = await updateAppConstant(token, {
-          ...data,
-          constant_id: constantId,
-        });
-        if (response.status === 200) {
-          toast.success("Application constant updated successfully");
-          submitProps.resetForm();
-          setShowModal(false);
-        }
-      }
-    } catch (error: any) {
-      console.log(error.response);
-      toast.error(error.response.data.errors);
-    } finally {
-      setLoading(false);
+  const submitData = async (data: any, actionType: string, token: string) => {
+    if (actionType === "create") {
+      return await createAppConstant(token, data, app._id);
+    } else {
+      return await updateAppConstant(token, data, app._id);
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      setLoading(true);
-      toast.loading("Loading...");
-      const response = await deleteAppConstant(token, {
-        user_id: user._id,
-        app_id: app._id,
-        public_key: public_key,
-        constant_id: constantId,
+  const deleteData = async (data: any, token: string) => {
+    return await deleteAppConstant(token, data, app._id);
+  };
+
+  const handleSubmit = (values: ConstantProps) => {
+    const { key, value, description, type } = values;
+    const data = {
+      user_id: user._id,
+      public_key: public_key,
+      key,
+      value,
+      description,
+      type,
+      action: actionType,
+      component: "constants",
+      workspace_id: app.workspace_id,
+    };
+
+    mutate({ data, actionType, token });
+  };
+
+  const { mutate, status: appMutationStatus } = useMutation({
+    mutationFn: ({
+      data,
+      actionType,
+      token,
+    }: {
+      data: any;
+      actionType: string;
+      token: string;
+    }) => submitData(data, actionType, token),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["app", id],
       });
-      if (response.status === 200) {
+      toast.success("Application constant updated successfully");
+      setShowModal(false);
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response.data.errors || "An error occurred");
+    },
+  });
+
+  const { mutate: deleteAppConstantMutation, status: deleteStatus } =
+    useMutation({
+      mutationFn: async (payload: any) => {
+        return await deleteData(payload, token);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ["app", id],
+        });
         toast.success("Application constant deleted successfully");
         setShowModal(false);
-      }
-    } catch (error: any) {
-      console.log(error.response);
-      toast.error(error.response.data.errors);
-    } finally {
-      setLoading(false);
-    }
-  };
+      },
+      onError: (error: ApiError) => {
+        toast.error(error.response.data.errors || "An error occurred");
+      },
+    });
 
   const openCreateModal = () => {
     setShowModal(true);
@@ -137,7 +140,6 @@ export default function Constants({
     setShowModal(true);
     formik.setValues(constant);
     setActionType("update");
-    setConstantId(constant._id);
   };
 
   const formik = useFormik<ConstantProps>({
@@ -194,8 +196,8 @@ export default function Constants({
             <div>
               {constants.map((constant: any) => (
                 <div
-                  key={constant._id}
-                  className="border rounded bg-white h-[110px] flex items-center px-7 justify-between mt-7 cursor-pointer"
+                  key={constant.key}
+                  className="border rounded bg-white h-[110px] grid grid-cols-3 items-center pl-7 pr-20 justify-between mt-7 cursor-pointer hover:shadow-md transition-all"
                   onClick={() => openUpdateModal(constant)}
                 >
                   <div>
@@ -204,10 +206,14 @@ export default function Constants({
                       {constant.description}
                     </p>
                   </div>
-                  <div className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm uppercase">
-                    {constant.type}
+                  <div className="flex items-center justify-center">
+                    <div className="text-[#00875A] border text-xs px-[14px] py-1 bg-[#00875A]/10 rounded-sm uppercase w-fit flex items-center">
+                      {constant.type}
+                    </div>
                   </div>
-                  <p className="text-xs font-semibold">{constant.value}</p>
+                  <div className="flex items-center justify-end">
+                    <p className="text-xs font-semibold">{constant.value}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -227,8 +233,14 @@ export default function Constants({
             <h1 className="text-grey text-xl font-bold border-b px-7 py-6">
               Create Application Contants
             </h1>
-            <div className="px-7 mt-4 pb-7 border-b">
-              <form className="mt-[31px]">
+            <div className="px-7 mt-4">
+              <form
+                className="mt-8"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  formik.handleSubmit();
+                }}
+              >
                 <div>
                   <CustomInput
                     placeholder="Key"
@@ -291,34 +303,40 @@ export default function Constants({
                     </p>
                   ) : null}
                 </div>
+                <div className="mt-7 pt-6 flex justify-between items-center border-t">
+                  {actionType === "update" && (
+                    <Button
+                      onClick={() => {
+                        deleteAppConstantMutation({
+                          key: formik.values.key,
+                          user_id: user._id,
+                          public_key,
+                        });
+                      }}
+                      disabled={deleteStatus === "pending"}
+                      className="font-semibold text-xs border text-white bg-[#DC3444] outline-none h-8 rounded px-6 gap-2 whitespace-nowrap"
+                    >
+                      Delete Application Constant
+                    </Button>
+                  )}
+
+                  <div className="flex justify-end w-full gap-5">
+                    <Button
+                      onClick={() => setShowModal(false)}
+                      className="font-semibold text-sm border  text-grey outline-none h-8 rounded px-6"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-8 px-6"
+                      disabled={appMutationStatus === "pending"}
+                    >
+                      {actionType === "create" ? "Create" : "Update"}
+                    </Button>
+                  </div>
+                </div>
               </form>
-            </div>
-
-            <div className="py-6 flex justify-between items-center px-7">
-              {actionType === "update" && (
-                <Button
-                  onClick={handleDelete}
-                  className="font-semibold text-sm border  text-white bg-[#DC3444] outline-none h-8 rounded px-6 gap-2"
-                >
-                  Delete Application Constant
-                </Button>
-              )}
-
-              <div className="flex justify-end w-full gap-5">
-                <Button
-                  onClick={() => setShowModal(false)}
-                  className="font-semibold text-sm border  text-grey outline-none h-8 rounded px-6"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className="bg-[#0846A6] text-white font-semibold text-sm outline-none rounded h-8 px-6"
-                  disabled={!formik.isValid || !formik.dirty || loading}
-                  onClick={() => formik.handleSubmit()}
-                >
-                  {actionType === "create" ? "Create" : "Update"}
-                </Button>
-              </div>
             </div>
           </div>
         </Modal>
