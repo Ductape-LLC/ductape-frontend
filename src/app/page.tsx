@@ -283,8 +283,8 @@ export default function Home() {
                 Ductape for developers
               </h2>
               <p className="mt-4 text-grey-500 font-medium">
-                Ductape provides an open-source, developer-friendly backend that
-                helps developers get started on all they need.
+                Ductape provides a developer-friendly sdk that helps developers
+                get started on all they need
               </p>
 
               <div className="mt-10 flex flex-col gap-4 text-grey font-medium">
