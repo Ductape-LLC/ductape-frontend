@@ -15,7 +15,6 @@ export default function GetStarted({
 }: {
   params: { id: string };
 }) {
-  const [showModal, setShowModal] = useState(true);
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
@@ -28,7 +27,7 @@ export default function GetStarted({
 
           <div className="px-16 p-10">
             {currentStep === 0 ? (
-              <StepSix setCurrentStep={setCurrentStep} />
+              <StepOne setCurrentStep={setCurrentStep} />
             ) : currentStep === 1 ? (
               <StepTwo setCurrentStep={setCurrentStep} />
             ) : currentStep === 2 ? (

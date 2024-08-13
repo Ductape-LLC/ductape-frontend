@@ -102,7 +102,7 @@ export const fetchAppByTag = async (token: string, tag: string) => {
     );
   } catch (e: any) {
     // Interpreting the response as "tag doesn't exist" if "App not found" error occurs
-    if (e.response?.data?.errors === "App not found") {
+    if (e.response?.data?.errors === "Error: App not found") {
       return null;
     } else {
       throw e;

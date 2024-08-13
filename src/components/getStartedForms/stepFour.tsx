@@ -15,7 +15,14 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { ApiError } from "@/types/user.types";
 import { Button } from "../ui/button";
-import CustomSelect from "@/components/common/Select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface StepFourProps {
   setCurrentStep: (currentStep: number) => void;
@@ -38,6 +45,11 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
+const types = [
+  { value: "string", label: "String" },
+  { value: "object", label: "Object" },
+];
+
 const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
@@ -58,10 +70,11 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
   });
 
   const app = data?.data?.data;
-  const variables: Variable[] = app?.variables.map((variable: any) => ({
-    ...variable,
-    update: false,
-  }));
+  const variables: Variable[] =
+    app?.variables?.map((variable: any) => ({
+      ...variable,
+      update: false,
+    })) || [];
 
   const submitData = async (data: any, actionType: string, token: string) => {
     if (actionType === "create") {
@@ -90,7 +103,7 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
         user_id: user._id,
         public_key,
         key: variable.key,
-        type: "string",
+        type: variable.type,
         description: variable.description,
         action: variable.update ? "update" : "create",
         component: "variables",
@@ -125,13 +138,13 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, handleChange }) => (
+          {({ values, handleChange, setFieldValue }) => (
             <Form>
               <FieldArray name="variables">
                 {({ push }) => (
                   <>
                     <div className="grid gap-9">
-                      {variables.map((variable, index) => (
+                      {values.variables.map((variable, index) => (
                         <div key={index} className="flex items-center gap-4">
                           <Field name={`variables[${index}].update`}>
                             {({ field }: any) => (
@@ -188,23 +201,31 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
                               <Label htmlFor={`variables[${index}].type`}>
                                 Type
                               </Label>
-                              <CustomSelect
-                                placeholder="Type"
-                                // value={formik.values.type}
-                                // onChange={(value: string) =>
-                                //   formik.setFieldValue("type", value)
-                                // }
-                                options={[
-                                  {
-                                    value: "string",
-                                    label: "String",
-                                  },
-                                  {
-                                    value: "object",
-                                    label: "Object",
-                                  },
-                                ]}
-                              />
+                              <Select
+                                name={`variables[${index}].type`}
+                                onValueChange={(value) =>
+                                  setFieldValue(
+                                    `variables[${index}].type`,
+                                    value
+                                  )
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select Action" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    {types?.map((type: any) => (
+                                      <SelectItem
+                                        key={type.value}
+                                        value={type.value}
+                                      >
+                                        {type.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
                               <ErrorMessage
                                 name={`variables[${index}].type`}
                                 component="div"
@@ -219,14 +240,14 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
                     <Button
                       variant="ghost"
                       className="p-0 text-primary font-semibold text-xs underline mt-5 block"
-                      onClick={() =>
+                      onClick={() => {
                         push({
                           key: "",
                           type: "",
                           description: "",
                           update: false,
-                        })
-                      }
+                        });
+                      }}
                     >
                       +Add Variables
                     </Button>
@@ -256,7 +277,6 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
                             disabled={status === "pending"}
                             onClick={() => {
                               handleSubmit(values);
-
                               setTimeout(() => {
                                 setCurrentStep(4);
                               }, 2000);

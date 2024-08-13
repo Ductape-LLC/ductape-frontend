@@ -78,7 +78,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
         if (event.target?.result) {
           try {
             const jsonContent = JSON.parse(event.target.result as string);
-
+            console.log("JSON content:", jsonContent);
             setUploadedFileContent(jsonContent);
           } catch (error) {
             console.error("Error importing JSON:", error);
@@ -102,12 +102,17 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   });
 
   const handleSubmit = async () => {
+    console.log("uyyy");
     if (uploadedFileContent) {
       try {
         mutate(uploadedFileContent, {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["app", id] });
             toast.success("Import successful");
+            console.log("Import successful");
+            setTimeout(() => {
+              setCurrentStep(1);
+            }, 2000);
           },
           onError: (error) => {
             console.error(error);
@@ -228,11 +233,7 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
             </Button>
             <Button
               disabled={uploadingAppStatus === "pending"}
-              onClick={() => {
-                handleSubmit();
-
-                setCurrentStep(1);
-              }}
+              onClick={handleSubmit}
               type="button"
               className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
             >

@@ -148,7 +148,7 @@ export const createUploadUrl = async ({
   }
 };
 
-export const uploadFileToUrl = async (url: string, file: { type: string }) => {
+export const uploadFileToUrl = async (url: string, file: File) => {
   try {
     const response = await axios.put(url, file, {
       headers: {
