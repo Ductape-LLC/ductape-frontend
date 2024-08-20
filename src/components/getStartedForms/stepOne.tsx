@@ -17,9 +17,10 @@ const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
 
 interface StepOneProps {
   setCurrentStep: (currentStep: number) => void;
+  disableUploadField: boolean;
 }
 
-const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
+const StepOne: FC<StepOneProps> = ({ setCurrentStep, disableUploadField }) => {
   const pathname = usePathname();
   const id = pathname.split("/")[2];
   const queryClient = useQueryClient();
@@ -78,7 +79,6 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
         if (event.target?.result) {
           try {
             const jsonContent = JSON.parse(event.target.result as string);
-            console.log("JSON content:", jsonContent);
             setUploadedFileContent(jsonContent);
           } catch (error) {
             console.error("Error importing JSON:", error);
@@ -95,21 +95,26 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
   const { getRootProps, getInputProps, open, acceptedFiles } = useDropzone({
     onDrop: memoizedOnDrop,
     accept: { "application/json": [".json"] },
-    noClick: true,
-    noKeyboard: true,
     multiple: false,
     maxSize: MAX_UPLOAD_SIZE,
+    noClick: disableUploadField,
+    noKeyboard: disableUploadField,
   });
 
+  console.log(disableUploadField, "assa");
+
   const handleSubmit = async () => {
-    console.log("uyyy");
+    if (disableUploadField) {
+      setCurrentStep(1);
+      return;
+    }
+
     if (uploadedFileContent) {
       try {
         mutate(uploadedFileContent, {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["app", id] });
             toast.success("Import successful");
-            console.log("Import successful");
             setTimeout(() => {
               setCurrentStep(1);
             }, 2000);
@@ -222,15 +227,6 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep }) => {
 
         <div className="flex justify-end items-center my-11">
           <div className="flex gap-4">
-            <Button
-              variant="secondary"
-              disabled={uploadingAppStatus === "pending"}
-              className="font-semibold text-xs h-8 px-7 rounded border border-grey-300"
-              onClick={handleSubmit}
-              type="button"
-            >
-              Save
-            </Button>
             <Button
               disabled={uploadingAppStatus === "pending"}
               onClick={handleSubmit}

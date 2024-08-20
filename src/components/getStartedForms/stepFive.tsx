@@ -350,13 +350,6 @@ const StepFive: FC<StepFiveProps> = ({ setCurrentStep }) => {
                       <div className="flex justify-end items-center my-11">
                         <div className="flex gap-4">
                           <Button
-                            className="font-semibold text-xs bg-white text-grey px-7 rounded border border-grey-300"
-                            type="submit"
-                            disabled={status === "pending"}
-                          >
-                            Save
-                          </Button>
-                          <Button
                             type="submit"
                             disabled={status === "pending"}
                             className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"

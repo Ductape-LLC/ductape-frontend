@@ -91,6 +91,9 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["app", id] });
       toast.success("All variables processed successfully");
+      setTimeout(() => {
+        setCurrentStep(4);
+      }, 2000);
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.errors || "An error occurred");
@@ -162,7 +165,7 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
                               />
                             )}
                           </Field>
-                          <div className="flex items-center justify-between gap-6 w-full">
+                          <div className="flex items-start justify-between gap-6 w-full">
                             <div className="flex-1">
                               <Label
                                 htmlFor={`variables[${index}].description`}
@@ -265,21 +268,8 @@ const StepFour: FC<StepFourProps> = ({ setCurrentStep }) => {
                           <Button
                             type="button"
                             disabled={status === "pending"}
-                            className="font-semibold text-xs bg-white text-grey h-8 px-7 rounded border border-grey-300"
                             onClick={() => {
                               handleSubmit(values);
-                            }}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            type="button"
-                            disabled={status === "pending"}
-                            onClick={() => {
-                              handleSubmit(values);
-                              setTimeout(() => {
-                                setCurrentStep(4);
-                              }, 2000);
                             }}
                             className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
                           >

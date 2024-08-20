@@ -1,7 +1,7 @@
 import React, { FC, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import Button from "@/components/common/Button";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { fetchApp, updateAppConstant } from "@/api/appsClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -26,6 +26,7 @@ const validationSchema = Yup.object({
 
 const StepSix: FC<StepSixProps> = ({ setCurrentStep }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const id = pathname.split("/")[2];
   const queryClient = useQueryClient();
 
@@ -64,6 +65,7 @@ const StepSix: FC<StepSixProps> = ({ setCurrentStep }) => {
     },
     onError: (error) => {
       console.error("Error creating upload URL:", error);
+      toast.error(`Error creating upload URL: ${error}`);
     },
   });
 
@@ -102,6 +104,8 @@ const StepSix: FC<StepSixProps> = ({ setCurrentStep }) => {
       setTimeout(() => {
         setCurrentStep(6);
       }, 2000);
+
+      router.push(`/apps/${id}`);
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.errors || "An error occurred");
@@ -121,6 +125,7 @@ const StepSix: FC<StepSixProps> = ({ setCurrentStep }) => {
       workspace_id: app.workspace_id,
       logo: logoUrl,
       description: values.description,
+      get_started: 0,
     };
 
     await mutateAsync(data as any);
@@ -233,13 +238,6 @@ const StepSix: FC<StepSixProps> = ({ setCurrentStep }) => {
 
                 <div className="flex justify-end items-center my-11">
                   <div className="flex gap-4">
-                    <Button
-                      disabled={uploadingLogo === "pending" || isSubmitting}
-                      type="submit"
-                      className="font-semibold text-xs bg-white text-grey px-7 rounded border border-grey-300"
-                    >
-                      Save
-                    </Button>
                     <Button
                       disabled={uploadingLogo === "pending" || isSubmitting}
                       className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"

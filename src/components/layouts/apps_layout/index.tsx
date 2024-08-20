@@ -35,9 +35,7 @@ export default function AppsLayout({
 
   const app = data?.data?.data;
 
-  const isNewApp = ["actions", "events", "constants", "variables"].every(
-    (key) => !app?.[key] || app?.[key].length === 0
-  );
+  const isNewApp = app?.get_started === 1;
 
   useEffect(() => {
     if (status === "success") {
