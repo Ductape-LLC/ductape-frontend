@@ -31,7 +31,7 @@ const validationSchema = Yup.object().shape({
   constants: Yup.array().of(
     Yup.object().shape({
       key: Yup.string().required("Constant key is required"),
-      value: Yup.string().required("Base URL is required"),
+      value: Yup.string().required("Value is required"),
       description: Yup.string().required("Description is required"),
     })
   ),
@@ -77,6 +77,9 @@ const StepThree: FC<StepThreeProps> = ({ setCurrentStep }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["app", id] });
       toast.success("All constants processed successfully");
+      setTimeout(() => {
+        setCurrentStep(3);
+      }, 2000);
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.errors || "An error occurred");
@@ -149,7 +152,7 @@ const StepThree: FC<StepThreeProps> = ({ setCurrentStep }) => {
                               />
                             )}
                           </Field>
-                          <div className="flex items-center justify-between gap-6 w-full">
+                          <div className="flex items-start justify-between gap-6 w-full">
                             <div className="flex-1">
                               <Label
                                 htmlFor={`constants[${index}].description`}
@@ -233,22 +236,8 @@ const StepThree: FC<StepThreeProps> = ({ setCurrentStep }) => {
                           <Button
                             type="button"
                             disabled={status === "pending"}
-                            className="font-semibold text-xs bg-white text-grey h-8 px-7 rounded border border-grey-300"
                             onClick={() => {
                               handleSubmit(values);
-                            }}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            type="button"
-                            disabled={status === "pending"}
-                            onClick={() => {
-                              handleSubmit(values);
-
-                              setTimeout(() => {
-                                setCurrentStep(3);
-                              }, 2000);
                             }}
                             className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
                           >

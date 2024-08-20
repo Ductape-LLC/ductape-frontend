@@ -1,24 +1,12 @@
 "use client";
 
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Modal, Input, Progress } from "antd";
+import { Progress } from "antd";
 import Dashboard_layout from "../../../components/layouts/dashboard-layout";
 import Apps_Layout from "../../../components/layouts/apps_layout";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { fetchApp } from "@/api/appsClient";
 
@@ -68,10 +56,7 @@ const data = [
 ];
 
 export default function App({ params: { id } }: { params: { id: string } }) {
-  const router = useRouter();
   const { token, public_key, user } = useSelector((state: any) => state.user);
-
-  const [showModal, setShowModal] = useState(true);
 
   const payload = {
     token,

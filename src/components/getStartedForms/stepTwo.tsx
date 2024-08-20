@@ -78,6 +78,9 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["app", id] });
       toast.success("All environments processed successfully");
+      setTimeout(() => {
+        setCurrentStep(2);
+      }, 2000);
     },
     onError: (error: ApiError) => {
       toast.error(error.response?.data?.errors || "An error occurred");
@@ -256,23 +259,9 @@ const StepTwo: FC<StepTwoProps> = ({ setCurrentStep }) => {
                           <Button
                             type="button"
                             disabled={status === "pending"}
-                            className="font-semibold text-xs bg-white text-grey h-8 px-7 rounded border border-grey-300"
-                            onClick={() => {
-                              handleSubmit(values);
-                            }}
-                          >
-                            Save
-                          </Button>
-                          <Button
-                            type="button"
-                            disabled={status === "pending"}
                             className="font-semibold text-xs bg-primary text-white h-8 px-7 rounded"
                             onClick={() => {
                               handleSubmit(values);
-
-                              setTimeout(() => {
-                                setCurrentStep(2);
-                              }, 2000);
                             }}
                           >
                             Next
