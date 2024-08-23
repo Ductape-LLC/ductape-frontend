@@ -14,3 +14,4 @@ export const APP_CREATE_VARIABLES = "/apps/v1/variables";
 export const APP_FETCH_VARIABLES = "/apps/v1/variables/:app_id";
 export const APP_UPDATE_VARIABLES = "/apps/v1/variables/:variable_id";
 export const APP_DELETE_VARIABLES = "/apps/v1/variables/:variable_id";
+export const APP_FETCH_DOMAINS = "/apps/v1/domains";

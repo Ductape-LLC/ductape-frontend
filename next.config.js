@@ -9,6 +9,9 @@ const nextConfig = {
     "rc-picker",
     "@babel",
   ],
+  images: {
+    domains: ["ductape-public.s3.us-east-2.amazonaws.com"],
+  },
 };
 
 module.exports = nextConfig;

@@ -51,3 +51,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* react select */
+.react-select__control {
+  border-radius: 6px !important;
+  border-color: hsl(var(--input)) !important;
+}
+
+.react-select__control--is-focused {
+  border-color: hsl(var(--ring)) !important;
+  border-width: 2px !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
