@@ -18,7 +18,7 @@ interface StepSixProps {
   setCurrentStep: (currentStep: number) => void;
 }
 
-const MAX_UPLOAD_SIZE = 200 * 1024 * 1024; // 200 MB
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10 MB
 
 const validationSchema = Yup.object({
   description: Yup.string().required("Description is required"),

@@ -101,8 +101,6 @@ const StepOne: FC<StepOneProps> = ({ setCurrentStep, disableUploadField }) => {
     noKeyboard: disableUploadField,
   });
 
-  console.log(disableUploadField, "assa");
-
   const handleSubmit = async () => {
     if (disableUploadField) {
       setCurrentStep(1);

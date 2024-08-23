@@ -45,7 +45,7 @@ export default function AppsLayout({
     }
   }, [isNewApp, app?._id, router, status]);
 
-  if (status === "pending") {
+  if (status === "pending" || !app) {
     return <p>Loading...</p>;
   }
 
@@ -63,10 +63,10 @@ export default function AppsLayout({
 
         <div className="flex items-center gap-3 mt-2 pl-11">
           <Image
-            src="/images/facebook.svg"
+            src={app?.logo ?? "/images/facebook.svg"}
             width={24}
             height={24}
-            alt="facebook"
+            alt="app logo"
           />
           <p className="text-grey font-bold text-xl">{app?.app_name}</p>
         </div>
@@ -125,7 +125,7 @@ export default function AppsLayout({
                   height={24}
                   width={24}
                 />
-                <Link href={`/apps/${app._id}`} className="font-bold text-sm">
+                <Link href={`/apps/${app?._id}`} className="font-bold text-sm">
                   Dashboard
                 </Link>
               </div>
@@ -243,7 +243,7 @@ export default function AppsLayout({
                     width={24}
                   />
                   <Link
-                    href={`/apps/${app._id}/constants`}
+                    href={`/apps/${app?._id}/constants`}
                     className="font-bold text-sm"
                   >
                     Application Constants
@@ -265,7 +265,7 @@ export default function AppsLayout({
                     width={24}
                   />
                   <Link
-                    href={`/apps/${app._id}/constants`}
+                    href={`/apps/${app?._id}/constants`}
                     className="font-bold text-sm"
                   >
                     Retry Policy
@@ -332,7 +332,7 @@ export default function AppsLayout({
                     width={24}
                   />
                   <Link
-                    href="/apps/authorizations"
+                    href={`/apps/${app._id}/authorizations`}
                     className="font-bold text-sm"
                   >
                     Authorizations

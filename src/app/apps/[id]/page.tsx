@@ -83,10 +83,10 @@ export default function App({ params: { id } }: { params: { id: string } }) {
           <div className="px-16 pt-8 h-[170px] border-b bg-white">
             <div className="flex items-center gap-3">
               <Image
-                src="/images/facebook.svg"
+                src={app?.logo ?? "/images/facebook.svg"}
                 width={32}
                 height={32}
-                alt="facebook"
+                alt="app logo"
               />
               <p className="text-[#232830] font-bold text-3xl">
                 {app.app_name}

@@ -15,6 +15,7 @@ import {
   APP_UPDATE_VARIABLES,
   APP_DELETE_VARIABLES,
   APP_FETCH_TAGS,
+  APP_FETCH_DOMAINS,
 } from "./urls";
 import { Parameterize } from "../../utils";
 
@@ -238,6 +239,14 @@ export const fetchAppVariable = async ({
     return await appsClient(token, "application/json").get(
       URL + `/?user_id=${user_id}&public_key=${public_key}`
     );
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const fetchDomains = async (token: string) => {
+  try {
+    return await appsClient(token, "application/json").get(APP_FETCH_DOMAINS);
   } catch (e) {
     throw e;
   }
