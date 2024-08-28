@@ -126,7 +126,7 @@ export default function AppsLayout({
                   width={24}
                 />
                 <Link href={`/apps/${app?._id}`} className="font-bold text-sm">
-                  Dashboard
+                  My App
                 </Link>
               </div>
 
@@ -265,7 +265,7 @@ export default function AppsLayout({
                     width={24}
                   />
                   <Link
-                    href={`/apps/${app?._id}/constants`}
+                    href={`/apps/${app?._id}/retry-policy`}
                     className="font-bold text-sm"
                   >
                     Retry Policy
@@ -312,7 +312,10 @@ export default function AppsLayout({
                     height={24}
                     width={24}
                   />
-                  <Link href="/apps/events" className="font-bold text-sm">
+                  <Link
+                    href={`/apps/${app?._id}/events`}
+                    className="font-bold text-sm"
+                  >
                     Events
                   </Link>
                 </div>

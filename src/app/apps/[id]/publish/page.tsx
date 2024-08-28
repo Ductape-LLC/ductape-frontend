@@ -85,8 +85,6 @@ export default function Publish({
     app?.domains || []
   );
 
-  console.log(selectedDomains, "assh");
-
   useEffect(() => {
     if (app?.domains) {
       setSelectedDomains(app.domains);
