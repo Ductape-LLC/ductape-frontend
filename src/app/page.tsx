@@ -62,10 +62,10 @@ export default function Home() {
                   height={24}
                   alt="cta"
                 />
-                Download Ductape v0.2.4
+                Download Ductape
               </a>
               <a
-                href="#"
+                href="https://docs.ductape.app/"
                 className="rounded-full px-6 py-4 flex items-center gap-4 text-grey border border-grey-500"
               >
                 Read documentation
@@ -345,7 +345,7 @@ export default function Home() {
                   your product.
                 </p>
                 <a
-                  href="#"
+                  href="https://docs.ductape.app/"
                   className="group rounded-full px-6 py-3 flex items-center gap-2 text-white border border-white w-fit"
                 >
                   Read documentation
@@ -380,7 +380,7 @@ export default function Home() {
                   height={24}
                   alt="cta"
                 />
-                Download Ductape v0.2.4
+                Download Ductape
               </a>
             </div>
             <div className="absolute left-0 right-0 w-full h-[0.5px] bg-[#EFEFEF]" />
@@ -395,7 +395,7 @@ export default function Home() {
                 <div className="flex flex-col gap-7 text-sm md:text-base">
                   <div className="flex items-center gap-6 flex-wrap">
                     <a
-                      href="#"
+                      href="https://docs.ductape.app/"
                       className="text-white font-semibold underline uppercase"
                     >
                       documentation

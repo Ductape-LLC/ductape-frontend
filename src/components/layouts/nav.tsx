@@ -11,7 +11,7 @@ const LINKS = [
   },
   {
     label: "Documentation",
-    href: "#",
+    href: "https://docs.ductape.app/",
   },
   {
     label: "Pricing",
@@ -74,7 +74,7 @@ export default function Nav() {
             className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white font-semibold"
           >
             <Image src="/images/ductape.svg" width={24} height={24} alt="cta" />
-            Download Ductape v0.2.4
+            Download Ductape
           </a>
         </div>
       </nav>
@@ -100,7 +100,7 @@ export default function Nav() {
                 height={24}
                 alt="cta"
               />
-              Download Ductape v0.2.4
+              Download Ductape
             </a>
           </div>
         </ul>
