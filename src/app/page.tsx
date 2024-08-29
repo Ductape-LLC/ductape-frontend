@@ -53,7 +53,9 @@ export default function Home() {
             </p>
             <div className="mt-6 flex items-center gap-4 lg:gap-5 font-semibold text-sm lg:text-base whitespace-nowrap flex-col md:flex-row">
               <a
-                href="#"
+                href="https://www.npmjs.com/package/ductape-sdk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white"
               >
                 <Image
@@ -62,10 +64,12 @@ export default function Home() {
                   height={24}
                   alt="cta"
                 />
-                Download Ductape v0.2.4
+                Download Ductape
               </a>
               <a
-                href="#"
+                href="https://docs.ductape.app/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-full px-6 py-4 flex items-center gap-4 text-grey border border-grey-500"
               >
                 Read documentation
@@ -345,7 +349,9 @@ export default function Home() {
                   your product.
                 </p>
                 <a
-                  href="#"
+                  href="https://docs.ductape.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group rounded-full px-6 py-3 flex items-center gap-2 text-white border border-white w-fit"
                 >
                   Read documentation
@@ -371,7 +377,9 @@ export default function Home() {
                 Ready to launch products faster by using Ductape?
               </h3>
               <a
-                href="#"
+                href="https://www.npmjs.com/package/ductape-sdk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white rounded-full px-6 py-4 flex items-center gap-4 text-primary font-semibold"
               >
                 <Image
@@ -380,7 +388,7 @@ export default function Home() {
                   height={24}
                   alt="cta"
                 />
-                Download Ductape v0.2.4
+                Download Ductape
               </a>
             </div>
             <div className="absolute left-0 right-0 w-full h-[0.5px] bg-[#EFEFEF]" />
@@ -395,7 +403,7 @@ export default function Home() {
                 <div className="flex flex-col gap-7 text-sm md:text-base">
                   <div className="flex items-center gap-6 flex-wrap">
                     <a
-                      href="#"
+                      href="https://docs.ductape.app/"
                       className="text-white font-semibold underline uppercase"
                     >
                       documentation
