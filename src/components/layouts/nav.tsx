@@ -70,7 +70,9 @@ export default function Nav() {
             Login
           </Link>
           <a
-            href="#"
+            href="https://www.npmjs.com/package/ductape-sdk"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white font-semibold"
           >
             <Image src="/images/ductape.svg" width={24} height={24} alt="cta" />
@@ -91,7 +93,9 @@ export default function Nav() {
               Login
             </Link>
             <a
-              href="#"
+              href="https://www.npmjs.com/package/ductape-sdk"
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white font-semibold"
             >
               <Image

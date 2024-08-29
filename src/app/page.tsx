@@ -53,7 +53,9 @@ export default function Home() {
             </p>
             <div className="mt-6 flex items-center gap-4 lg:gap-5 font-semibold text-sm lg:text-base whitespace-nowrap flex-col md:flex-row">
               <a
-                href="#"
+                href="https://www.npmjs.com/package/ductape-sdk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-primary rounded-full px-6 py-4 flex items-center gap-4 text-white"
               >
                 <Image
@@ -66,6 +68,8 @@ export default function Home() {
               </a>
               <a
                 href="https://docs.ductape.app/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-full px-6 py-4 flex items-center gap-4 text-grey border border-grey-500"
               >
                 Read documentation
@@ -346,6 +350,8 @@ export default function Home() {
                 </p>
                 <a
                   href="https://docs.ductape.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group rounded-full px-6 py-3 flex items-center gap-2 text-white border border-white w-fit"
                 >
                   Read documentation
@@ -371,7 +377,9 @@ export default function Home() {
                 Ready to launch products faster by using Ductape?
               </h3>
               <a
-                href="#"
+                href="https://www.npmjs.com/package/ductape-sdk"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white rounded-full px-6 py-4 flex items-center gap-4 text-primary font-semibold"
               >
                 <Image
