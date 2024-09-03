@@ -1,12 +1,20 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 
-const AuthorizationItem = () => {
+export default function AuthorizationItem({
+  id,
+  authorizationId,
+}: {
+  id: string;
+  authorizationId: string;
+}) {
   const router = useRouter();
 
   return (
     <div
-      onClick={() => router.push("/apps/authorizations/details")}
+      onClick={() =>
+        router.push(`/apps/${id}/authorizations/${authorizationId}`)
+      }
       className="border rounded bg-white h-[110px] flex items-center px-7 justify-between cursor-pointer"
     >
       <p className="font-bold text-lg">For Examples</p>
@@ -16,6 +24,4 @@ const AuthorizationItem = () => {
       <p className="text-xs font-semibold underline">Production Sandbox</p>
     </div>
   );
-};
-
-export default AuthorizationItem;
+}

@@ -71,6 +71,9 @@ const config = {
           500: "hsl(var(--white-500))",
           400: "hsl(var(--white-400))",
         },
+        red: {
+          DEFAULT: "hsl(var(--red))",
+        },
       },
       fontFamily: {
         sans: ["var(--font-raleway)"],

@@ -1,5 +1,4 @@
-export const USER_BASE_URL =
-  "http://ductape-ecs-848753313.us-east-2.elb.amazonaws.com/users";
+export const USER_BASE_URL = "https://api.ductape.app/users";
 export const USER_CREATE_URL = "/users/v1/create";
 export const USER_LOGIN_URL = "/users/v1/login";
 export const USER_FORGOT_URL = "/users/v1/forgot";

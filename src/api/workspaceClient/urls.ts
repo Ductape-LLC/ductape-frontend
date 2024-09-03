@@ -1,5 +1,4 @@
-export const WORKSPACES_BASE_URL =
-  "http://ductape-ecs-848753313.us-east-2.elb.amazonaws.com/workspaces";
+export const WORKSPACES_BASE_URL = "https://api.ductape.app/workspaces";
 export const WORKSPACE_CREATE_URL = "/workspaces/v1/create";
 export const WORKSPACE_FETCH_URL = "/workspaces/v1/fetch/:user_id";
 export const WORKSPACE_DEFAULT_CHANGE = "/workspaces/v1/update/:user_id";
