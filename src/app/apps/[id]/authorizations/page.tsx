@@ -64,6 +64,16 @@ export default function Authorizations({
     console.log("omoeux");
   };
 
+  const initialValues = {
+    type: "",
+    authorization_flow: "",
+    action: "",
+    expiry: "",
+    period: "",
+    tag: "",
+    description: "",
+  };
+
   return (
     <Dashboard_layout activeTab="Apps">
       <Apps_Layout activeAppTab="Authorizations" id={id}>
@@ -112,7 +122,7 @@ export default function Authorizations({
                 <h1 className="text-grey text-xl font-bold">Create Event</h1>
               </div>
 
-              <Formik initialValues={{}} onSubmit={handleSubmit}>
+              <Formik initialValues={initialValues} onSubmit={handleSubmit}>
                 {({ values, setFieldValue, setFieldTouched, handleSubmit }) => (
                   <Form>
                     <div className="grid gap-4">
