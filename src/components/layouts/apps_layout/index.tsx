@@ -295,7 +295,10 @@ export default function AppsLayout({
                     height={24}
                     width={24}
                   />
-                  <Link href="#" className="font-bold text-sm">
+                  <Link
+                    href={`/apps/${app._id}/actions`}
+                    className="font-bold text-sm"
+                  >
                     Actions
                   </Link>
                 </div>

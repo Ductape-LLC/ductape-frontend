@@ -1,5 +1,4 @@
-export const APPS_BASE_URL =
-  "http://ductape-ecs-848753313.us-east-2.elb.amazonaws.com/apps";
+export const APPS_BASE_URL = "https://api.ductape.app/apps";
 export const APPS_CREATE_URL = "/apps/v1/create";
 export const APPS_FETCH_URL = "/apps/v1/workspace";
 export const APP_FETCH_URL = "/apps/v1/:app_id";

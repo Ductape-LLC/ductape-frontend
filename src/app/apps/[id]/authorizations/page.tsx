@@ -95,7 +95,7 @@ export default function Authorizations({
                 New Authorization
               </Button>
             </div> */}
-            <AuthorizationItem />
+            <AuthorizationItem id={id} authorizationId="1" />
           </div>
 
           <Modal

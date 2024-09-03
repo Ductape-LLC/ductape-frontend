@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import ReactSelect from "react-select";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function Eventss({
+export default function Events({
   params: { id, eventId },
 }: {
   params: { id: string; eventId: string };
