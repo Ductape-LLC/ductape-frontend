@@ -149,6 +149,13 @@ export default function Events({ params: { id } }: { params: { id: string } }) {
     onSubmit: handleSubmit,
   });
 
+  const initialValues: ConstantProps = {
+    key: "",
+    value: "",
+    type: "",
+    description: "",
+  };
+
   if (appLoadingStatus === "pending") {
     return <p>Loading...</p>;
   }
@@ -237,7 +244,7 @@ export default function Events({ params: { id } }: { params: { id: string } }) {
               <h1 className="text-grey text-xl font-bold">Create Event</h1>
             </div>
 
-            <Formik initialValues={{}} onSubmit={handleSubmit}>
+            <Formik initialValues={initialValues} onSubmit={handleSubmit}>
               <Form>
                 <div className="grid gap-4">
                   {step === 1 ? (
