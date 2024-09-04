@@ -81,7 +81,9 @@ export default function Dashboard() {
   const { workspaces, defaultWorkspace, workspaceStats } = useSelector(
     (state: any) => state.workspace
   );
+
   const { token, public_key, user } = useSelector((state: any) => state.user);
+  console.log({ token, public_key, user }, "iaio");
 
   const { data } = useQuery({
     queryKey: ["workspaceStats"],

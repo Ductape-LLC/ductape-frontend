@@ -1,17 +1,17 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import toast from 'react-hot-toast';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import toast from "react-hot-toast";
 import {
   setWorkspaceStats,
   setDefaultWorkspace,
   setWorkspaces,
-} from '@/redux/slice/workspaceSlice';
+} from "@/redux/slice/workspaceSlice";
 import {
   fetchWorkspaceStats,
   changeDefaultWorkspace,
   fetchWorkspaces,
   updateWorkspaceEnvs,
-} from '@/api/workspaceClient';
+} from "@/api/workspaceClient";
 
 interface IWorkspaces {
   workspaces: any;
@@ -38,6 +38,7 @@ export const useWorkspaces = (): IWorkspaces => {
   const fetchAndSaveWorkSacpes = async () => {
     try {
       const response = await fetchWorkspaces(token, user._id, public_key);
+      console.log(response, "response");
       if (response.status === 201) {
         console.log(response.data.data);
         const workspacesData = response.data.data;
@@ -56,7 +57,7 @@ export const useWorkspaces = (): IWorkspaces => {
   const saveEnvs = async (envs: ENV[]) => {
     try {
       setLoading(true);
-      toast.loading('Loading...');
+      toast.loading("Loading...");
       const response = await updateWorkspaceEnvs(token, defaultWorkspace._id, {
         envs,
         user_id: user._id,
@@ -64,7 +65,7 @@ export const useWorkspaces = (): IWorkspaces => {
       });
 
       if (response.status === 201) {
-        toast.success('Environments Saved successfully');
+        toast.success("Environments Saved successfully");
         await fetchAndSaveWorkSacpes();
         setLoading(false);
       }
@@ -123,8 +124,6 @@ export const useWorkspaces = (): IWorkspaces => {
     await ChangeDefaultWorkspace(workspace.workspace_id);
     await dispatch(setDefaultWorkspace(workspace));
   };
-
-  
 
   return {
     workspaces,
