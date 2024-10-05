@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://vite-app.vercel.app/:path*"
+    }
+  ]
+}
