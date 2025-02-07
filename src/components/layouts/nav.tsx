@@ -94,9 +94,14 @@ export default function Nav() {
             </li>
           ))}
           <div className="flex flex-col items-start gap-3 font-semibold">
-            <Link href="/auth/login" className="py-4">
+            <a
+              href="https://cloud.ductape.app/auth/login"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-4"
+            >
               Login
-            </Link>
+            </a>
             <a
               href="https://www.npmjs.com/package/ductape-sdk"
               target="_blank"
