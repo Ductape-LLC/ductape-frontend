@@ -66,9 +66,14 @@ export default function Nav() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3 font-semibold">
-          <Link href="/auth/login" className="px-6 py-4">
+          <a
+            href="https://cloud.ductape.app/auth/login"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-4"
+          >
             Login
-          </Link>
+          </a>
           <a
             href="https://www.npmjs.com/package/ductape-sdk"
             target="_blank"

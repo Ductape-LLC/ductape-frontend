@@ -449,7 +449,7 @@ export default function Home() {
                   </div>
                 </div>
                 <p className="text-white font-semibold">
-                  © Ductape Technology 2024
+                  © Ductape Technology {new Date().getFullYear()}
                 </p>
               </div>
             </div>
